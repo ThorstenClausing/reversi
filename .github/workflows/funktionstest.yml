@@ -11,4 +11,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: pip install numpy pytest pytest-cov
       - run: pytest test_datei_1.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-      - run: pytest test_datei_2.py --cov=com
+      - run: pytest test_datei_2.py
