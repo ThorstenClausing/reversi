@@ -1,3 +1,4 @@
+import numpy as np
 from abc import ABC, abstractmethod
 from spiellogik import moegliche_zuege, zug_spielen
 
@@ -37,7 +38,7 @@ class Lernender_Spieler(Spieler):
     if l == 1:
       return liste_moegliche_zuege[0]
     bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
-    if bewertung_dict == None:
+    if bewertung_dict is None:
       n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
     summe = np.array([bewertung_dict[key] for key in bewertung_dict.keys()]).sum()
@@ -63,7 +64,7 @@ class Optimierender_Spieler(Spieler):
     if l == 1:
       return liste_moegliche_zuege[0]
     bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
-    if bewertung_dict == None:
+    if bewertung_dict is None:
       n = self.rng.randomint(l)
       return liste_moegliche_zuege[n]
     bewertungszahl = 0
@@ -94,7 +95,7 @@ class Minimax_Spieler(Spieler):
         moegliche_zuege_zwei.append(None)
       ergebnis_liste_zwei = []
       for zug_zwei in moegliche_zuege_zwei:
-        if zug_zwei != None:
+        if zug_zwei is not None:
           stellung_zwei = zug_spielen(stellung_eins,zug_zwei,gegner_am_zug)
         else:
           stellung_zwei = stellung_eins
@@ -103,7 +104,7 @@ class Minimax_Spieler(Spieler):
           moegliche_zuege_drei.append(None)
         ergebnis_liste_drei = []
         for zug_drei in moegliche_zuege_drei:
-          if zug_drei != None:
+          if zug_drei is not None:
             stellung_drei = zug_spielen(stellung_zwei,zug_drei,self.farbe)
           else:
             stellung_drei = stellung_zwei
@@ -112,7 +113,7 @@ class Minimax_Spieler(Spieler):
             moegliche_zuege_vier.append(None)
           ergebnis_liste_vier = []
           for zug_vier in moegliche_zuege_vier:
-            if zug_vier != None:
+            if zug_vier is not None:
               stellung_vier = zug_spielen(stellung_drei,zug_vier,gegner_am_zug)
             else:
               stellung_vier = stellung_drei
