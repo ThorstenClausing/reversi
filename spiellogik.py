@@ -52,3 +52,35 @@ def einschluss(z,s,richtung,farbe,stellung):
       return True
   else:
       return False
+
+def zug_spielen(stellung,zug,farbe):
+  z,s = zug[0]
+  assert stellung[z,s] == 0
+  neue_stellung = stellung.copy()
+  neue_stellung[z,s] = farbe
+  umzudrehende_steine = []
+  for richtung in zug[1]:
+    umzudrehende_steine.extend(eingeschlossene_steine(neue_stellung,z,s,richtung,farbe))
+  for stein in umzudrehende_steine:
+    neue_stellung[stein[0],stein[1]] = farbe
+  return neue_stellung
+
+def eingeschlossene_steine(stellung,z,s,richtung,farbe):
+  a,b = np.array([z,s]) + richtung
+  assert a in range(8) and b in range(8)
+  steine = [(a,b)]
+  c,d = np.array([a,b]) + richtung
+  if (0 <= c < 8) and (0 <= d < 8):
+    if stellung[c,d] == -1*farbe:
+      steine.extend(eingeschlossene_steine(stellung,a,b,richtung,farbe))
+    elif stellung[c,d] == farbe:
+      return steine
+    else:
+      print(f'Fehler 1\t c = {c}, d = {d}, farbe = {farbe}\n',stellung[c,d],'\t',stellung)
+      #Fehlerbehebung zu ergänzen
+      assert False
+  else:
+    print(f'Fehler 2\t a = {a}, b = {b}, richtung = {richtung}, c = {c}, d = {d}, farbe = {farbe}\n',stellung)
+    #Fehlerbehebung zu ergänzen
+    assert False
+  return steine
