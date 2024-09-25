@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm install -g pytest
-      - run: pytest test_datei_1
+      - run: python pytest test_datei_1
