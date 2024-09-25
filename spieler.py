@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from spiellogik import moegliche_zuege, zug_spielen
 
 class Spieler(ABC):
 
