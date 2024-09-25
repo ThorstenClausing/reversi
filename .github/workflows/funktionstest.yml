@@ -1,0 +1,9 @@
+name: funktionstest
+on:
+  workflow_dispatch:
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v4
+      - run: pytest test_datei_1
