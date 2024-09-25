@@ -12,3 +12,4 @@ jobs:
       - run: pip install numpy
       - run: pip install pytest
       - run: pytest test_datei_1.py
+      - run: pytest test_datei_2.py
