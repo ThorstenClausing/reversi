@@ -10,4 +10,4 @@ jobs:
           python-version: '3.11'
       - uses: actions/checkout@v4
       - run: pip install numpy pytest pytest-cov
-      - run: pytest --cov-report=term --cov
+      - run: pytest --cov-report=term-missing --cov
