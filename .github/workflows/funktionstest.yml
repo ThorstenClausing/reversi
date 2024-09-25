@@ -5,6 +5,10 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
       - uses: actions/checkout@v4
+      - run: pip install numpy
       - run: pip install pytest
       - run: pytest test_datei_1.py
