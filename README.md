@@ -15,6 +15,8 @@ einen Zug mit umso höherer Wahrscheinlichkeit, je erfolgreicher sich dieser Zug
 Die Datei partieumgebung.py stellt eine Umgebung zur Verfügung, in der zwei beliebige Spieler gegeneinander spielen können.
 
 Die Datei auswertungsumgebung.py stellt eine Umgebung zur Verfügung, die für eine Serie von Partien aufzeichnet, welche Züge in welchen Stellungen mit welchem Endergebnis
-gespielt wurden, um macht Lernenden und Optimierenden Spielern diese Daten zugänglich.  
+gespielt wurden, und macht Lernenden und Optimierenden Spielern diese Daten zugänglich.  
+
+Die Datei gui_umgebung.py stellt eine graphische Nutzerschnittstelle bereit [noch nicht implementiert].
 
 Technische Abhängigkeiten: Python, NumPy, Pickle, ABC
