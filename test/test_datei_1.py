@@ -2,7 +2,7 @@ import os
 import sys
 
 # directory reach
-directory = os.path(__file__).abspath()
+directory = os.path.abspath()
 
 # setting path
 sys.path.append(directory.parent.parent)
