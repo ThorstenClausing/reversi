@@ -5,7 +5,7 @@ import sys
 directory = os.path.abspath('../')
 
 # setting path
-sys.path.append(directory.parent.parent)
+sys.path.append(directory)
 
 
 from spiellogik import GRUNDSTELLUNG, moegliche_zuege
