@@ -10,5 +10,5 @@ jobs:
           python-version: '3.11'
       - uses: actions/checkout@v4
       - run: |
-              pip install numpy pickle
+              pip install numpy
               python minimax_vs_stochastisch.py
