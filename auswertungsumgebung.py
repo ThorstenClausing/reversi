@@ -1,5 +1,5 @@
 import pickle
-from google.colab import files
+#from google.colab import files
 from spiellogik import moegliche_zuege, zug_spielen
 
 class Auswertungsumgebung:
@@ -16,10 +16,12 @@ class Auswertungsumgebung:
     with (open(datei,'wb')) as f:
       pickle.dump(self.bewertung,f)
 
+  """
   def bewertung_speichern_colab(self,datei='reversi.of'):
     with (open(datei,'wb')) as f:
       pickle.dump(self.bewertung,f)
     files.download(datei)
+  """
 
   def __bewertung_enthaelt(self,anzahl_steine,stellung,am_zug):
     if anzahl_steine in self.bewertung.keys():
