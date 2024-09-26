@@ -1,6 +1,7 @@
 from auswertungsumgebung import Auswertungsumgebung
 from spieler import Minimax_Spieler, Stochastischer_Spieler
 from spiellogik import WEISS, SCHWARZ
+from partieumgebung import Partieumgebung
 
 awu = Auswertungsumgebung()
 spieler_weiss = Minimax_Spieler(WEISS)
