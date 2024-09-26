@@ -1,3 +1,13 @@
+import path
+import sys
+
+# directory reach
+directory = path.path(__file__).abspath()
+
+# setting path
+sys.path.append(directory.parent.parent)
+
+
 from spiellogik import GRUNDSTELLUNG, moegliche_zuege
 
 def test_func():
