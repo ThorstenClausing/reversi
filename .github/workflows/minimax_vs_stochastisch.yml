@@ -11,4 +11,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
               pip install numpy
-              python minimax_vs_stochastisch.py
+              python minimax_vs_stochastisch.py 10
