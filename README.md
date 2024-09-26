@@ -8,7 +8,7 @@ In der Datei spieler.py werden vier verschiedene Arten von Spielern definiert:
 - Der Minimax-Spieler berechnet - mit einer Tiefe von vier Zügen - alle von der aktuellen Stellung aus erreichbaren Stellungen aus, bewertet 
 diese mit der Differenz der Anzahl der weißen und schwarzen Steine, und ermittelt von dort aus rückwärts mit dem MiniMax-Algorithmus (= backward-induction-Methode) den
 besten Zug für die aktuelle Stellung.
-- Der Lernende Spieler merkt sich für alle Stellungen, die ihm schon einmal begegnet sind, welchen Zuge er gespielt hat und zu welchem Endergebnis dies geführt hat, und wählt dann 
+- Der Lernende Spieler merkt sich für alle Stellungen, die ihm schon einmal begegnet sind, welchen Zug er gespielt hat und zu welchem Endergebnis dies geführt hat, und wählt dann 
 einen Zug mit umso höherer Wahrscheinlichkeit, je erfolgreicher sich dieser Zug in vorhergehenden Partien erwiesen hat.
 - Der Optimierende Spieler wählt jeweils deterministisch denjenigen Zug, der sich in vorhergehenden Partien in der aktuellen Stellung als am erfolgreichsten erwiesen hat.
 
