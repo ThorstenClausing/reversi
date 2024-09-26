@@ -1,4 +1,4 @@
-from spiellogik import GRUNDSTELLUNG, moegliche_zuege
+from scripts.spiellogik import GRUNDSTELLUNG, moegliche_zuege
 
 def test_func():
   zuege = []
