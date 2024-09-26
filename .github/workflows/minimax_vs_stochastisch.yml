@@ -1,0 +1,12 @@
+name: minimax_vs_stochastisch
+on:
+  workflow_dispatch:
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/checkout@v4
+      - run: python minimax_vs_stochastisch.py
