@@ -1,6 +1,6 @@
 import pickle
 #from google.colab import files
-from spiellogik import moegliche_zuege, zug_spielen
+from spiellogik import moegliche_zuege, zug_spielen, WEISS, SCHWARZ, GRUNDSTELLUNG
 
 class Auswertungsumgebung:
 
