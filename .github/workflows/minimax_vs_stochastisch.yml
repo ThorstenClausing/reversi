@@ -9,4 +9,6 @@ jobs:
         with:
           python-version: '3.11'
       - uses: actions/checkout@v4
-      - run: python minimax_vs_stochastisch.py
+      - run: |
+              pip install numpy, google
+              python minimax_vs_stochastisch.py
