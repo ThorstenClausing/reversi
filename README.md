@@ -1,4 +1,4 @@
-"reversi" ist eine Sammlung von Skripten, um einem Computer mit reinforcement-learning-Methoden beizubringen, (gut) Reversi zu spielen.
+"reversi" ist eine Sammlung von Modulen, um einem Computer mit reinforcement-learning-Methoden beizubringen, (gut) Reversi zu spielen.
 
 In der Datei spiellogik.py werden die Spielregeln von Reversi in Funktionen abgebildet, die mögliche Züge und Spielstellungen beschreiben.
 
