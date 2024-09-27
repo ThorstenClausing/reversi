@@ -12,3 +12,4 @@ jobs:
       - run: |
               pip install numpy
               python skripte/lernend_vs_stochastisch.py 10
+      - uses: actions/upload-artifact@v4
