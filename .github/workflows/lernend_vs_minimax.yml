@@ -1,4 +1,4 @@
-name: lernend_vs_stochastisch
+name: lernend_vs_minimax
 on:
   workflow_dispatch:
 jobs:
