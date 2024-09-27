@@ -16,3 +16,4 @@ jobs:
         with:
           path: reversi.of
           compression-level: 0
+          overwrite: true
