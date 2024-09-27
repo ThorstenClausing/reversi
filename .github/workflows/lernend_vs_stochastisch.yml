@@ -14,4 +14,4 @@ jobs:
               python skripte/lernend_vs_stochastisch.py 10
       - uses: actions/upload-artifact@v4
         with:
-          path: bewertung.of
+          path: reversi.of
