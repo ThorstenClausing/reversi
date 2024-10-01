@@ -15,6 +15,6 @@ jobs:
               python skripte/optimierend_vs_stochastisch.py 100
       - uses: actions/upload-artifact@v4
         with:
-          path: reversi.of
+          path: neu.of
           compression-level: 6
           overwrite: true
