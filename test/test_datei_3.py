@@ -14,4 +14,4 @@ def test_func():
     assert mz_neu(stellung)[i][0] == mz_alt(stellung)[i][0]
     for j in range(len(mz_neu(stellung)[i][1])):
       assert (mz_neu(stellung)[i][1][j] == mz_alt(stellung)[i][1][j]).all()
-  assert (zs_neu(stellung, mz_neu(stellung)[0],SCHWARZ) == zs_alt(stllung, mz_alt(stellung)[0],SCHWARZ)).all()
+  assert (zs_neu(stellung, mz_neu(stellung)[0],SCHWARZ) == zs_alt(stellung, mz_alt(stellung)[0],SCHWARZ)).all()
