@@ -1,4 +1,4 @@
-from spiellogik import moegliche_zuege, zug_spielen, WEISS, SCHWARZ, GRUNDSTELLUNG
+from spiellogik_alternativ import moegliche_zuege, zug_spielen, WEISS, SCHWARZ, GRUNDSTELLUNG
 from auswertungsumgebung import Auswertungsumgebung
 
 class Partieumgebung:
