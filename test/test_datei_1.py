@@ -13,7 +13,7 @@ parent = os.path.dirname(current)
 # the sys.path.
 sys.path.append(parent)
 
-from spiellogik import GRUNDSTELLUNG, moegliche_zuege
+from spiellogik_alternativ import GRUNDSTELLUNG, moegliche_zuege
 
 def test_func():
   zuege = []
