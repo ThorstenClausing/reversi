@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
               pip install numpy
+              git lfs pull
               python skripte/optimierend_vs_stochastisch.py 100
       - uses: actions/upload-artifact@v4
         with:
