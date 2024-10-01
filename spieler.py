@@ -66,7 +66,7 @@ class Optimierender_Spieler(Spieler):
       return liste_moegliche_zuege[0]
     bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
     if bewertung_dict is None:
-      n = self.rng.randomint(l)
+      n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
     bewertungszahl = 0
     bester_zug = None
