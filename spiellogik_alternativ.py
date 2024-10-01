@@ -68,9 +68,9 @@ def einschluss(z, s, richtung, farbe, stellung):
     """
     Checks if a move is valid by checking for flanking pieces of opposite color.
     """
-    a, b = np.array([z, s]) + richtung
-    if not (0 <= a < 8 and 0 <= b < 8) or stellung[a, b] != -1 * farbe:
-        return False
+    if not (0 <= z < 8 and 0 <= s < 8) or stellung[z, s] != -1 * farbe:
+        assert False
+    a, b = z, s
     while True:
         c, d = np.array([a, b]) + richtung
         if not (0 <= c < 8 and 0 <= d < 8):
