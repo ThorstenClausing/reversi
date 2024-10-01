@@ -1,4 +1,4 @@
-from spiellogik import moegliche_zuege
+from spiellogik_alternativ import moegliche_zuege
 import numpy as np
 
 stellung = np.zeros([8,8])
