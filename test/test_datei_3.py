@@ -6,8 +6,8 @@ from spiellogik import SCHWARZ
 import numpy as np
 
 stellung = np.zeros([8,8])
-stellung[2,4] = stellung[3,3] = stellung[3,4] = stellung[4,4] = 1
-stellung[4,3] = -1
+stellung[3,3] = stellung[4,2] = stellung[4,4] = stellung[5,2] = stellung[6,2] = 1
+stellung[3,4] = stelung[4,3] = -1
 
 def test_func():
   assert len(mz_neu(stellung)) == len(mz_alt(stellung))
