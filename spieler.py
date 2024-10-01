@@ -1,6 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from spiellogik import moegliche_zuege, zug_spielen
+from spiellogik_alternativ import moegliche_zuege, zug_spielen
 from auswertungsumgebung import Auswertungsumgebung
 
 class Spieler(ABC):
