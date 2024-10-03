@@ -1,27 +1,3 @@
-"""
-GEMINI sagt:
-
-Key optimizations:
-
-Early return in einschluss: Instead of recursing, we now use a while True loop that breaks early if a piece of the same color is found or if we reach the edge of the 
-board. This eliminates the overhead of recursion.
-
-Avoid unnecessary if checks: In moegliche_zuege, we avoid checking if the move is valid before calling einschluss by combining the condition directly in the if statement.
-
-Clearer error handling: Although the code still uses assert False for errors, the error messages are more informative. This helps identify issues during development.
-
-Additional Potential Optimizations:
-
-Cython: For even greater speed, consider using Cython to compile Python code to C, which can significantly improve performance for computationally intensive parts.
-
-Numba: Numba can be used to JIT-compile numerical functions, potentially leading to speedups.
-
-Vectorization: Explore opportunities for vectorizing calculations using NumPy's array operations to leverage optimized BLAS libraries.
-
-Remember: These optimizations are based on the provided code and its specific use case. The best approach may vary depending on your exact needs and the overall application.
-
-By implementing these changes, you can make your code significantly more efficient and performant.
-"""
 import numpy as np
 
 WEISS = 1
@@ -37,75 +13,91 @@ UNTEN = np.array([1, 0])
 UNTEN_RECHTS = np.array([1, 1])
 
 RICHTUNGEN = [OBEN_LINKS, OBEN, OBEN_RECHTS, LINKS, RECHTS, UNTEN_LINKS, UNTEN, UNTEN_RECHTS]
-leerzeile = [0 for _ in range(8)]
-GRUNDSTELLUNG = np.array([leerzeile, leerzeile, leerzeile, [0, 0, 0, 1, -1, 0, 0, 0], 
-                           [0, 0, 0, -1, 1, 0, 0, 0], leerzeile, leerzeile, leerzeile])
 
-def moegliche_zuege(stellung, farbe=None):
-    """
-    Finds all possible moves for the given color.
-    """
-    zuege = []
-    if farbe is None:
-        farbe = WEISS if np.count_nonzero(stellung) % 2 == 0 else SCHWARZ
-    for z in range(8):
-        for s in range(8):
-            if stellung[z, s] == 0:
-                r_liste = []
-                for richtung in RICHTUNGEN:
-                    a, b = np.array([z, s]) + richtung
-                    if 0 <= a < 8 and 0 <= b < 8 and stellung[a, b] == -1 * farbe:
-                        if einschluss(a, b, richtung, farbe, stellung):
-                            r_liste.append(richtung)
-                if r_liste:
-                    zuege.append(((z, s), r_liste))
-    return zuege
+class Stellung(np.ndarray):
 
-def einschluss(z, s, richtung, farbe, stellung):
-    """
-    Checks if a move is valid by checking for flanking pieces of opposite color.
-    """
-    if not (0 <= z < 8 and 0 <= s < 8) or stellung[z, s] != -1 * farbe:
-        assert False
-    a, b = z, s
-    while True:
-        c, d = np.array([a, b]) + richtung
-        if not (0 <= c < 8 and 0 <= d < 8):
-            return False
-        if stellung[c, d] == farbe:
-            return True
-        if stellung[c, d] == 0:
-            return False
-        a, b = c, d
+    def __new__(cls):
+        stellung = np.ndarray.__new__(cls, (8,8), dtype=np.int8)
+        stellung.fill(0)
+        return stellung
+      
+    def __array_wrap__(self, array, context=None, return_scalar=False):
+        return array[()]
+      
+    def schwarz(self, liste):
+        for index in liste:
+            self[index[0],index[1]] = -1
 
-def zug_spielen(stellung, zug, farbe):
-    """
-    Applies a move to the board, flipping captured pieces.
-    """
-    z, s = zug[0]
-    assert stellung[z, s] == 0
-    neue_stellung = stellung.copy()
-    neue_stellung[z, s] = farbe
-    for richtung in zug[1]:
-        umzudrehende_steine = eingeschlossene_steine(neue_stellung, z, s, richtung, farbe)
-        for stein in umzudrehende_steine:
-            neue_stellung[stein[0], stein[1]] = farbe
-    return neue_stellung
+    def weiss(self, liste):
+        for index in liste:
+            self[index[0],index[1]] = 1  
 
-def eingeschlossene_steine(stellung, z, s, richtung, farbe):
-    """
-    Finds all pieces that would be flipped by a move.
-    """
-    a, b = np.array([z, s]) + richtung
-    assert 0 <= a < 8 and 0 <= b < 8
-    steine = [(a, b)]
-    while True:
-        c, d = np.array([a, b]) + richtung
-        if not (0 <= c < 8 and 0 <= d < 8):
+    def grundstellung(self):
+        self.weiss([(3,3),(4,4)])
+        seld.schwarz([(3,4),(4,3)])
+
+    def moegliche_zuege(self, farbe):
+        """
+        Finds all possible moves for the given color.
+        """
+        zuege = []
+        for z in range(8):
+            for s in range(8):
+                if self[z, s] == 0:
+                    r_liste = []
+                    for richtung in RICHTUNGEN:
+                        a, b = np.array([z, s]) + richtung
+                        if 0 <= a < 8 and 0 <= b < 8 and self[a, b] == -1 * farbe:
+                            if self.__einschluss(a, b, richtung, farbe):
+                                r_liste.append(richtung)
+                    if r_liste:
+                        zuege.append(((z, s), r_liste))
+        return zuege
+
+    def __einschluss(self, z, s, richtung, farbe):
+        """
+        Checks if a move is valid by checking for flanking pieces of opposite color.
+        """
+        if not (0 <= z < 8 and 0 <= s < 8) or self[z, s] != -1 * farbe:
             assert False
-        if stellung[c, d] == farbe:
-            return steine
-        if stellung[c, d] == 0:
-            assert False
-        steine.append((c, d))
-        a, b = c, d
+        a, b = z, s
+        while True:
+            c, d = np.array([a, b]) + richtung
+            if not (0 <= c < 8 and 0 <= d < 8):
+                return False
+            if self[c, d] == farbe:
+                return True
+            if self[c, d] == 0:
+                return False
+            a, b = c, d
+
+    def zug_spielen(self, zug, farbe):
+        """
+        Applies a move to the board, flipping captured pieces.
+        """
+        z, s = zug[0]
+        assert self[z, s] == 0
+        neue_stellung = stellung.copy()
+        self[z, s] = farbe
+        for richtung in zug[1]:
+            umzudrehende_steine = self.__eingeschlossene_steine(z, s, richtung, farbe)
+            for stein in umzudrehende_steine:
+                self[stein[0], stein[1]] = farbe
+       
+    def __eingeschlossene_steine(self, z, s, richtung, farbe):
+        """
+        Finds all pieces that would be flipped by a move.
+        """
+        a, b = np.array([z, s]) + richtung
+        assert 0 <= a < 8 and 0 <= b < 8
+        steine = [(a, b)]
+        while True:
+            c, d = np.array([a, b]) + richtung
+            if not (0 <= c < 8 and 0 <= d < 8):
+                assert False
+            if self[c, d] == farbe:
+                return steine
+            if self[c, d] == 0:
+                assert False
+            steine.append((c, d))
+            a, b = c, d
