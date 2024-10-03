@@ -6,9 +6,6 @@ Key optimizations:
 Early return in einschluss: Instead of recursing, we now use a while True loop that breaks early if a piece of the same color is found or if we reach the edge of the 
 board. This eliminates the overhead of recursion.
 
-Premature return in eingeschlossene_steine: We return an empty list [] if we encounter an empty space or go out of bounds. This avoids unnecessary iteration and 
-improves the efficiency, especially for invalid moves.
-
 Avoid unnecessary if checks: In moegliche_zuege, we avoid checking if the move is valid before calling einschluss by combining the condition directly in the if statement.
 
 Clearer error handling: Although the code still uses assert False for errors, the error messages are more informative. This helps identify issues during development.
@@ -105,10 +102,10 @@ def eingeschlossene_steine(stellung, z, s, richtung, farbe):
     while True:
         c, d = np.array([a, b]) + richtung
         if not (0 <= c < 8 and 0 <= d < 8):
-            return []
+            assert False
         if stellung[c, d] == farbe:
             return steine
         if stellung[c, d] == 0:
-            return []
+            assert False
         steine.append((c, d))
         a, b = c, d
