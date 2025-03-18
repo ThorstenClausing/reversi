@@ -79,12 +79,13 @@ class Stellung(np.ndarray):
         z, s = zug[0]
         assert self[z, s] == LEER
         neue_stellung = stellung.copy()
-        self[z, s] = AM_ZUG
+        neue_stellung[z, s] = AM_ZUG
         for richtung in zug[1]:
-            umzudrehende_steine = self.__eingeschlossene_steine(z, s, richtung)
+            umzudrehende_steine = neue_stellung.__eingeschlossene_steine(z, s, richtung)
             for stein in umzudrehende_steine:
-                self[stein[0], stein[1]] = AM_ZUG
-        self.__gegenspieler_kommt_zum_zug()
+                neue_stellung[stein[0], stein[1]] = AM_ZUG
+        neue_stellung.__gegenspieler_kommt_zum_zug()
+        return neue_stellung
        
     def __eingeschlossene_steine(self, z, s, richtung):
         """
