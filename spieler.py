@@ -1,12 +1,9 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from spiellogik import moegliche_zuege, zug_spielen
+from spiellogik import Stellung
 from auswertungsumgebung import Auswertungsumgebung
 
 class Spieler(ABC):
-
-  def __init__(self,farbe):
-    self.farbe = farbe
 
   @abstractmethod
   def zug_waehlen(self,stellung):
@@ -14,12 +11,12 @@ class Spieler(ABC):
 
 class Stochastischer_Spieler(Spieler):
 
-  def __init__(self,farbe):
-    super().__init__(farbe)
+  def __init__(self):
+    super().__init__()
     self.rng = np.random.default_rng()
 
   def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
+    liste_moegliche_zuege = stellung.moegliche_zuege()
     if (b := len(liste_moegliche_zuege)) == 0:
       return None
     n = self.rng.integers(b)
@@ -27,18 +24,18 @@ class Stochastischer_Spieler(Spieler):
 
 class Lernender_Spieler(Spieler):
 
-  def __init__(self,farbe,awu):
-    super().__init__(farbe)
+  def __init__(self,awu):
+    super().__init__()
     self.auswertungsumgebung = awu
     self.rng = np.random.default_rng()
 
   def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
+    liste_moegliche_zuege = stellung.moegliche_zuege()
     if (l := len(liste_moegliche_zuege)) == 0:
       return None
     if l == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
+    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung)
     if bewertung_dict is None:
       n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
@@ -53,18 +50,18 @@ class Lernender_Spieler(Spieler):
 
 class Optimierender_Spieler(Spieler):
 
-  def __init__(self,farbe,awu):
-    super().__init__(farbe)
+  def __init__(self,awu):
+    super().__init__()
     self.auswertungsumgebung = awu
     self.rng = np.random.default_rng()
 
   def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
+    liste_moegliche_zuege = stellung.moegliche_zuege()
     if (l := len(liste_moegliche_zuege)) == 0:
       return None
     if l == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
+    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung)
     if bewertung_dict is None:
       n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
@@ -76,13 +73,10 @@ class Optimierender_Spieler(Spieler):
         bewertungszahl = b
     return bester_zug
 
-class Minimax_Spieler(Spieler):
-
-  def __init__(self,farbe):
-    super().__init__(farbe)
+class Minimax_Spieler(Spieler): #An Spiellogik anpassen
 
   def zug_waehlen(self,stellung):
-    moegliche_zuege_eins = moegliche_zuege(stellung,self.farbe)
+    moegliche_zuege_eins = stellung.moegliche_zuege()
     if (l := len(moegliche_zuege_eins)) == 0:
       return None
     if l == 1:
@@ -90,7 +84,7 @@ class Minimax_Spieler(Spieler):
     gegner_am_zug = -1*self.farbe
     ergebnis = -65
     for zug_eins in moegliche_zuege_eins:
-      stellung_eins = zug_spielen(stellung,zug_eins,self.farbe)
+      stellung_eins = zug_spielen(stellung,zug_eins)
       moegliche_zuege_zwei = moegliche_zuege(stellung_eins,gegner_am_zug)
       if len(moegliche_zuege_zwei) == 0:
         moegliche_zuege_zwei.append(None)
