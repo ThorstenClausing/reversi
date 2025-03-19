@@ -23,9 +23,9 @@ class Stochastischer_Spieler(Spieler):
 
 class Lernender_Spieler(Spieler):
 
-  def __init__(self, awu):
+  def __init__(self, speicher):
     super().__init__()
-    self.auswertungsumgebung = awu
+    self.erfahrungsspeicher = speicher
     self.rng = np.random.default_rng()
 
   def zug_waehlen(self, stellung):
@@ -34,7 +34,7 @@ class Lernender_Spieler(Spieler):
       return None
     if (l:=len(liste_moegliche_zuege)) == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung)
+    bewertung_dict = self.erfahrungsspeicher.bewertung_geben(stellung)
     if bewertung_dict is None:
       n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
@@ -49,9 +49,9 @@ class Lernender_Spieler(Spieler):
 
 class Optimierender_Spieler(Spieler):
 
-  def __init__(self, awu):
+  def __init__(self, speicher):
     super().__init__()
-    self.auswertungsumgebung = awu
+    self.erfahrungsspeicher = speicher
     self.rng = np.random.default_rng()
 
   def zug_waehlen(self, stellung):
@@ -60,7 +60,7 @@ class Optimierender_Spieler(Spieler):
       return None
     if (l := len(liste_moegliche_zuege)) == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung)
+    bewertung_dict = self.erfahrungsspeicher.bewertung_geben(stellung)
     if bewertung_dict is None:
       n = self.rng.integers(l)
       return liste_moegliche_zuege[n]
@@ -82,14 +82,14 @@ class Minimax_Spieler(Spieler): #Prüfen!!
       return moegliche_zuege_eins[0]
     ergebnis = -65
     for zug_eins in moegliche_zuege_eins:
-      stellung_eins = stellung.zug_spielen(zug_eins)
+      stellung_eins = stellung.copy().zug_spielen(zug_eins)
       moegliche_zuege_zwei = stellung_eins.moegliche_zuege()
       if not moegliche_zuege_zwei:
         moegliche_zuege_zwei.append(None)
       ergebnis_liste_zwei = []
       for zug_zwei in moegliche_zuege_zwei:
         if zug_zwei is not None:
-          stellung_zwei = stellung_eins.zug_spielen(zug_zwei)
+          stellung_zwei = stellung_eins.copy().zug_spielen(zug_zwei)
         else:
           stellung_zwei = stellung_eins
         moegliche_zuege_drei = stellung_zwei.moegliche_zuege()
@@ -98,7 +98,7 @@ class Minimax_Spieler(Spieler): #Prüfen!!
         ergebnis_liste_drei = []
         for zug_drei in moegliche_zuege_drei:
           if zug_drei is not None:
-            stellung_drei = stellung_zwei.zug_spielen(zug_drei)
+            stellung_drei = stellung_zwei.copy().zug_spielen(zug_drei)
           else:
             stellung_drei = stellung_zwei
           moegliche_zuege_vier = stellung_drei.moegliche_zuege()
@@ -107,7 +107,7 @@ class Minimax_Spieler(Spieler): #Prüfen!!
           ergebnis_liste_vier = []
           for zug_vier in moegliche_zuege_vier:
             if zug_vier is not None:
-              stellung_vier = stellung_drei.zug_spielen(zug_vier)
+              stellung_vier = stellung_drei.copy().zug_spielen(zug_vier)
             else:
               stellung_vier = stellung_drei
             ergebnis_liste_vier.append(stellung_vier.sum())
