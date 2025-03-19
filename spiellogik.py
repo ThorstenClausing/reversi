@@ -19,7 +19,7 @@ class Stellung(np.ndarray):
 
     def __new__(cls):
         stellung = np.ndarray.__new__(cls, (8,8), dtype=np.int8)
-        stellung.fill(0)
+        stellung.fill(LEER)
         return stellung
       
     def __array_wrap__(self, array, context=None, return_scalar=False):
@@ -78,15 +78,13 @@ class Stellung(np.ndarray):
         """
         z, s = zug[0]
         assert self[z, s] == LEER
-        neue_stellung = stellung.copy()
-        neue_stellung[z, s] = AM_ZUG
+        self[z, s] = AM_ZUG
         for richtung in zug[1]:
-            umzudrehende_steine = neue_stellung.__eingeschlossene_steine(z, s, richtung)
+            umzudrehende_steine = self.__eingeschlossene_steine(z, s, richtung)
             for stein in umzudrehende_steine:
-                neue_stellung[stein[0], stein[1]] = AM_ZUG
-        neue_stellung.__gegenspieler_kommt_zum_zug()
-        return neue_stellung
-       
+                self[stein[0], stein[1]] = AM_ZUG
+        self.__gegenspieler_kommt_zum_zug()
+               
     def __eingeschlossene_steine(self, z, s, richtung):
         """
         Finds all pieces that would be flipped by a move.
