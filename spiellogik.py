@@ -4,14 +4,14 @@ AM_ZUG = 1
 NICHT_AM_ZUG = -1
 LEER = 0
 
-OBEN_LINKS = np.array([-1, -1])
-OBEN = np.array([-1, 0])
-OBEN_RECHTS = np.array([-1, 1])
-LINKS = np.array([0, -1])
-RECHTS = np.array([0, 1])
-UNTEN_LINKS = np.array([1, -1])
-UNTEN = np.array([1, 0])
-UNTEN_RECHTS = np.array([1, 1])
+OBEN_LINKS = np.array([-1, -1], dtype=np.int8)
+OBEN = np.array([-1, 0], dtype=np.int8)
+OBEN_RECHTS = np.array([-1, 1], dtype=np.int8)
+LINKS = np.array([0, -1], dtype=np.int8)
+RECHTS = np.array([0, 1], dtype=np.int8)
+UNTEN_LINKS = np.array([1, -1], dtype=np.int8)
+UNTEN = np.array([1, 0], dtype=np.int8)
+UNTEN_RECHTS = np.array([1, 1], dtype=np.int8)
 
 RICHTUNGEN = [OBEN_LINKS, OBEN, OBEN_RECHTS, LINKS, RECHTS, UNTEN_LINKS, UNTEN, UNTEN_RECHTS]
 
