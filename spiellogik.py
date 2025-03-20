@@ -34,8 +34,8 @@ class Stellung(np.ndarray):
             self[index[0],index[1]] = AM_ZUG  
 
     def grundstellung(self):
-        self.__nicht_am_zug([(3,3),(4,4)])
-        seld.__am_zug([(3,4),(4,3)])
+        self.__am_zug([(3,3),(4,4)])
+        self.__nicht_am_zug([(3,4),(4,3)])
 
     def moegliche_zuege(self):
         """
@@ -76,13 +76,16 @@ class Stellung(np.ndarray):
         """
         Applies a move to the board, flipping captured pieces.
         """
-        z, s = zug[0]
-        assert self[z, s] == LEER
-        self[z, s] = AM_ZUG
-        for richtung in zug[1]:
-            umzudrehende_steine = self.__eingeschlossene_steine(z, s, richtung)
-            for stein in umzudrehende_steine:
-                self[stein[0], stein[1]] = AM_ZUG
+        if zug is None:
+            assert not self.moegliche_zuege()
+        else:
+            z, s = zug[0]
+            assert self[z, s] == LEER
+            self[z, s] = AM_ZUG
+            for richtung in zug[1]:
+                umzudrehende_steine = self.__eingeschlossene_steine(z, s, richtung)
+                for stein in umzudrehende_steine:
+                    self[stein[0], stein[1]] = AM_ZUG
         self.__gegenspieler_kommt_zum_zug()
                
     def __eingeschlossene_steine(self, z, s, richtung):
@@ -107,4 +110,22 @@ class Stellung(np.ndarray):
         """
         Vertauscht AM_ZUG und NICHT_AM_ZUG.
         """
-        self = np.negative(self)
+#        for i in range(0,8):
+#            for j in range(0,8):
+#                self[i,j] = -self[i,j]
+        with np.nditer(self, op_flags=['readwrite']) as it:
+            for x in it:
+                x[...] = -x
+        
+    def stellung_anzeigen(self):
+        spalte = 0
+        for feld in np.nditer(self):
+            match(feld):
+                case 1: print(' X', end='')
+                case -1: print(' O', end='')
+                case _: print(' -', end='')
+            spalte += 1
+            if spalte == 8:
+                spalte = 0
+                print('\n', end='')
+                
