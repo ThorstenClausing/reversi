@@ -113,7 +113,7 @@ class Stellung(np.ndarray):
 #        for i in range(0,8):
 #            for j in range(0,8):
 #                self[i,j] = -self[i,j]
-        with np.nditer(self, op_flags=['readwrite']) as it:
+        with np.nditer(self, op_flags=['readwrite'], flags=['external_loop']) as it:
             for x in it:
                 x[...] = -x
         

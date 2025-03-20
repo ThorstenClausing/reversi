@@ -1,18 +1,21 @@
 import pickle
+import numpy as np
 #from google.colab import files
-from spiellogik import moegliche_zuege, zug_spielen, WEISS, SCHWARZ, GRUNDSTELLUNG
+from spiellogik import Stellung
 
 class Erfahrungsspeicher:
 
-  def __init__(self):
+  def __init__(self, schwarz=True, weiss=False):
+    self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
+    self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
     self.bewertung = {}
-    self.ergebnis_speicher = 0
+#    self.ergebnis_speicher = 0
 
-  def bewertung_laden(self,datei='reversi.of'):
+  def bewertung_laden(self, datei='reversi.of'):
     with (open(datei,'rb')) as f:
       self.bewertung = pickle.load(f)
 
-  def bewertung_speichern(self,datei='reversi.of'):
+  def bewertung_speichern(self, datei='reversi.of'):
     with (open(datei,'wb')) as f:
       pickle.dump(self.bewertung,f)
 
@@ -23,54 +26,51 @@ class Erfahrungsspeicher:
     files.download(datei)
   """
 
-  def __bewertung_enthaelt(self,anzahl_steine,stellung,am_zug):
+  def __bewertung_enthaelt(self, stellung, anzahl_steine=None):
+    if anzahl_steine is None: anzahl_steine = np.count_nonzero(stellung) 
     if anzahl_steine in self.bewertung.keys():
       for b_tupel in self.bewertung[anzahl_steine]:
-        if (b_tupel[0] == stellung).all() and b_tupel[1] == am_zug:
+        if (b_tupel[0] == stellung).all():
           return True
     return False
 
-  def __zu_bewertung_hinzufuegen(self,anzahl_steine,stellung,am_zug):
-    dict_stellung = {zug[0]:1 for zug in moegliche_zuege(stellung,am_zug)}
-    b_tupel = (stellung,am_zug,dict_stellung)
+  def __zu_bewertung_hinzufuegen(self, stellung, anzahl_steine=None):
+    if anzahl_steine is None: anzahl_steine = np.count_nonzero(stellung) 
+    b_tupel = (stellung, 0, 0)
     if anzahl_steine in self.bewertung.keys():
       self.bewertung[anzahl_steine].append(b_tupel)
     else:
       self.bewertung[anzahl_steine] = [b_tupel]
 
-  def bewertung_aktualisieren(self,protokoll): # getrennte Bewertungen fuer weiss und schwarz?
-    stellung = GRUNDSTELLUNG.copy()
-    am_zug = WEISS
+  def bewertung_aktualisieren(self, protokoll):
+    stellung = Stellung()
+    stellung.grundstellung()
     anzahl_steine = 4
+    zug_nummer = 1
     ergebnis = protokoll.pop()
-    while len(protokoll) > 0:
-      p_zug = protokoll.pop(0)
-      if len(moegliche_zuege(stellung,am_zug)) > 1:
-        if not self.__bewertung_enthaelt(anzahl_steine,stellung,am_zug):
-          self.__zu_bewertung_hinzufuegen(anzahl_steine,stellung,am_zug)
-        if p_zug != None:
-          for b_tupel in self.bewertung[anzahl_steine]:
-            if (b_tupel[0] == stellung).all() and b_tupel[1] == am_zug:
-              b_tupel[2][p_zug] += ergebnis
-              if (saldo := b_tupel[2][p_zug]) <= 0:
-                for key in b_tupel[2].keys():
-                  b_tupel[2][key] += 1 - saldo
-              break
-      if p_zug != None:
-        for zug in moegliche_zuege(stellung,am_zug):
-          if zug[0] == p_zug:
-            stellung = zug_spielen(stellung,zug,am_zug)
-            break
-        anzahl_steine += 1
-      am_zug *= -1
+    while protokoll:
+      zug = protokoll.pop(0)
+      stellung.zug_spielen(zug)
+      if zug is not None:
+          anzahl_steine += 1
+      if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
+        if not self.__bewertung_enthaelt(anzahl_steine, stellung):
+          self.__zu_bewertung_hinzufuegen(anzahl_steine, stellung)
+      for b_tupel in self.bewertung[anzahl_steine]:
+        if (b_tupel[0] == stellung).all():
+          b_tupel[1] += ergebnis if zug_nummer % 2 else -1*ergebnis
+          b_tupel[2] += 1
+          break
+      zug_nummer += 1
+      
 
-  def bewertung_geben(self,stellung,am_zug):
+  def bewertung_geben(self, stellung):
     anzahl_steine = stellung.nonzero()[0].shape[0]
     if anzahl_steine in self.bewertung.keys():
       for b_tupel in self.bewertung[anzahl_steine]:
-        if (stellung == b_tupel[0]).all() and am_zug == b_tupel[1]:
-          return b_tupel[2]
+        if (stellung == b_tupel[0]).all():
+          return b_tupel[1], b_tupel[2]
     return None
 
-  def ergebnis_speichern(self,ergebnis):
-    self.ergebnis_speicher += ergebnis
+#  def ergebnis_speichern(self, ergebnis):
+#    self.ergebnis_speicher += ergebnis
