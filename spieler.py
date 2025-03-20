@@ -1,6 +1,5 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from auswertungsumgebung import Auswertungsumgebung
 
 class Spieler(ABC):
 
@@ -32,20 +31,22 @@ class Lernender_Spieler(Spieler):
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
       return None
-    if (l:=len(liste_moegliche_zuege)) == 1:
+    if (l := len(liste_moegliche_zuege)) == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.erfahrungsspeicher.bewertung_geben(stellung)
-    if bewertung_dict is None:
-      n = self.rng.integers(l)
-      return liste_moegliche_zuege[n]
-    summe = np.array([bewertung_dict[key] for key in bewertung_dict.keys()]).sum()
-    n = self.rng.integers(summe)
-    grenze = 0
+    bewertungen = []
     for zug in liste_moegliche_zuege:
-      grenze += bewertung_dict[zug[0]]
-      if n <= grenze:
-        return zug
-
+      folgestellung = stellung.copy()
+      folgestellung.zug_spielen(zug)
+      erfahrung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
+      if erfahrung is None:
+          bewertung = 1
+      else:
+          bewertung = erfahrung[0]/erfahrung[1]
+      bewertungen.append(bewertung)
+    wahrscheinlichkeiten = np.array(bewertungen)
+    wahrscheinlichkeiten = wahrscheinlichkeiten / np.sum(wahrscheinlichkeiten)
+    n = self.rng.choice(l, p=wahrscheinlichkeiten)
+    return liste_moegliche_zuege[n]
 
 class Optimierender_Spieler(Spieler):
 
@@ -74,11 +75,11 @@ class Optimierender_Spieler(Spieler):
 
 class Minimax_Spieler(Spieler): #Prüfen!!
 
-  def zug_waehlen(self,stellung):
+  def zug_waehlen(self, stellung):
     moegliche_zuege_eins = stellung.moegliche_zuege()
     if not moegliche_zuege_eins:
       return None
-    if (l := len(moegliche_zuege_eins)) == 1:
+    if len(moegliche_zuege_eins) == 1:
       return moegliche_zuege_eins[0]
     ergebnis = -65
     for zug_eins in moegliche_zuege_eins:

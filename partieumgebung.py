@@ -1,18 +1,17 @@
 import numpy as np
 from spiellogik import Stellung
-from auswertungsumgebung import Auswertungsumgebung
 
 class Partieumgebung:
 
-  def __init__(self,spieler_weiss,spieler_schwarz,auswertungsumgebung=None):
+  def __init__(self, spieler_weiss, spieler_schwarz, speicher=None):
     self.spieler_weiss = spieler_weiss
     self.spieler_schwarz = spieler_schwarz
-    self.auswertungsumgebung = auswertungsumgebung
-    self.protokoll = []
-
-  def starten(self):
+    self.erfahrungsspeicher = speicher
+   
+  def partie_starten(self):
     stellung = Stellung()
     stellung.grundstellung()
+    protokoll = []
     zu_ende = False
     keine_zugmoeglichkeit = False
     zug_nummer = 1
@@ -22,7 +21,7 @@ class Partieumgebung:
       else:
         zug = self.spieler_weiss.zug_waehlen(stellung)
       stellung.zug_spielen(zug)
-      self.protokoll.append(zug)
+      protokoll.append(zug)
       zug_nummer += 1
       if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
         if keine_zugmoeglichkeit:
@@ -32,19 +31,32 @@ class Partieumgebung:
         keine_zugmoeglichkeit = False 
       if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
         zu_ende = True
-    ergebnis = self.ergebnis_fuer_schwarz(stellung, zug_nummer)
-    self.protokoll.append(ergebnis)
-    if self.auswertungsumgebung != None:
-      self.auswertungsumgebung.bewertung_aktualisieren(self.protokoll)
+    ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
+    protokoll.append(ergebnis)
+    if self.erfahrungsspeicher is not None:
+      self.erfahrungsspeicher.bewertung_aktualisieren(protokoll.copy())
       
-  def __scharz_am_zug(zug_nummer):
+    protokoll.pop()
+    e = '\t'
+    for zug in protokoll:
+      if zug is not None:
+         print(zug[0], end=e)
+      else:
+          print(' pass ', end=e)
+      e = '\n' if e == '\t' else '\t'
+    print(ergebnis)
+    stellung.stellung_anzeigen()
+      
+  def __schwarz_am_zug(self, zug_nummer):
       return zug_nummer % 2 == 1
   
-  def __ergebnis_fuer_schwarz(stellung, zug_nummer):
+  def __ergebnis_fuer_schwarz(self, stellung, zug_nummer):
       steindifferenz = stellung.sum()
+      print('Differenz: ', steindifferenz)
       if steindifferenz == 0:
           return 0
       anzahl_leere_felder = 64 - np.count_nonzero(stellung)
+      print('Leere Felder: ', anzahl_leere_felder)
       if steindifferenz > 0:
           ergebnis = steindifferenz + anzahl_leere_felder
       else:
