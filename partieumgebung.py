@@ -3,9 +3,9 @@ from spiellogik import Stellung
 
 class Partieumgebung:
 
-  def __init__(self, spieler_weiss, spieler_schwarz, speicher=None):
-    self.spieler_weiss = spieler_weiss
+  def __init__(self, spieler_schwarz, spieler_weiss, speicher=None):
     self.spieler_schwarz = spieler_schwarz
+    self.spieler_weiss = spieler_weiss    
     self.erfahrungsspeicher = speicher
    
   def partie_starten(self):
@@ -34,8 +34,8 @@ class Partieumgebung:
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     protokoll.append(ergebnis)
     if self.erfahrungsspeicher is not None:
-      self.erfahrungsspeicher.bewertung_aktualisieren(protokoll.copy())
-      
+      self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+    """  
     protokoll.pop()
     e = '\t'
     for zug in protokoll:
@@ -46,17 +46,18 @@ class Partieumgebung:
       e = '\n' if e == '\t' else '\t'
     print(ergebnis)
     stellung.stellung_anzeigen()
+    """
       
   def __schwarz_am_zug(self, zug_nummer):
       return zug_nummer % 2 == 1
   
   def __ergebnis_fuer_schwarz(self, stellung, zug_nummer):
       steindifferenz = stellung.sum()
-      print('Differenz: ', steindifferenz)
+#      print('Differenz: ', steindifferenz)
       if steindifferenz == 0:
           return 0
       anzahl_leere_felder = 64 - np.count_nonzero(stellung)
-      print('Leere Felder: ', anzahl_leere_felder)
+#     print('Leere Felder: ', anzahl_leere_felder)
       if steindifferenz > 0:
           ergebnis = steindifferenz + anzahl_leere_felder
       else:

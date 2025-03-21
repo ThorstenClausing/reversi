@@ -9,7 +9,6 @@ class Erfahrungsspeicher:
     self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
     self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
     self.bewertung = {}
-#    self.ergebnis_speicher = 0
 
   def bewertung_laden(self, datei='reversi.of'):
     with (open(datei,'rb')) as f:
@@ -29,8 +28,8 @@ class Erfahrungsspeicher:
   def __bewertung_enthaelt(self, stellung, anzahl_steine=None):
     if anzahl_steine is None: anzahl_steine = np.count_nonzero(stellung) 
     if anzahl_steine in self.bewertung.keys():
-      for b_tupel in self.bewertung[anzahl_steine]:
-        if (b_tupel[0] == stellung).all():
+      for b_eintrag in self.bewertung[anzahl_steine]:
+        if (b_eintrag['Stellung'] == stellung).all():
           return True
     return False
 
@@ -41,7 +40,6 @@ class Erfahrungsspeicher:
       self.bewertung[anzahl_steine].append(b_eintrag)
     else:
       self.bewertung[anzahl_steine] = [b_eintrag]
-    print('Hinzugefügt!')
 
   def bewertung_aktualisieren(self, protokoll):
     stellung = Stellung()
@@ -49,7 +47,7 @@ class Erfahrungsspeicher:
     anzahl_steine = 4
     zug_nummer = 1
     ergebnis = protokoll.pop()
-    print('Aktuelles Ergebnis: ',ergebnis)
+#    print('Aktuelles Ergebnis: ',ergebnis)
     while protokoll:
       zug = protokoll.pop(0)
       stellung.zug_spielen(zug)
@@ -63,19 +61,19 @@ class Erfahrungsspeicher:
               b_eintrag['Summe'] += (ergebnis if zug_nummer % 2 else -1*ergebnis)
               b_eintrag['Anzahl'] += 1
               break
-      zug_nummer += 1
-      
+      zug_nummer += 1      
 
   def bewertung_geben(self, stellung):
     anzahl_steine = stellung.nonzero()[0].shape[0]
     if anzahl_steine in self.bewertung.keys():
       for b_eintrag in self.bewertung[anzahl_steine]:
         if (stellung == b_eintrag['Stellung']).all():
-          return b_eintrag['Summe'], b_eintrag['Anzahl']
+          return b_eintrag['Summe']/b_eintrag['Anzahl']
     return None
 
   def bewertung_drucken(self):
       print(len(self.bewertung.keys()))
       for anzahl_steine in self.bewertung.keys():
-          print('Anzahl Steine: ',anzahl_steine)
-          print(self.bewertung[anzahl_steine])
+          print('\nAnzahl Steine: ',anzahl_steine, end=' - ')
+          for eintrag in self.bewertung[anzahl_steine]:
+              print(eintrag['Summe'],'\t',eintrag['Anzahl'], end=', ')
