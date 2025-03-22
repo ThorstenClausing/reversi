@@ -52,6 +52,22 @@ class Partieumgebung:
       return zug_nummer % 2 == 1
   
   def __ergebnis_fuer_schwarz(self, stellung, zug_nummer):
+      """
+      Rückgabewert: Partieergebnis (Punktdifferenz) aus Sicht von Schwarz
+
+      Parameters
+      ----------
+      stellung : TYPE Stellung
+          DESCRIPTION. Endstellung, für die das Ergebis berechnet werden soll
+      zug_nummer : TYPE Integer
+          DESCRIPTION. Anzahl der bisher ausgeführten Züge (einschließlich passen)  + 1
+
+      Returns 
+      -------
+      TYPE Integer
+      DESCRIPTION. Differenz des nach den WOF-Regeln bestimmten Partieergebnisses
+
+      """
       steindifferenz = stellung.sum()
 #      print('Differenz: ', steindifferenz)
       if steindifferenz == 0:

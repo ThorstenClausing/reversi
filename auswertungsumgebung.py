@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 #from google.colab import files
-from spiellogik import Stellung
+from spiellogik import Stellung, als_kanonische_stellung
 
 class Erfahrungsspeicher:
 
@@ -28,46 +28,64 @@ class Erfahrungsspeicher:
   def __bewertung_enthaelt(self, stellung, anzahl_steine=None):
     if anzahl_steine is None: anzahl_steine = np.count_nonzero(stellung) 
     if anzahl_steine in self.bewertung.keys():
+      stellung_to_bytes = stellung.tobytes()
       for b_eintrag in self.bewertung[anzahl_steine]:
-        if (b_eintrag['Stellung'] == stellung).all():
-          return True
-    return False
+        if b_eintrag['Stellung'] == stellung_to_bytes:
+          return b_eintrag
+    return None
 
   def __zu_bewertung_hinzufuegen(self, stellung, anzahl_steine=None):
+    """
+      Parameters
+      ----------
+      stellung : TYPE Stellung
+          DESCRIPTION Stellung, für die ein neuer Bewertungseintrag angelegt 
+          werden soll.
+          Die Stellung MUSS kanonisch sein!
+      anzahl_steine : TYPE Integer | None
+          DESCRIPTION Anzahl von Steinen in der eingegebenen Stellung 
+          The default is None => dann zählt die Methode die Steine selber
+
+      Returns
+      -------
+      b_eintrag : TYPE Dictionary
+          DESCRIPTION Bewertungseintrag für die eingegebene Stellung
+
+      """
     if anzahl_steine is None: anzahl_steine = np.count_nonzero(stellung) 
-    b_eintrag = {'Stellung':stellung.copy(), 'Summe':0, 'Anzahl':0}
+    b_eintrag = {'Stellung':(stellung.copy()).tobytes(), 'Summe':0, 'Anzahl':0}
     if anzahl_steine in self.bewertung.keys():
       self.bewertung[anzahl_steine].append(b_eintrag)
     else:
       self.bewertung[anzahl_steine] = [b_eintrag]
+    return b_eintrag
 
   def bewertung_aktualisieren(self, protokoll):
     stellung = Stellung()
     stellung.grundstellung()
     anzahl_steine = 4
     zug_nummer = 1
-    ergebnis = protokoll.pop()
+    ergebnis = protokoll.pop()/2
 #    print('Aktuelles Ergebnis: ',ergebnis)
     while protokoll:
       zug = protokoll.pop(0)
       stellung.zug_spielen(zug)
+      kanonische_stellung = als_kanonische_stellung(stellung)
       if zug is not None:
           anzahl_steine += 1
       if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
-        if not self.__bewertung_enthaelt(stellung, anzahl_steine):
-          self.__zu_bewertung_hinzufuegen(stellung, anzahl_steine)
-        for b_eintrag in self.bewertung[anzahl_steine]:
-          if (b_eintrag['Stellung'] == stellung).all():
-              b_eintrag['Summe'] += (ergebnis if zug_nummer % 2 else -1*ergebnis)
-              b_eintrag['Anzahl'] += 1
-              break
+        if not(b_eintrag := self.__bewertung_enthaelt(kanonische_stellung, anzahl_steine)):
+          b_eintrag = self.__zu_bewertung_hinzufuegen(kanonische_stellung, anzahl_steine)
+        b_eintrag['Summe'] += (ergebnis if zug_nummer % 2 else -1*ergebnis)
+        b_eintrag['Anzahl'] += 1
       zug_nummer += 1      
 
   def bewertung_geben(self, stellung):
-    anzahl_steine = stellung.nonzero()[0].shape[0]
+    anzahl_steine = np.count_nonzero(stellung)    
     if anzahl_steine in self.bewertung.keys():
-      for b_eintrag in self.bewertung[anzahl_steine]:
-        if (stellung == b_eintrag['Stellung']).all():
+      stellung_to_bytes = (als_kanonische_stellung(stellung)).tobytes()
+      for b_eintrag in self.bewertung[anzahl_steine]:        
+        if b_eintrag['Stellung'] == stellung_to_bytes:
           return b_eintrag['Summe']/b_eintrag['Anzahl']
     return None
 

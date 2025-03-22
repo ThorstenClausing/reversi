@@ -129,3 +129,44 @@ class Stellung(np.ndarray):
                 spalte = 0
                 print('\n', end='')
                 
+def als_kanonische_stellung(stellung):
+    stellung_eins = stellung.copy()
+    stellung_bytes = stellung_eins.tobytes()
+    kanonische_stellung = stellung_eins
+    # 90 Grad nach links rotieren
+    stellung_zwei = np.rot90(stellung_eins)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # 180 Grad nach links rotieren    
+    stellung_zwei = np.rot90(stellung_zwei)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # 270 Grad nach links rotieren
+    stellung_zwei = np.rot90(stellung_zwei)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # an Nebendiagonale spiegeln
+    stellung_zwei = np.rot90(np.transpose(stellung_zwei))
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # vertikal spiegeln    
+    stellung_zwei = np.fliplr(stellung_eins)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # horizontal spiegeln    
+    stellung_zwei = np.flipud(stellung_eins)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    # an Hauptdiagonale spiegeln
+    stellung_zwei = np.transpose(stellung_eins)
+    if stellung_zwei.tobytes() < stellung_bytes:
+        stellung_bytes = stellung_zwei.tobytes()
+        kanonische_stellung = stellung_zwei
+    return kanonische_stellung
+    
