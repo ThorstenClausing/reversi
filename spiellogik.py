@@ -131,42 +131,42 @@ class Stellung(np.ndarray):
                 
 def als_kanonische_stellung(stellung):
     stellung_eins = stellung.copy()
-    stellung_bytes = stellung_eins.tobytes()
-    kanonische_stellung = stellung_eins
+    stellung_to_bytes = stellung_eins.tobytes()
+    
     # 90 Grad nach links rotieren
     stellung_zwei = np.rot90(stellung_eins)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # 180 Grad nach links rotieren    
     stellung_zwei = np.rot90(stellung_zwei)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # 270 Grad nach links rotieren
     stellung_zwei = np.rot90(stellung_zwei)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # an Nebendiagonale spiegeln
     stellung_zwei = np.rot90(np.transpose(stellung_zwei))
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # vertikal spiegeln    
     stellung_zwei = np.fliplr(stellung_eins)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # horizontal spiegeln    
     stellung_zwei = np.flipud(stellung_eins)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
     # an Hauptdiagonale spiegeln
     stellung_zwei = np.transpose(stellung_eins)
-    if stellung_zwei.tobytes() < stellung_bytes:
-        stellung_bytes = stellung_zwei.tobytes()
-        kanonische_stellung = stellung_zwei
-    return kanonische_stellung
+    if stellung_zwei.tobytes() < stellung_to_bytes:
+        stellung_to_bytes = stellung_zwei.tobytes()
+        
+    return stellung_to_bytes
     
