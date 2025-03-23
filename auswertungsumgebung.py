@@ -91,3 +91,49 @@ class Erfahrungsspeicher:
           print('\nAnzahl Steine: ',anzahl_steine, end=' - ')
           for eintrag in self.bewertung[anzahl_steine]:
               print(eintrag['Summe'],'\t',eintrag['Anzahl'], end=', ')
+              
+class Ergebnisspeicher:
+
+  def __init__(self, schwarz=True, weiss=False):
+    self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
+    self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
+    self.bewertung = {}
+
+  def bewertung_laden(self, datei='reversi.ergebnis'):
+    with (open(datei,'rb')) as f:
+      self.bewertung = pickle.load(f)
+
+  def bewertung_speichern(self, datei='reversi.ergebnis'):
+    with (open(datei,'wb')) as f:
+      pickle.dump(self.bewertung,f)
+
+  def bewertung_aktualisieren(self, protokoll):
+    stellung = Stellung()
+    stellung.grundstellung()
+    anzahl_steine = 4
+    zug_nummer = 1
+    ergebnis = protokoll.pop()//2
+#    print('Aktuelles Ergebnis: ',ergebnis)
+    while protokoll:
+      zug = protokoll.pop(0)
+      stellung.zug_spielen(zug)
+      stellung_to_bytes = als_kanonische_stellung(stellung)
+      if zug is not None:
+          anzahl_steine += 1
+      if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
+        if stellung_to_bytes not in self.bewertung.keys():
+          self.bewertung[stellung_to_bytes] = (0, 0)
+        summe = self.bewertung[stellung_to_bytes][0] + (ergebnis if zug_nummer % 2 else -1*ergebnis)
+        anzahl = self.bewertung[stellung_to_bytes][1] + 1
+        self.bewertung[stellung_to_bytes] = (summe, anzahl)
+      zug_nummer += 1      
+
+  def bewertung_geben(self, stellung):
+    stellung_to_bytes = als_kanonische_stellung(stellung)
+    if stellung_to_bytes in self.bewertung.keys():       
+        return self.bewertung[stellung_to_bytes][0]/self.bewertung[stellung_to_bytes][1]
+    return None
+
+  def bewertung_drucken(self):
+      for stellung_to_bytes in self.bewertung.keys():
+          print(stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])
