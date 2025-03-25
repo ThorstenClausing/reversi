@@ -16,6 +16,6 @@ spieler_weiss = Lernender_Spieler(speicher, 5)
 
 partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 for _ in range(anzahl_partien):
-  partie.starten()
+  partie.partie_starten()
 speicher.bewertung_drucken()
 speicher.bewertung_speichern('neu.of')
