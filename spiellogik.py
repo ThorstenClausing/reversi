@@ -39,7 +39,6 @@ class Stellung(np.ndarray):
         self.__am_zug([(3,3),(4,4)])
         self.__nicht_am_zug([(3,4),(4,3)])
 
-    #@jit(forceobj=True, looplift=True)
     def moegliche_zuege(self):
         """
         Finds all possible moves for the player who is to move.
@@ -76,7 +75,6 @@ class Stellung(np.ndarray):
                 return False
             a, b = c, d
 
-    #@jit
     def zug_spielen(self, zug):
         """
         Applies a move to the board, flipping captured pieces.
@@ -116,9 +114,6 @@ class Stellung(np.ndarray):
         """
         Vertauscht AM_ZUG und NICHT_AM_ZUG.
         """
-#        for i in range(0,8):
-#            for j in range(0,8):
-#                self[i,j] = -self[i,j]
         with np.nditer(self, op_flags=['readwrite'], flags=['external_loop']) as it:
             for x in it:
                 x[...] = -x
@@ -150,7 +145,6 @@ class Stellung(np.ndarray):
     #     return pack('>HHHHHHHH', liste[0],liste[1],liste[2],liste[3],liste[4],liste[5],liste[6],liste[7])
     
 
-#@jit                
 def als_kanonische_stellung(stellung):
     stellung_eins = stellung.copy()
     stellung_to_bytes = stellung_eins.tobytes()

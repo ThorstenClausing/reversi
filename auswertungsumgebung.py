@@ -136,4 +136,4 @@ class Ergebnisspeicher:
 
   def bewertung_drucken(self):
       for stellung_to_bytes in self.bewertung.keys():
-          print(*stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])
+          print(stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])

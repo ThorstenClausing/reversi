@@ -12,30 +12,29 @@ class Partieumgebung:
     stellung = Stellung()
     stellung.grundstellung()
     protokoll = []
-    zu_ende = False
     keine_zugmoeglichkeit = False
     zug_nummer = 1
-    while not zu_ende:
-      if self.__schwarz_am_zug(zug_nummer):
-        zug = self.spieler_schwarz.zug_waehlen(stellung)
-      else:
-        zug = self.spieler_weiss.zug_waehlen(stellung)
-      stellung.zug_spielen(zug)
-      protokoll.append(zug)
-      zug_nummer += 1
-      if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
-        if keine_zugmoeglichkeit:
-            protokoll.pop()
-            zu_ende = True
-        keine_zugmoeglichkeit = True
-      else:
-        keine_zugmoeglichkeit = False 
-      if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
-        zu_ende = True
+    while True:
+        if self.__schwarz_am_zug(zug_nummer):
+            zug = self.spieler_schwarz.zug_waehlen(stellung)
+        else:
+            zug = self.spieler_weiss.zug_waehlen(stellung)
+        stellung.zug_spielen(zug)
+        protokoll.append(zug)
+        zug_nummer += 1
+        if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
+            if keine_zugmoeglichkeit:
+                protokoll.pop()
+                break
+            keine_zugmoeglichkeit = True
+        else:
+            keine_zugmoeglichkeit = False 
+        if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
+            break
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     protokoll.append(ergebnis)
     if self.erfahrungsspeicher is not None:
-      self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+        self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
     """  
     protokoll.pop()
     e = '\t'
