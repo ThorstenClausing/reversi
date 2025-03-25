@@ -1,4 +1,6 @@
 import numpy as np
+from numba import jit
+#from struct import pack
 
 AM_ZUG = 1
 NICHT_AM_ZUG = -1
@@ -37,6 +39,7 @@ class Stellung(np.ndarray):
         self.__am_zug([(3,3),(4,4)])
         self.__nicht_am_zug([(3,4),(4,3)])
 
+    #@jit(forceobj=True, looplift=True)
     def moegliche_zuege(self):
         """
         Finds all possible moves for the player who is to move.
@@ -55,6 +58,7 @@ class Stellung(np.ndarray):
                         zuege.append(((z, s), r_liste))
         return zuege
 
+    @jit
     def __einschluss(self, z, s, richtung):
         """
         Checks if a move is valid by checking for flanking pieces of opposite color.
@@ -72,6 +76,7 @@ class Stellung(np.ndarray):
                 return False
             a, b = c, d
 
+    #@jit
     def zug_spielen(self, zug):
         """
         Applies a move to the board, flipping captured pieces.
@@ -87,7 +92,8 @@ class Stellung(np.ndarray):
                 for stein in umzudrehende_steine:
                     self[stein[0], stein[1]] = AM_ZUG
         self.__gegenspieler_kommt_zum_zug()
-               
+  
+    @jit             
     def __eingeschlossene_steine(self, z, s, richtung):
         """
         Finds all pieces that would be flipped by a move.
@@ -128,7 +134,23 @@ class Stellung(np.ndarray):
             if spalte == 8:
                 spalte = 0
                 print('\n', end='')
-                
+    
+   
+    # def tobytes(self):      
+    #     liste = []
+    #     for idx in range(8):
+    #         zahl = 0
+    #         for b in np.nditer(self[idx,:]):
+    #             zahl <<= 2
+    #             if b == -1:
+    #                 zahl += 3
+    #             else:
+    #                 zahl += b
+    #         liste.append(zahl)
+    #     return pack('>HHHHHHHH', liste[0],liste[1],liste[2],liste[3],liste[4],liste[5],liste[6],liste[7])
+    
+
+#@jit                
 def als_kanonische_stellung(stellung):
     stellung_eins = stellung.copy()
     stellung_to_bytes = stellung_eins.tobytes()

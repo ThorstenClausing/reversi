@@ -103,7 +103,7 @@ class Ergebnisspeicher:
     with (open(datei,'rb')) as f:
       self.bewertung = pickle.load(f)
 
-  def bewertung_speichern(self, datei='reversi.ergebnis'):
+  def bewertung_speichern(self, datei='reversi.ergebnis2'):
     with (open(datei,'wb')) as f:
       pickle.dump(self.bewertung,f)
 
@@ -136,4 +136,4 @@ class Ergebnisspeicher:
 
   def bewertung_drucken(self):
       for stellung_to_bytes in self.bewertung.keys():
-          print(stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])
+          print(*stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])

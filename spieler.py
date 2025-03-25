@@ -31,15 +31,15 @@ class Lernender_Spieler(Spieler):
   def zug_waehlen(self, stellung):
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
-      return None
+        return None
     if (l := len(liste_moegliche_zuege)) == 1:
-      return liste_moegliche_zuege[0]
+        return liste_moegliche_zuege[0]
     besten_zug_waehlen = self.rng.integers(self.epsilon_kehrwert)
     if not besten_zug_waehlen:
         n = self.rng.integers(l)
         return liste_moegliche_zuege[n]
     else:
-        beste_zuege = []    
+        beste_zuege = []
         beste_bewertung = -65
         for zug in liste_moegliche_zuege:
           folgestellung = stellung.copy()
@@ -55,6 +55,7 @@ class Lernender_Spieler(Spieler):
         n = self.rng.integers(len(beste_zuege))
         return beste_zuege[n]
 
+
 class Optimierender_Spieler(Spieler):
 
   def __init__(self, speicher):
@@ -66,23 +67,26 @@ class Optimierender_Spieler(Spieler):
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
       return None
-    if len(liste_moegliche_zuege) == 1:
+    if (l := len(liste_moegliche_zuege)) == 1:
       return liste_moegliche_zuege[0]
-    beste_zuege = []    
+    beste_zuege = []
     beste_bewertung = -65
     for zug in liste_moegliche_zuege:
       folgestellung = stellung.copy()
       folgestellung.zug_spielen(zug)
       bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
       if bewertung is None:
-          bewertung = 1
+          continue
       if bewertung == beste_bewertung:
           beste_zuege.append(zug)
       if bewertung > beste_bewertung:
           beste_zuege = [zug]
-#    assert beste_zuege
-    n = self.rng.integers(len(beste_zuege))
-    return beste_zuege[n]
+    if beste_zuege:
+        n = self.rng.integers(len(beste_zuege))
+        return beste_zuege[n]
+    else:
+        n = self.rng.integers(l)
+        return liste_moegliche_zuege[n]
 
 class Minimax_Spieler(Spieler): #Prüfen!!
 

@@ -25,6 +25,7 @@ class Partieumgebung:
       zug_nummer += 1
       if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
         if keine_zugmoeglichkeit:
+            protokoll.pop()
             zu_ende = True
         keine_zugmoeglichkeit = True
       else:
