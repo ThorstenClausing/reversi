@@ -14,7 +14,7 @@ speicher = Ergebnisspeicher(True, True)
 spieler_schwarz = Optimierender_Spieler(speicher, 5)
 spieler_weiss = Optimierender_Spieler(speicher, 5)
 
-partie = Partieumgebung(spieler_weiss,spieler_schwarz,awu)
+partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 for _ in range(anzahl_partien):
   partie.starten()
 speicher.bewertung_drucken()
