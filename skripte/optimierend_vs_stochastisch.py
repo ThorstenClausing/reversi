@@ -6,13 +6,13 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from auswertungsumgebung import Ergebnisspeicher
-from spieler import Optimierender_Spieler
+from spieler import Lernender_Spieler
 from partieumgebung import Partieumgebung
 
 anzahl_partien = int(sys.argv[1])
 speicher = Ergebnisspeicher(True, True)
-spieler_schwarz = Optimierender_Spieler(speicher, 5)
-spieler_weiss = Optimierender_Spieler(speicher, 5)
+spieler_schwarz = Lernender_Spieler(speicher, 5)
+spieler_weiss = Lernender_Spieler(speicher, 5)
 
 partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 for _ in range(anzahl_partien):
