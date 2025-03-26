@@ -10,6 +10,10 @@ class Erfahrungsspeicher:
     self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
     self.bewertung = {}
 
+  def speichermerkmale_setzen(self, schwarz, weiss):
+    self.schwarz = schwarz
+    self.weiss = weiss
+
   def bewertung_laden(self, datei='reversi.of'):
     with (open(datei,'rb')) as f:
       self.bewertung = pickle.load(f)
