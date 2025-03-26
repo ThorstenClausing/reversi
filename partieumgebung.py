@@ -57,7 +57,8 @@ class Partieumgebung:
   def test_starten(self):
     stellung = Stellung()
     stellung.grundstellung()
-    self.testprotokoll = [0, 0, 0, 0]
+    if self.testprotokoll is None:
+        self.testprotokoll = [0, 0, 0, 0]
     keine_zugmoeglichkeit = False
     zug_nummer = 1
     while True:
