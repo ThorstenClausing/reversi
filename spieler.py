@@ -28,6 +28,9 @@ class Lernender_Spieler(Spieler):
     self.epsilon_kehrwert = epsilon_kehrwert
     self.rng = np.random.default_rng()
 
+  def epsilonkehrwert_eingeben(self, ekw):
+    self.epsilon_kehrwert = ekw
+
   def zug_waehlen(self, stellung):
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
