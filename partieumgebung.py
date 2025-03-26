@@ -7,6 +7,13 @@ class Partieumgebung:
     self.spieler_schwarz = spieler_schwarz
     self.spieler_weiss = spieler_weiss    
     self.erfahrungsspeicher = speicher
+    self.testprotokoll = None
+
+  def testprotokoll_geben(self):
+    return self.testprotokll
+
+  def testprotokoll_drucken(self):
+    print(self.testprotokll)
    
   def partie_starten(self):
     stellung = Stellung()
@@ -47,6 +54,35 @@ class Partieumgebung:
     print(ergebnis)
     stellung.stellung_anzeigen()
     """
+  def test_starten(self):
+    stellung = Stellung()
+    stellung.grundstellung()
+    self.testprotokoll = [0, 0, 0, 0]
+    keine_zugmoeglichkeit = False
+    zug_nummer = 1
+    while True:
+        if self.__schwarz_am_zug(zug_nummer):
+            zug = self.spieler_schwarz.zug_waehlen(stellung)
+        else:
+            zug = self.spieler_weiss.zug_waehlen(stellung)
+        stellung.zug_spielen(zug)
+        zug_nummer += 1
+        if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
+            if keine_zugmoeglichkeit:
+                break
+            keine_zugmoeglichkeit = True
+        else:
+            keine_zugmoeglichkeit = False 
+        if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
+            break
+    ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
+    self.testprotokll[0] += ergebnis
+    if ergebnis > 0:
+      self.testprotokoll[1] += 1
+    elif ergebnis == 0:
+      self.testprotokoll[2] += 1
+    else:
+      self.testprotokoll[3] += 1
       
   def __schwarz_am_zug(self, zug_nummer):
       return zug_nummer % 2 == 1
