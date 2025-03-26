@@ -12,6 +12,9 @@ class Partieumgebung:
   def testprotokoll_geben(self):
     return self.testprotokoll
 
+  def testprotokoll_zuruecksetzen(self):
+    self.testprotokoll = [0, 0, 0, 0]
+    
   def testprotokoll_drucken(self):
     print(self.testprotokoll)
    
