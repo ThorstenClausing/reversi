@@ -20,7 +20,7 @@ partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch, speicher)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt, speicher)
 
-for y in [2, 3, 4, 5]:
+for y in [2, 3]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
