@@ -10,10 +10,10 @@ class Partieumgebung:
     self.testprotokoll = None
 
   def testprotokoll_geben(self):
-    return self.testprotokll
+    return self.testprotokoll
 
   def testprotokoll_drucken(self):
-    print(self.testprotokll)
+    print(self.testprotokoll)
    
   def partie_starten(self):
     stellung = Stellung()
