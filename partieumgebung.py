@@ -76,7 +76,7 @@ class Partieumgebung:
         if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
             break
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
-    self.testprotokll[0] += ergebnis
+    self.testprotokoll[0] += ergebnis
     if ergebnis > 0:
       self.testprotokoll[1] += 1
     elif ergebnis == 0:
