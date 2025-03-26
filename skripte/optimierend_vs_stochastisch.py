@@ -23,15 +23,15 @@ test_weiss = Partieumgebung(spieler_stoch, spieler_opt, speicher)
 for y in [2, 3, 4, 5]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
-        for _ in range(anzahl_partien):
-            partie.partie_starten()
-        test_schwarz.testprotokoll_zuruecksetzen()
-        for _ in range(anzahl_tests):
-            test_schwarz.test_starten()
-        test_schwarz.testprotokoll_drucken()
-        test_weiss.testprotokoll_zuruecksetzen()
-        for _ in range(anzahl_tests):
-            test_weiss.test_starten()
-        test_weiss.testprotokoll_drucken()
+    for _ in range(anzahl_partien):
+        partie.partie_starten()
+    test_schwarz.testprotokoll_zuruecksetzen()
+    for _ in range(anzahl_tests):
+        test_schwarz.test_starten()
+    test_schwarz.testprotokoll_drucken()
+    test_weiss.testprotokoll_zuruecksetzen()
+    for _ in range(anzahl_tests):
+        test_weiss.test_starten()
+    test_weiss.testprotokoll_drucken()
 
 speicher.bewertung_speichern('neu.of')
