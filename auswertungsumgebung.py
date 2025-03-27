@@ -115,6 +115,9 @@ class Ergebnisspeicher:
     with (open(datei,'wb')) as f:
       pickle.dump(self.bewertung,f)
 
+  def anzahl_bewertungen(self):
+    return len(self.bewertung.keys())
+
   def bewertung_aktualisieren(self, protokoll):
     stellung = Stellung()
     stellung.grundstellung()
