@@ -20,11 +20,12 @@ partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch, speicher)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt, speicher)
 
-for y in [2, 3]:
+for y in [2, 3, 4]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
         partie.partie_starten()
+    print('Bewertungen: ', speicher.anzahl_bewertungen())
     test_schwarz.testprotokoll_zuruecksetzen()
     for _ in range(anzahl_tests):
         test_schwarz.test_starten()
