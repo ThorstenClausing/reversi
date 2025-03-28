@@ -12,6 +12,7 @@ jobs:
       - run: |
               pip install numpy 
               pip install numba
+              pip install itertools
               git lfs pull
               python skripte/optimierend_vs_stochastisch.py 100
       - uses: actions/upload-artifact@v4
