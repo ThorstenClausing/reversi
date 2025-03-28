@@ -12,6 +12,9 @@ from partieumgebung import Partieumgebung
 anzahl_partien = int(sys.argv[1])
 anzahl_tests = int(sys.argv[2])
 speicher = Ergebnisspeicher(True, True)
+datei_liste = ['datei' + str(i) + '.of' for i in range(57)]
+speicher.bewertungen_laden(datei_liste)
+print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
 spieler_opt = Optimierender_Spieler(speicher)
@@ -20,7 +23,7 @@ partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch, speicher)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt, speicher)
 
-for y in [2, 3, 4]:
+for y in [5, 6, 7]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
