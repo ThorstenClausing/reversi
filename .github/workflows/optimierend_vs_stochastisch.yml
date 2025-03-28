@@ -10,7 +10,7 @@ jobs:
           python-version: '3.12'
       - uses: actions/checkout@v4
       - run: |
-              pip install numpy numba itertools
+              pip install numpy numba
               git lfs pull
               python skripte/optimierend_vs_stochastisch.py 100000 100
       - uses: actions/upload-artifact@v4
