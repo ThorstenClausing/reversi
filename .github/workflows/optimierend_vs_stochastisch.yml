@@ -9,6 +9,8 @@ jobs:
         with:
           python-version: '3.12'
       - uses: actions/checkout@v4
+        with: 
+          lfs: true
       - run: |
               pip install numpy numba
               git lfs checkout *.of
