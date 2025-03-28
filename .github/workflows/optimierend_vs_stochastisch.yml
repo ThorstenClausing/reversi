@@ -13,7 +13,6 @@ jobs:
           lfs: true
       - run: |
               pip install numpy numba
-              git lfs track *.of
               git lfs pull
               python skripte/optimierend_vs_stochastisch.py 100000 100
       - uses: actions/upload-artifact@v4
