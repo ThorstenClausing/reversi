@@ -12,7 +12,7 @@ from partieumgebung import Partieumgebung
 anzahl_partien = int(sys.argv[1])
 anzahl_tests = int(sys.argv[2])
 speicher = Ergebnisspeicher(True, True)
-datei_liste = ['teil' + str(i) + '.of' for i in range(57)]
+datei_liste = ['daten//teil' + str(i) + '.of' for i in range(562)]
 speicher.bewertungen_laden(datei_liste)
 print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 spieler_schwarz = Lernender_Spieler(speicher)
