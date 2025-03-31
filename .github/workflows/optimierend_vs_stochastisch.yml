@@ -9,11 +9,12 @@ jobs:
         with:
           python-version: '3.12'
       - uses: actions/checkout@v4
+        with: 
+          lfs: true
       - run: |
-              pip install numpy 
-              pip install numba
+              pip install numpy numba
               git lfs pull
-              python skripte/optimierend_vs_stochastisch.py 100
+              python skripte/optimierend_vs_stochastisch.py 100000 100
       - uses: actions/upload-artifact@v4
         with:
           path: |
