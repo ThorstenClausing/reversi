@@ -124,12 +124,12 @@ class Ergebnisspeicher:
            teil_bewertung = pickle.load(f)
            self.bewertung.update(teil_bewertung)
 
-  def bewertung_speichern(self, datei='reversi'):
+  def bewertung_speichern(self, dateiname='reversi'):
     if len(self.bewertung) > 250000:
         liste = [dict(batch) for batch in batched(self.bewertung.items(), 250000)]
         zahl = 0
         for teil_bewertung in liste:
-            datei = 'teil' + str(zahl) + '.of'
+            datei = dateiname + str(zahl) + '.of'
             with (open(datei,'wb')) as f:
               pickle.dump(teil_bewertung, f)
             zahl += 1  
@@ -143,23 +143,22 @@ class Ergebnisspeicher:
   def bewertung_aktualisieren(self, protokoll):
     stellung = Stellung()
     stellung.grundstellung()
-    anzahl_steine = 4
-    zug_nummer = 1
+    zug_nummer = 0
     ergebnis = protokoll.pop()//2
 #    print('Aktuelles Ergebnis: ',ergebnis)
     while protokoll:
+      zug_nummer += 1
       zug = protokoll.pop(0)
-      stellung.zug_spielen(zug)
-      stellung_to_bytes = als_kanonische_stellung(stellung)
-      if zug is not None:
-          anzahl_steine += 1
+      stellung.zug_spielen(zug)     
       if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
-        if stellung_to_bytes not in self.bewertung.keys():
-          self.bewertung[stellung_to_bytes] = (0, 0)
-        summe = self.bewertung[stellung_to_bytes][0] + (ergebnis if zug_nummer % 2 else -1*ergebnis)
-        anzahl = self.bewertung[stellung_to_bytes][1] + 1
-        self.bewertung[stellung_to_bytes] = (summe, anzahl)
-      zug_nummer += 1      
+          stellung_to_bytes = als_kanonische_stellung(stellung)
+          differenz = ergebnis if zug_nummer % 2 else -1*ergebnis
+          if stellung_to_bytes not in self.bewertung.keys():
+              self.bewertung[stellung_to_bytes] = (differenz, 1)
+          else:
+              summe = self.bewertung[stellung_to_bytes][0] + differenz
+              anzahl = self.bewertung[stellung_to_bytes][1] + 1
+              self.bewertung[stellung_to_bytes] = (summe, anzahl)          
 
   def bewertung_geben(self, stellung):
     stellung_to_bytes = als_kanonische_stellung(stellung)

@@ -23,24 +23,25 @@ class Partieumgebung:
     stellung.grundstellung()
     protokoll = []
     keine_zugmoeglichkeit = False
-    zug_nummer = 1
+    zug_nummer = 0
     while True:
+        zug_nummer += 1
         if self.__schwarz_am_zug(zug_nummer):
             zug = self.spieler_schwarz.zug_waehlen(stellung)
         else:
             zug = self.spieler_weiss.zug_waehlen(stellung)
-        stellung.zug_spielen(zug)
-        protokoll.append(zug)
-        zug_nummer += 1
+        stellung.zug_spielen(zug)        
         if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
             if keine_zugmoeglichkeit:
-                protokoll.pop()
                 break
             keine_zugmoeglichkeit = True
         else:
             keine_zugmoeglichkeit = False 
-        if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
-            break
+        protokoll.append(zug)       
+        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+            break       
+        # Am Ende der Schleife entspricht zug_nummer der Anzahl der tatsächlich
+        # gespielten Züge
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     protokoll.append(ergebnis)
     if self.erfahrungsspeicher is not None:
@@ -63,22 +64,22 @@ class Partieumgebung:
     if self.testprotokoll is None:
         self.testprotokoll = [0, 0, 0, 0]
     keine_zugmoeglichkeit = False
-    zug_nummer = 1
+    zug_nummer = 0
     while True:
+        zug_nummer += 1
         if self.__schwarz_am_zug(zug_nummer):
             zug = self.spieler_schwarz.zug_waehlen(stellung)
         else:
             zug = self.spieler_weiss.zug_waehlen(stellung)
-        stellung.zug_spielen(zug)
-        zug_nummer += 1
+        stellung.zug_spielen(zug)        
         if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
             if keine_zugmoeglichkeit:
                 break
             keine_zugmoeglichkeit = True
         else:
             keine_zugmoeglichkeit = False 
-        if zug_nummer >= 61 and np.count_nonzero(stellung) == 64:
-            break
+        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+            break        
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     self.testprotokoll[0] += ergebnis
     if ergebnis > 0:
@@ -100,7 +101,7 @@ class Partieumgebung:
       stellung : TYPE Stellung
           DESCRIPTION. Endstellung, für die das Ergebis berechnet werden soll
       zug_nummer : TYPE Integer
-          DESCRIPTION. Anzahl der bisher ausgeführten Züge (einschließlich passen)  + 1
+          DESCRIPTION. Anzahl der bisher ausgeführten Züge (einschließlich passen)
 
       Returns 
       -------
@@ -109,15 +110,22 @@ class Partieumgebung:
 
       """
       steindifferenz = stellung.sum()
+      # Die Steindifferenze besagt, wie viele Steine der Spieler, der am Zug 
+      # ist, mehr hat als sein Gegenspieler.
 #      print('Differenz: ', steindifferenz)
       if steindifferenz == 0:
           return 0
       anzahl_leere_felder = 64 - np.count_nonzero(stellung)
 #     print('Leere Felder: ', anzahl_leere_felder)
+      # Leere Felder werden als Punkte für den Spieler gewertet, der mehr
+      # Steine hat.
       if steindifferenz > 0:
           ergebnis = steindifferenz + anzahl_leere_felder
       else:
           ergebnis = steindifferenz - anzahl_leere_felder
-      if not zug_nummer % 2:
+      # Wenn ungerade viele Züge gespielt wurden, ist Weiß am Zug.
+      # Die Steindifferenz besagt dann, wie viele Steine Weiß mehr hat als 
+      # Schwarz. Aus Sicht von Schwarz muss das Ergebnis dann umgedreht werden.
+      if zug_nummer % 2 == 1: 
           ergebnis = -1*ergebnis
       return ergebnis
