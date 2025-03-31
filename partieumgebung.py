@@ -1,44 +1,131 @@
-from spiellogik import moegliche_zuege, zug_spielen, WEISS, SCHWARZ, GRUNDSTELLUNG
-from auswertungsumgebung import Auswertungsumgebung
+import numpy as np
+from spiellogik import Stellung
 
 class Partieumgebung:
 
-  def __init__(self,spieler_weiss,spieler_schwarz,auswertungsumgebung=None):
-    self.spieler_weiss = spieler_weiss
+  def __init__(self, spieler_schwarz, spieler_weiss, speicher=None):
     self.spieler_schwarz = spieler_schwarz
-    self.auswertungsumgebung = auswertungsumgebung
-    self.protokoll = []
+    self.spieler_weiss = spieler_weiss    
+    self.erfahrungsspeicher = speicher
+    self.testprotokoll = None
 
-  def starten(self,stellung=GRUNDSTELLUNG,am_zug=WEISS):
-    self.stellung = stellung
-    self.am_zug = am_zug
-    self.zu_ende = False
-    while not self.zu_ende:
-      if self.am_zug == WEISS:
-        zug = self.spieler_weiss.zug_waehlen(self.stellung)
+  def testprotokoll_geben(self):
+    return self.testprotokoll
+
+  def testprotokoll_zuruecksetzen(self):
+    self.testprotokoll = [0, 0, 0, 0]
+    
+  def testprotokoll_drucken(self):
+    print(self.testprotokoll)
+   
+  def partie_starten(self):
+    stellung = Stellung()
+    stellung.grundstellung()
+    protokoll = []
+    keine_zugmoeglichkeit = False
+    zug_nummer = 0
+    while True:
+        zug_nummer += 1
+        if self.__schwarz_am_zug(zug_nummer):
+            zug = self.spieler_schwarz.zug_waehlen(stellung)
+        else:
+            zug = self.spieler_weiss.zug_waehlen(stellung)
+        stellung.zug_spielen(zug)        
+        if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
+            if keine_zugmoeglichkeit:
+                break
+            keine_zugmoeglichkeit = True
+        else:
+            keine_zugmoeglichkeit = False 
+        protokoll.append(zug)       
+        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+            break       
+        # Am Ende der Schleife entspricht zug_nummer der Anzahl der tatsächlich
+        # gespielten Züge
+    ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
+    protokoll.append(ergebnis)
+    if self.erfahrungsspeicher is not None:
+        self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+    """  
+    protokoll.pop()
+    e = '\t'
+    for zug in protokoll:
+      if zug is not None:
+         print(zug[0], end=e)
       else:
-        zug = self.spieler_schwarz.zug_waehlen(self.stellung)
-      if zug == None: # Behandlung von Situationen ohne Zugmöglichkeit
-        self.am_zug = -1*self.am_zug
-        if self.am_zug == WEISS:
-          zug = self.spieler_weiss.zug_waehlen(self.stellung)
+          print(' pass ', end=e)
+      e = '\n' if e == '\t' else '\t'
+    print(ergebnis)
+    stellung.stellung_anzeigen()
+    """
+  def test_starten(self):
+    stellung = Stellung()
+    stellung.grundstellung()
+    if self.testprotokoll is None:
+        self.testprotokoll = [0, 0, 0, 0]
+    keine_zugmoeglichkeit = False
+    zug_nummer = 0
+    while True:
+        zug_nummer += 1
+        if self.__schwarz_am_zug(zug_nummer):
+            zug = self.spieler_schwarz.zug_waehlen(stellung)
         else:
-          zug = self.spieler_schwarz.zug_waehlen(self.stellung)
-        if zug == None:
-          self.zu_ende = True
+            zug = self.spieler_weiss.zug_waehlen(stellung)
+        stellung.zug_spielen(zug)        
+        if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
+            if keine_zugmoeglichkeit:
+                break
+            keine_zugmoeglichkeit = True
         else:
-          self.protokoll.append(None)
-      if not self.zu_ende:
-        self.stellung = zug_spielen(self.stellung,zug,self.am_zug)
-        self.protokoll.append(zug[0])
-        self.am_zug = -1*self.am_zug
-        if self.stellung.nonzero()[0].shape[0] == 64:
-          self.zu_ende = True
-    ergebnis = self.stellung.sum()
+            keine_zugmoeglichkeit = False 
+        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+            break        
+    ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
+    self.testprotokoll[0] += ergebnis
     if ergebnis > 0:
-      self.auswertungsumgebung.ergebnis_speichern(1)
+      self.testprotokoll[1] += 1
     elif ergebnis == 0:
-      self.auswertungsumgebung.ergebnis_speichern(0.5)
-    self.protokoll.append(ergebnis)
-    if self.auswertungsumgebung != None:
-      self.auswertungsumgebung.bewertung_aktualisieren(self.protokoll)
+      self.testprotokoll[2] += 1
+    else:
+      self.testprotokoll[3] += 1
+      
+  def __schwarz_am_zug(self, zug_nummer):
+      return zug_nummer % 2 == 1
+  
+  def __ergebnis_fuer_schwarz(self, stellung, zug_nummer):
+      """
+      Rückgabewert: Partieergebnis (Punktdifferenz) aus Sicht von Schwarz
+
+      Parameters
+      ----------
+      stellung : TYPE Stellung
+          DESCRIPTION. Endstellung, für die das Ergebis berechnet werden soll
+      zug_nummer : TYPE Integer
+          DESCRIPTION. Anzahl der bisher ausgeführten Züge (einschließlich passen)
+
+      Returns 
+      -------
+      TYPE Integer
+      DESCRIPTION. Differenz des nach den WOF-Regeln bestimmten Partieergebnisses
+
+      """
+      steindifferenz = stellung.sum()
+      # Die Steindifferenze besagt, wie viele Steine der Spieler, der am Zug 
+      # ist, mehr hat als sein Gegenspieler.
+#      print('Differenz: ', steindifferenz)
+      if steindifferenz == 0:
+          return 0
+      anzahl_leere_felder = 64 - np.count_nonzero(stellung)
+#     print('Leere Felder: ', anzahl_leere_felder)
+      # Leere Felder werden als Punkte für den Spieler gewertet, der mehr
+      # Steine hat.
+      if steindifferenz > 0:
+          ergebnis = steindifferenz + anzahl_leere_felder
+      else:
+          ergebnis = steindifferenz - anzahl_leere_felder
+      # Wenn ungerade viele Züge gespielt wurden, ist Weiß am Zug.
+      # Die Steindifferenz besagt dann, wie viele Steine Weiß mehr hat als 
+      # Schwarz. Aus Sicht von Schwarz muss das Ergebnis dann umgedreht werden.
+      if zug_nummer % 2 == 1: 
+          ergebnis = -1*ergebnis
+      return ergebnis

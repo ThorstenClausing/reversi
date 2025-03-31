@@ -1,133 +1,139 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from spiellogik import moegliche_zuege, zug_spielen
-from auswertungsumgebung import Auswertungsumgebung
 
 class Spieler(ABC):
 
-  def __init__(self,farbe):
-    self.farbe = farbe
-
   @abstractmethod
-  def zug_waehlen(self,stellung):
+  def zug_waehlen(self, stellung):
     pass
 
 class Stochastischer_Spieler(Spieler):
 
-  def __init__(self,farbe):
-    super().__init__(farbe)
+  def __init__(self):
+    super().__init__()
     self.rng = np.random.default_rng()
 
-  def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
-    if (b := len(liste_moegliche_zuege)) == 0:
+  def zug_waehlen(self, stellung):
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
       return None
-    n = self.rng.integers(b)
+    n = self.rng.integers(len(liste_moegliche_zuege))
     return liste_moegliche_zuege[n]
 
 class Lernender_Spieler(Spieler):
 
-  def __init__(self,farbe,awu):
-    super().__init__(farbe)
-    self.auswertungsumgebung = awu
+  def __init__(self, speicher, epsilon_kehrwert=10):
+    super().__init__()
+    self.erfahrungsspeicher = speicher
+    self.epsilon_kehrwert = epsilon_kehrwert
     self.rng = np.random.default_rng()
 
-  def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
-    if (l := len(liste_moegliche_zuege)) == 0:
-      return None
-    if l == 1:
-      return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
-    if bewertung_dict is None:
-      n = self.rng.integers(l)
-      return liste_moegliche_zuege[n]
-    summe = np.array([bewertung_dict[key] for key in bewertung_dict.keys()]).sum()
-    n = self.rng.integers(summe)
-    grenze = 0
-    for zug in liste_moegliche_zuege:
-      grenze += bewertung_dict[zug[0]]
-      if n <= grenze:
-        return zug
+  def epsilonkehrwert_eingeben(self, ekw):
+    self.epsilon_kehrwert = ekw
+
+  def zug_waehlen(self, stellung):
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
+        return None
+    if (l := len(liste_moegliche_zuege)) == 1:
+        return liste_moegliche_zuege[0]
+    besten_zug_waehlen = self.rng.integers(self.epsilon_kehrwert)
+    if not besten_zug_waehlen:
+        n = self.rng.integers(l)
+        return liste_moegliche_zuege[n]
+    else:
+        beste_zuege = []
+        beste_bewertung = -65
+        for zug in liste_moegliche_zuege:
+          folgestellung = stellung.copy()
+          folgestellung.zug_spielen(zug)
+          bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
+          if bewertung is None:
+              bewertung = 1
+          if bewertung == beste_bewertung:
+              beste_zuege.append(zug)
+          if bewertung > beste_bewertung:
+              beste_zuege = [zug]
+#        assert beste_zuege
+        n = self.rng.integers(len(beste_zuege))
+        return beste_zuege[n]
 
 
 class Optimierender_Spieler(Spieler):
 
-  def __init__(self,farbe,awu):
-    super().__init__(farbe)
-    self.auswertungsumgebung = awu
+  def __init__(self, speicher):
+    super().__init__()
+    self.erfahrungsspeicher = speicher
     self.rng = np.random.default_rng()
 
-  def zug_waehlen(self,stellung):
-    liste_moegliche_zuege = moegliche_zuege(stellung,self.farbe)
-    if (l := len(liste_moegliche_zuege)) == 0:
+  def zug_waehlen(self, stellung):
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
       return None
-    if l == 1:
+    if (l := len(liste_moegliche_zuege)) == 1:
       return liste_moegliche_zuege[0]
-    bewertung_dict = self.auswertungsumgebung.bewertung_geben(stellung,self.farbe)
-    if bewertung_dict is None:
-      n = self.rng.integers(l)
-      return liste_moegliche_zuege[n]
-    bewertungszahl = 0
-    bester_zug = None
+    beste_zuege = []
+    beste_bewertung = -65
     for zug in liste_moegliche_zuege:
-      if (b := bewertung_dict[zug[0]]) > bewertungszahl:
-        bester_zug = zug
-        bewertungszahl = b
-    return bester_zug
+      folgestellung = stellung.copy()
+      folgestellung.zug_spielen(zug)
+      bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
+      if bewertung is None:
+          continue
+      if bewertung == beste_bewertung:
+          beste_zuege.append(zug)
+      if bewertung > beste_bewertung:
+          beste_zuege = [zug]
+    if beste_zuege:
+        n = self.rng.integers(len(beste_zuege))
+        return beste_zuege[n]
+    else:
+        n = self.rng.integers(l)
+        return liste_moegliche_zuege[n]
 
-class Minimax_Spieler(Spieler):
+class Minimax_Spieler(Spieler): #Prüfen!!
 
-  def __init__(self,farbe):
-    super().__init__(farbe)
-
-  def zug_waehlen(self,stellung):
-    moegliche_zuege_eins = moegliche_zuege(stellung,self.farbe)
-    if (l := len(moegliche_zuege_eins)) == 0:
+  def zug_waehlen(self, stellung):
+    moegliche_zuege_eins = stellung.moegliche_zuege()
+    if not moegliche_zuege_eins:
       return None
-    if l == 1:
+    if len(moegliche_zuege_eins) == 1:
       return moegliche_zuege_eins[0]
-    gegner_am_zug = -1*self.farbe
     ergebnis = -65
     for zug_eins in moegliche_zuege_eins:
-      stellung_eins = zug_spielen(stellung,zug_eins,self.farbe)
-      moegliche_zuege_zwei = moegliche_zuege(stellung_eins,gegner_am_zug)
-      if len(moegliche_zuege_zwei) == 0:
+      stellung_eins = stellung.copy()
+      stellung_eins.zug_spielen(zug_eins)
+      moegliche_zuege_zwei = stellung_eins.moegliche_zuege()
+      if not moegliche_zuege_zwei:
         moegliche_zuege_zwei.append(None)
       ergebnis_liste_zwei = []
       for zug_zwei in moegliche_zuege_zwei:
-        if zug_zwei is not None:
-          stellung_zwei = zug_spielen(stellung_eins,zug_zwei,gegner_am_zug)
-        else:
-          stellung_zwei = stellung_eins
-        moegliche_zuege_drei = moegliche_zuege(stellung_zwei,self.farbe)
-        if len(moegliche_zuege_drei) == 0:
+        stellung_zwei = stellung_eins.copy()
+        stellung_zwei.zug_spielen(zug_zwei)
+        moegliche_zuege_drei = stellung_zwei.moegliche_zuege()
+        if not moegliche_zuege_drei:
           moegliche_zuege_drei.append(None)
         ergebnis_liste_drei = []
         for zug_drei in moegliche_zuege_drei:
-          if zug_drei is not None:
-            stellung_drei = zug_spielen(stellung_zwei,zug_drei,self.farbe)
-          else:
-            stellung_drei = stellung_zwei
-          moegliche_zuege_vier = moegliche_zuege(stellung_drei,gegner_am_zug)
-          if len(moegliche_zuege_vier) == 0:
+          stellung_drei = stellung_zwei.copy()
+          stellung_drei.zug_spielen(zug_drei)
+          moegliche_zuege_vier = stellung_drei.moegliche_zuege()
+          if not moegliche_zuege_vier:
             moegliche_zuege_vier.append(None)
           ergebnis_liste_vier = []
           for zug_vier in moegliche_zuege_vier:
-            if zug_vier is not None:
-              stellung_vier = zug_spielen(stellung_drei,zug_vier,gegner_am_zug)
-            else:
-              stellung_vier = stellung_drei
+            stellung_vier = stellung_drei.copy()
+            stellung_vier.zug_spielen(zug_vier)
             ergebnis_liste_vier.append(stellung_vier.sum())
-          ergebnisse_vier = gegner_am_zug*np.array(ergebnis_liste_vier)
-          minimax_vier = gegner_am_zug*ergebnisse_vier.max()
+          ergebnisse_vier = np.array(ergebnis_liste_vier)
+          minimax_vier = ergebnisse_vier.min()
           ergebnis_liste_drei.append(minimax_vier)
-        ergebnisse_drei = self.farbe*np.array(ergebnis_liste_drei)
-        minimax_drei = self.farbe*ergebnisse_drei.max()
+        ergebnisse_drei = np.array(ergebnis_liste_drei)
+        minimax_drei = ergebnisse_drei.max()
         ergebnis_liste_zwei.append(minimax_drei)
-      ergebnisse_zwei = gegner_am_zug*np.array(ergebnis_liste_zwei)
-      minimax_zwei = gegner_am_zug*ergebnisse_zwei.max()
-      if (z := self.farbe*minimax_zwei) > ergebnis:
+      ergebnisse_zwei = np.array(ergebnis_liste_zwei)
+      minimax_zwei = ergebnisse_zwei.min()
+      if minimax_zwei > ergebnis:
         bester_zug = zug_eins
-        ergebnis = z
+        ergebnis = minimax_zwei
     return bester_zug
