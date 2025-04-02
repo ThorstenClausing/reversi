@@ -19,7 +19,7 @@ class Bewertungsnetz(nn.Module):
         return bewertung
 
 class Bewertungsdaten(Dataset):
-  def __init__(self, liste):
+    def __init__(self, liste):
         self.liste = liste
 
     def __len__(self):
