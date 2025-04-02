@@ -68,12 +68,15 @@ def test_loop(datengeber, modell, verlustfunktion):
             
     test_loss /= num_batches
     # r_quadrat implementieren!
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, R_quadrat: {r_quadrat:>8f} \n")
+    print(f"Test Error: \n Durchschnittsverlust: {(test_loss):>8f}%, R_quadrat: {r_quadrat:>0.3f} \n")
 
+optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
 epochen = 4
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
-    train_loop(training_datengeber, modell, nn.MSELoss(), torch.optim.SGD(modell.parameters(), lr=learning_rate))
+    train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
     test_loop(test_datengeber, modell, nn.MSELoss())
+
+torch.save(optimierer.state_dict(), 'gewichte')
 print("Ende")
 
