@@ -26,4 +26,4 @@ class Bewertungsdaten(Dataset):
         return len(self.liste)
 
     def __getitem__(self, idx):
-        return self.liste[idx]
+        return self.liste[idx][0], self.liste[idx][1]
