@@ -9,6 +9,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 import pickle
+import random
 import numpy as np
 from bewertungsnetz import Bewertungsdaten, Bewertungsnetz
 from spiellogik import Stellung
@@ -18,7 +19,8 @@ test_liste = []
 zaehler = 0
 bewertungen = {}
 durchschnitt = 0
-dateiliste = ['../reversi' + str(i) + '.of' for i in range(1)]
+dateiliste = ['../reversi' + str(i) + '.of' for i in [0, 34, 89, 124]]
+
 for datei in dateiliste:
     with (open(datei,'rb')) as f:
         bewertungen = pickle.load(f)
@@ -35,10 +37,16 @@ for datei in dateiliste:
         zaehler += 1
 
 durchschnitt /= len(test_liste)
+
+r_nenner = 0
+for _, bewertung in test_liste:
+    r_nenner += (bewertung.item() - durchschnitt)**2
+
+random.shuffle(training_liste)
 training_daten = Bewertungsdaten(training_liste)
 test_daten = Bewertungsdaten(test_liste)
-training_datengeber = DataLoader(training_daten, batch_size=1024, shuffle=True)
-test_datengeber = DataLoader(test_daten, batch_size=1024, shuffle=True)
+training_datengeber = DataLoader(training_daten, batch_size=64, shuffle=True)
+test_datengeber = DataLoader(test_daten, batch_size=64, shuffle=True)
 
 modell = Bewertungsnetz()
 
@@ -57,8 +65,8 @@ def train_loop(datengeber, modell, verlustfunktion, optimizer):
         optimizer.step()
         optimizer.zero_grad()
 
-        if batch % 1000 == 0:
-            verlust, current = verlust.item(), batch * 1024 + len(X)
+        if batch % 100 == 0:
+            verlust, current = verlust.item(), batch * 64 + len(X)
             print(f"loss: {verlust:>7f}  [{current:>5d}/{size:>5d}]")
 
 
@@ -67,28 +75,30 @@ def test_loop(datengeber, modell, verlustfunktion):
     # Unnecessary in this situation but added for best practices
     modell.eval()
     num_batches = len(datengeber)
-    test_loss, r_zaehler, r_nenner = 0, 0, 0
+    test_loss, r_zaehler = 0, 0
 
     # Evaluating the model with torch.no_grad() ensures that no gradients are computed during test mode
     # also serves to reduce unnecessary gradient computations and memory usage for tensors with requires_grad=True
     with torch.no_grad():
         for X, y in datengeber:
             vorhersage = modell(X)
-            test_loss += verlustfunktion(vorhersage, y).item()
-            #r_zaehler += (vorhersage - y)**2
-            #r_nenner += (y - durchschnitt)**2
+            fehler = verlustfunktion(vorhersage, y).item()
+            test_loss += fehler
+            r_zaehler += fehler*len(y)
             
+                        
     test_loss /= num_batches
-    r_quadrat = 1 #- r_zaehler/r_nenner
-    print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat:>0.3f} \n")
+    r_quadrat = 1 - r_zaehler/r_nenner
+    print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
 
-optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
-epochen = 20
+optimierer = torch.optim.RMSprop(modell.parameters())
+epochen = 25
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
     train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
     test_loop(test_datengeber, modell, nn.MSELoss())
 
 torch.save(optimierer.state_dict(), 'gewichte')
+
 print("Ende")
 

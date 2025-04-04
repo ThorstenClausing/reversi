@@ -6,11 +6,9 @@ class Bewertungsnetz(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(64, 42),
+            nn.Linear(64, 34),
             nn.ReLU(),
-            nn.Linear(42, 28),
-            nn.ReLU(),
-            nn.Linear(28, 1),
+            nn.Linear(34, 1),
         )
 
     def forward(self, x):
