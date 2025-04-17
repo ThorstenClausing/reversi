@@ -7,7 +7,8 @@ class Bewertungsnetz(nn.Module):
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
         self.ausgabeschicht = nn.Linear(34, 1)
-        self.aktivierung = nn.Tanh()
+        self.aktivierung_eins = nn.Tanh()
+        self.aktivierung_zwei = nn.Tanh()
         nn.init.xavier_uniform_(self.innere_schicht_eins.weight)
         nn.init.xavier_uniform_(self.innere_schicht_zwei.weight)
         nn.init.xavier_uniform_(self.ausgabeschicht.weight)
@@ -17,9 +18,9 @@ class Bewertungsnetz(nn.Module):
 
     def forward(self, x):
         z = self.innere_schicht_eins(x)
-        z = self.aktivierung(z)
+        z = self.aktivierung_eins(z)
         z = self.innere_schicht_zwei(z)
-        z = self.aktivierung(z)
+        z = self.aktivierung_zwei(z)
         bewertung = self.ausgabeschicht(z)
         return bewertung
 
@@ -37,10 +38,12 @@ class Faltendes_Bewertungsnetz(nn.Module):
     def __init__(self):
         super(Faltendes_Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Conv2d(3, 9, kernel_size=3, padding=1, groups=3)
-        self.innere_schicht_zwei = nn.Conv2d(9, 9, kernel_size=5, padding=2, groups=3)
+        self.innere_schicht_zwei = nn.Conv2d(9, 9, kernel_size=3, padding=1, groups=3)
         self.innere_schicht_drei = nn.Linear(576, 300)
         self.ausgabeschicht = nn.Linear(300, 1)
-        self.aktivierung = nn.Tanh()
+        #self.aktivierung_eins = nn.Tanh()
+        #self.aktivierung_zwei = nn.Tanh()
+        self.aktivierung_drei = nn.Tanh()
         self.flatten = nn.Flatten()
         nn.init.xavier_uniform_(self.innere_schicht_eins.weight)
         nn.init.xavier_uniform_(self.innere_schicht_zwei.weight)
@@ -53,9 +56,11 @@ class Faltendes_Bewertungsnetz(nn.Module):
 
     def forward(self, x):
         z = self.innere_schicht_eins(x)
+        #z = self.aktivierung_eins(z)
         z = self.innere_schicht_zwei(z)
+        #z = self.aktivierung_zwei(z)
         z = self.flatten(z)
         z = self.innere_schicht_drei(z)
-        z = self.aktivierung(z)
+        z = self.aktivierung_drei(z)
         bewertung = self.ausgabeschicht(z)
         return bewertung

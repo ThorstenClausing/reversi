@@ -51,7 +51,7 @@ random.shuffle(training_liste)
 training_daten = Bewertungsdaten(training_liste)
 test_daten = Bewertungsdaten(test_liste)
 training_datengeber = DataLoader(training_daten, batch_size=32, shuffle=True)
-test_datengeber = DataLoader(test_daten, batch_size=32, shuffle=True)
+test_datengeber = DataLoader(test_daten, batch_size=32)
  
 modell = Faltendes_Bewertungsnetz()
 
