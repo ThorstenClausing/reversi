@@ -1,10 +1,10 @@
 import numpy as np
 from numba import jit
-#from struct import pack
 
 AM_ZUG = 1
 NICHT_AM_ZUG = -1
 LEER = 0
+BRETTGROESSE = 6
 
 OBEN_LINKS = np.array([-1, -1], dtype=np.int8)
 OBEN = np.array([-1, 0], dtype=np.int8)
@@ -20,7 +20,7 @@ RICHTUNGEN = [OBEN_LINKS, OBEN, OBEN_RECHTS, LINKS, RECHTS, UNTEN_LINKS, UNTEN, 
 class Stellung(np.ndarray):
 
     def __new__(cls):
-        stellung = np.ndarray.__new__(cls, (8,8), dtype=np.int8)
+        stellung = np.ndarray.__new__(cls, (BRETTGROESSE,BRETTGROESSE), dtype=np.int8)
         stellung.fill(LEER)
         return stellung
       
@@ -36,21 +36,24 @@ class Stellung(np.ndarray):
             self[index[0],index[1]] = AM_ZUG  
 
     def grundstellung(self):
-        self.__am_zug([(3,3),(4,4)])
-        self.__nicht_am_zug([(3,4),(4,3)])
+        unten  = BRETTGROESSE//2
+        rechts = BRETTGROESSE//2
+        oben, links = unten - 1, rechts - 1
+        self.__am_zug([(oben, rechts), (unten, links)])
+        self.__nicht_am_zug([(oben, links), (unten, rechts)])
 
     def moegliche_zuege(self):
         """
         Finds all possible moves for the player who is to move.
         """
         zuege = []
-        for z in range(8):
-            for s in range(8):
+        for z in range(BRETTGROESSE):
+            for s in range(BRETTGROESSE):
                 if self[z, s] == LEER:
                     r_liste = []
                     for richtung in RICHTUNGEN:
                         a, b = np.array([z, s]) + richtung
-                        if 0 <= a < 8 and 0 <= b < 8 and self[a, b] == NICHT_AM_ZUG:
+                        if 0 <= a < BRETTGROESSE and 0 <= b < BRETTGROESSE and self[a, b] == NICHT_AM_ZUG:
                             if self.__einschluss(a, b, richtung):
                                 r_liste.append(richtung)
                     if r_liste:
@@ -62,12 +65,12 @@ class Stellung(np.ndarray):
         """
         Checks if a move is valid by checking for flanking pieces of opposite color.
         """
-        if not (0 <= z < 8 and 0 <= s < 8) or self[z, s] != NICHT_AM_ZUG:
+        if not (0 <= z < BRETTGROESSE and 0 <= s < BRETTGROESSE) or self[z, s] != NICHT_AM_ZUG:
             assert False
         a, b = z, s
         while True:
             c, d = np.array([a, b]) + richtung
-            if not (0 <= c < 8 and 0 <= d < 8):
+            if not (0 <= c < BRETTGROESSE and 0 <= d < BRETTGROESSE):
                 return False
             if self[c, d] == AM_ZUG:
                 return True
@@ -97,11 +100,11 @@ class Stellung(np.ndarray):
         Finds all pieces that would be flipped by a move.
         """
         a, b = np.array([z, s]) + richtung
-        assert 0 <= a < 8 and 0 <= b < 8
+        assert 0 <= a < BRETTGROESSE and 0 <= b < BRETTGROESSE
         steine = [(a, b)]
         while True:
             c, d = np.array([a, b]) + richtung
-            if not (0 <= c < 8 and 0 <= d < 8):
+            if not (0 <= c < BRETTGROESSE and 0 <= d < BRETTGROESSE):
                 assert False
             if self[c, d] == AM_ZUG:
                 return steine
@@ -126,24 +129,9 @@ class Stellung(np.ndarray):
                 case -1: print(' O', end='')
                 case _: print(' -', end='')
             spalte += 1
-            if spalte == 8:
+            if spalte == BRETTGROESSE:
                 spalte = 0
-                print('\n', end='')
-    
-   
-    # def tobytes(self):      
-    #     liste = []
-    #     for idx in range(8):
-    #         zahl = 0
-    #         for b in np.nditer(self[idx,:]):
-    #             zahl <<= 2
-    #             if b == -1:
-    #                 zahl += 3
-    #             else:
-    #                 zahl += b
-    #         liste.append(zahl)
-    #     return pack('>HHHHHHHH', liste[0],liste[1],liste[2],liste[3],liste[4],liste[5],liste[6],liste[7])
-    
+                print('\n', end='')   
 
 def als_kanonische_stellung(stellung):
     stellung_eins = stellung.copy()

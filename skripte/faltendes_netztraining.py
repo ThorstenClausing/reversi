@@ -11,38 +11,40 @@ from torch import nn
 import pickle
 import random
 import numpy as np
+import zipfile
 from bewertungsnetz import Bewertungsdaten, Faltendes_Bewertungsnetz
-#from spiellogik import Stellung
 
 training_liste = []
 test_liste = []
 zaehler = 0
 bewertungen = {}
 durchschnitt = 0
-dateiliste = ['../reversi' + str(i) + '.of' for i in [0, 1, 2]]
 
-for datei in dateiliste:
-    with (open(datei,'rb')) as f:
-        bewertungen = pickle.load(f)
-    for stellung_bytes in bewertungen.keys():
-        stellung = np.frombuffer(stellung_bytes, dtype=np.int8)
-        stellung = stellung.reshape(8,8)
-        stellung_plus = np.maximum(stellung, 0)
-        stellung_minus = np.maximum(-1*stellung, 0)
-        stellung_leer = 1 - stellung_plus - stellung_minus
-        stellung = np.array([stellung_plus, stellung_minus, stellung_leer])
-        bewertung = bewertungen[stellung_bytes][0]/bewertungen[stellung_bytes][1]
-        eingabe = (torch.from_numpy(stellung)).to(torch.float32)
-        ausgabe = (torch.tensor([bewertung, ])).to(torch.float32)
-        if zaehler % 3:
-            training_liste.append((eingabe, ausgabe))
-        else:
-            test_liste.append((eingabe, ausgabe))
-            durchschnitt += bewertung
-        zaehler += 1
+with zipfile.ZipFile("reversi.zip", mode="r") as archiv:
+    for datei in archiv.namelist():
+        if datei.endswith("20.of"):
+            with archiv.open(datei, mode="r") as offene_datei:
+                bewertungen = pickle.load(offene_datei)
+                for stellung_bytes in bewertungen.keys():
+                    stellung = np.frombuffer(stellung_bytes, dtype=np.int8)
+                    stellung = stellung.reshape(8,8)
+                    stellung_plus = np.maximum(stellung, 0)
+                    stellung_minus = np.maximum(-1*stellung, 0)
+                    stellung_leer = 1 - stellung_plus - stellung_minus
+                    stellung = np.array([stellung_plus, stellung_minus, stellung_leer])
+                    bewertung = bewertungen[stellung_bytes][0]/bewertungen[stellung_bytes][1]
+                    bewertung_np = np.array([bewertung, ])
+                    eingabe = (torch.from_numpy(stellung)).to(torch.float32)
+                    ausgabe = (torch.from_numpy(bewertung_np)).to(torch.float32)
+                    if zaehler % 3:
+                        training_liste.append((eingabe, ausgabe))
+                    else:
+                        test_liste.append((eingabe, ausgabe))
+                        durchschnitt += bewertung
+                    zaehler += 1
 
 durchschnitt /= len(test_liste)
-
+print('Daten geladen: ', len(test_liste) + len(training_liste))
 r_nenner = 0
 for _, bewertung in test_liste:
     r_nenner += (bewertung.item() - durchschnitt)**2
@@ -92,15 +94,16 @@ def test_loop(datengeber, modell, verlustfunktion, ergebnisliste):
     return ergebnisliste
 
 optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)
-epochen = 15
+epochen = 1
 ergebnisliste = []
 ergebnisliste = test_loop(test_datengeber, modell, nn.MSELoss(), ergebnisliste)
+verlustfunktion = nn.MSELoss()
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
-    train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
-    ergebnisliste = test_loop(test_datengeber, modell, nn.MSELoss(), ergebnisliste)
+    train_loop(training_datengeber, modell, verlustfunktion, optimierer)
+    ergebnisliste = test_loop(test_datengeber, modell, verlustfunktion, ergebnisliste)
 
-torch.save(optimierer.state_dict(), 'faltende_gewichte')
+torch.save(modell.state_dict(), 'faltende_gewichte')
 for wert in ergebnisliste:
     print(wert)
 

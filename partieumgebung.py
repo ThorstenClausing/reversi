@@ -1,6 +1,8 @@
 import numpy as np
 from spiellogik import Stellung
 
+ANZAHL_FELDER = 36
+
 class Partieumgebung:
 
   def __init__(self, spieler_schwarz, spieler_weiss, speicher=None):
@@ -29,16 +31,17 @@ class Partieumgebung:
         if self.__schwarz_am_zug(zug_nummer):
             zug = self.spieler_schwarz.zug_waehlen(stellung)
         else:
-            zug = self.spieler_weiss.zug_waehlen(stellung)
-        stellung.zug_spielen(zug)        
+            zug = self.spieler_weiss.zug_waehlen(stellung)               
         if zug is None: # Behandlung von Situationen ohne Zugmöglichkeit
             if keine_zugmoeglichkeit:
+                zug_nummer -= 1
                 break
             keine_zugmoeglichkeit = True
         else:
             keine_zugmoeglichkeit = False 
+        stellung.zug_spielen(zug)
         protokoll.append(zug)       
-        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+        if zug_nummer >= ANZAHL_FELDER - 4 and np.count_nonzero(stellung) == ANZAHL_FELDER:
             break       
         # Am Ende der Schleife entspricht zug_nummer der Anzahl der tatsächlich
         # gespielten Züge
@@ -58,6 +61,7 @@ class Partieumgebung:
     print(ergebnis)
     stellung.stellung_anzeigen()
     """
+    
   def test_starten(self):
     stellung = Stellung()
     stellung.grundstellung()
@@ -78,7 +82,7 @@ class Partieumgebung:
             keine_zugmoeglichkeit = True
         else:
             keine_zugmoeglichkeit = False 
-        if zug_nummer >= 60 and np.count_nonzero(stellung) == 64:
+        if zug_nummer >= ANZAHL_FELDER - 4 and np.count_nonzero(stellung) == ANZAHL_FELDER:
             break        
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     self.testprotokoll[0] += ergebnis
@@ -115,7 +119,7 @@ class Partieumgebung:
 #      print('Differenz: ', steindifferenz)
       if steindifferenz == 0:
           return 0
-      anzahl_leere_felder = 64 - np.count_nonzero(stellung)
+      anzahl_leere_felder = ANZAHL_FELDER - np.count_nonzero(stellung)
 #     print('Leere Felder: ', anzahl_leere_felder)
       # Leere Felder werden als Punkte für den Spieler gewertet, der mehr
       # Steine hat.

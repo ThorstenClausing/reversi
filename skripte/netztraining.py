@@ -11,30 +11,31 @@ from torch import nn
 import pickle
 import random
 import numpy as np
+import zipfile
 from bewertungsnetz import Bewertungsdaten, Bewertungsnetz
-#from spiellogik import Stellung
 
 training_liste = []
 test_liste = []
 zaehler = 0
 bewertungen = {}
 durchschnitt = 0
-dateiliste = ['../reversi' + str(i) + '.of' for i in [0, 1, 2]]
 
-for datei in dateiliste:
-    with (open(datei,'rb')) as f:
-        bewertungen = pickle.load(f)
-    for stellung_bytes in bewertungen.keys():
-        stellung = np.frombuffer(stellung_bytes, dtype=np.int8)
-        bewertung = bewertungen[stellung_bytes][0]/bewertungen[stellung_bytes][1]
-        eingabe = (torch.from_numpy(stellung)).to(torch.float32)
-        ausgabe = (torch.tensor([bewertung, ])).to(torch.float32)
-        if zaehler % 3:
-            training_liste.append((eingabe, ausgabe))
-        else:
-            test_liste.append((eingabe, ausgabe))
-            durchschnitt += bewertung
-        zaehler += 1
+with zipfile.ZipFile("reversi.zip", mode="r") as archiv:
+    for datei in archiv.namelist():
+        if datei.endswith("20.of"):
+            with archiv.open(datei, mode="r") as datei_av:
+                bewertungen = pickle.load(datei_av)
+                for stellung_bytes in bewertungen.keys():
+                    stellung = np.frombuffer(stellung_bytes, dtype=np.int8)
+                    bewertung = bewertungen[stellung_bytes][0]/bewertungen[stellung_bytes][1]
+                    eingabe = (torch.from_numpy(stellung)).to(torch.float32)
+                    ausgabe = (torch.tensor([bewertung, ])).to(torch.float32)
+                    if zaehler % 3:
+                        training_liste.append((eingabe, ausgabe))
+                    else:
+                        test_liste.append((eingabe, ausgabe))
+                        durchschnitt += bewertung
+                    zaehler += 1
 
 durchschnitt /= len(test_liste)
 
@@ -91,7 +92,7 @@ for t in range(epochen):
     train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
     test_loop(test_datengeber, modell, nn.MSELoss())
 
-torch.save(optimierer.state_dict(), 'gewichte')
+torch.save(modell.state_dict(), 'gewichte')
 
 print("Ende")
 

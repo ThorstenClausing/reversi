@@ -1,6 +1,6 @@
 import pickle
 import numpy as np
-from itertools import batched
+import zipfile
 #from google.colab import files
 from spiellogik import Stellung, als_kanonische_stellung
 
@@ -114,29 +114,22 @@ class Ergebnisspeicher:
     self.schwarz = schwarz
     self.weiss = weiss
 
-  def bewertung_laden(self, datei='reversi.of'):
-    with (open(datei,'rb')) as f:
-      self.bewertung = pickle.load(f)
-      
-  def bewertungen_laden(self, datei_liste):
-    for datei in datei_liste:
-        with (open(datei,'rb')) as f:
-           teil_bewertung = pickle.load(f)
-           self.bewertung.update(teil_bewertung)
+  def bewertung_laden(self, datei='reversi_6x6.of'):
+    try:
+        with zipfile.ZipFile("reversi.zip", "r") as archiv:
+            with archiv.open(datei, "r") as d:
+                self.bewertung = pickle.load(d)           
+    except:
+        print('Fehler beim Laden der Bewertung!')
 
-  def bewertung_speichern(self, dateiname='reversi'):
-    if len(self.bewertung) > 250000:
-        liste = [dict(batch) for batch in batched(self.bewertung.items(), 250000)]
-        zahl = 0
-        for teil_bewertung in liste:
-            datei = dateiname + str(zahl) + '.of'
-            with (open(datei,'wb')) as f:
-              pickle.dump(teil_bewertung, f)
-            zahl += 1  
-    else:
-        with (open(datei + '.of','wb')) as f:
-            pickle.dump(self.bewertung,f)
+  def bewertung_speichern(self, datei='reversi_6x6.of'):
+    with zipfile.ZipFile(
+            "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
+            ) as archiv:
+        with archiv.open(datei, "w") as d:
+            pickle.dump(self.bewertung, d)
 
+            
   def anzahl_bewertungen(self):
     return len(self.bewertung.keys())
 
@@ -168,4 +161,5 @@ class Ergebnisspeicher:
 
   def bewertung_drucken(self):
       for stellung_to_bytes in self.bewertung.keys():
-          print(stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])
+          #print(stellung_to_bytes, '\t', self.bewertung[stellung_to_bytes])
+          print(self.bewertung[stellung_to_bytes], end='\t')
