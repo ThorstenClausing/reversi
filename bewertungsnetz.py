@@ -3,6 +3,13 @@ from torch import nn
 from torch.utils.data import Dataset
 import numpy as np
 from spiellogik import Stellung, BRETTGROESSE
+from tensordict import tensorclass
+
+
+@tensorclass
+class MyData:
+    stellungen: torch.Tensor
+    bewertungen: torch.Tensor
 
 class Bewertungsnetz(nn.Module):
     def __init__(self, replay_buffer=None):
@@ -22,7 +29,8 @@ class Bewertungsnetz(nn.Module):
         self.replay_buffer = replay_buffer
 
     def forward(self, x):
-        z = self.innere_schicht_eins(x)
+        z = self.flatten(x)
+        z = self.innere_schicht_eins(z)
         z = self.aktivierung_eins(z)
         z = self.innere_schicht_zwei(z)
         z = self.aktivierung_zwei(z)
@@ -30,7 +38,7 @@ class Bewertungsnetz(nn.Module):
         return bewertung
     
     def bewertung_geben(self, stellung):
-        eingabe = (torch.tensor([stellung])).to(torch.float32)
+        eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
         ausgabe = self.forward(self.flatten(eingabe)).item()
         del eingabe
         return ausgabe
@@ -40,14 +48,20 @@ class Bewertungsnetz(nn.Module):
       stellung.grundstellung()
       zug_nummer = 0
       ergebnis = protokoll.pop()//2
-      beispielliste = []
+      liste_stellungen = []
+      liste_bewertungen = []
       while protokoll:
           zug_nummer += 1
           zug = protokoll.pop(0)
           stellung.zug_spielen(zug)
+          liste_stellungen.append(stellung.copy())
           bewertung = ergebnis if zug_nummer % 2 else -1*ergebnis
-          beispielliste.append((stellung, bewertung))
-      self.replay_buffer.extend(beispielliste)
+          liste_bewertungen.append([bewertung])
+      data = MyData(
+              stellungen=(torch.from_numpy(np.array(liste_stellungen))).to(torch.float32),
+              bewertungen=(torch.from_numpy(np.array(liste_bewertungen))).to(torch.float32), 
+              batch_size=[len(liste_stellungen)])
+      self.replay_buffer.extend(data)
 
 class Bewertungsdaten(Dataset):
     def __init__(self, liste):
