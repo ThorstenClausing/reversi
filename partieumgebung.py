@@ -1,7 +1,7 @@
 import numpy as np
-from spiellogik import Stellung
+from spiellogik import Stellung, BRETTGROESSE
 
-ANZAHL_FELDER = 36
+ANZAHL_FELDER = BRETTGROESSE**2
 
 class Partieumgebung:
 

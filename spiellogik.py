@@ -4,7 +4,7 @@ from numba import jit
 AM_ZUG = 1
 NICHT_AM_ZUG = -1
 LEER = 0
-BRETTGROESSE = 6
+BRETTGROESSE = 8
 
 OBEN_LINKS = np.array([-1, -1], dtype=np.int8)
 OBEN = np.array([-1, 0], dtype=np.int8)
