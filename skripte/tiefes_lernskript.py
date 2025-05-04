@@ -2,8 +2,15 @@
 """
 Created on Sat May  3 13:18:29 2025
 
-@author: User
+@author: Thorsten
 """
+import sys
+import os
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
 import torchrl.data as td
 import torch
 from torch import nn
@@ -53,10 +60,12 @@ optimator = torch.optim.Adam(netz.parameters(), lr=0.001)
 anzahl_partien = 10
 anzahl_zyklen = 10
 
-# Äußere Schleife: Abfolge von Trainingszyklen
-for _ in range(anzahl_zyklen):
-    # Innere Schleife: neue Beobachtungen generieren, einmal Netzparameter anpassen,
-    # einmal Spielstärke testen
+# Äußere Schleife: Abfolge von Trainingszyklen, einmal Netzparameter anpassen,
+# einmal Spielstärke testen
+for epsilon_kw in [min(2 + i, 10) for i in range(anzahl_zyklen)]:
+    spieler_schwarz.epsilonkehrwert_eingeben(epsilon_kw)
+    spieler_weiss.epsilonkehrwert_eingeben(epsilon_kw)
+    # Innere Schleife: neue Beobachtungen generieren und abspeichern
     for _ in range(anzahl_partien):
         umgebung.partie_starten()
     train_loop(replay_buffer, netz, verlustfunktion, optimator, 1000)
