@@ -65,7 +65,7 @@ ergebnisse = []
 ergebnisse = test_loop(netz, test_schwarz, test_weiss, 1000, ergebnisse)
 # Äußere Schleife: Abfolge von Trainingszyklen, einmal Netzparameter anpassen,
 # einmal Spielstärke testen
-for epsilon_kw in [2, 4, 8]: #[min(2 + i, 10) for i in range(anzahl_zyklen)]:
+for epsilon_kw in [min(2 + i, 10) for i in range(anzahl_zyklen)]:
     spieler_schwarz.epsilonkehrwert_eingeben(epsilon_kw)
     spieler_weiss.epsilonkehrwert_eingeben(epsilon_kw)
     # Innere Schleife: neue Beobachtungen generieren und abspeichern
@@ -73,5 +73,5 @@ for epsilon_kw in [2, 4, 8]: #[min(2 + i, 10) for i in range(anzahl_zyklen)]:
         umgebung.partie_starten()
     train_loop(replay_buffer, netz, verlustfunktion, optimator, 1000)
     ergebnisse = test_loop(netz, test_schwarz, test_weiss, 1000, ergebnisse)
-
-print(*ergebnisse)
+for ergebnis in ergebnisse:
+    print(*ergebnis)
