@@ -12,5 +12,5 @@ jobs:
         with: 
           lfs: true
       - run: |
-              pip install numpy numba torch tochrl
+              pip install numpy numba torch torchrl
               python skripte/tiefes_lernskript.py
