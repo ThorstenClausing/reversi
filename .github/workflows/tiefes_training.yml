@@ -1,0 +1,16 @@
+name: tiefes_training
+on:
+  workflow_dispatch:
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/checkout@v4
+        with: 
+          lfs: true
+      - run: |
+              pip install numpy numba torch tochrl
+              python skripte/tiefes_lernskript.py
