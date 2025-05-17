@@ -49,12 +49,12 @@ class Lernender_Spieler(Spieler):
           folgestellung.zug_spielen(zug)
           bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
           if bewertung is None:
-              bewertung = 1
+              bewertung = 10
           if bewertung == beste_bewertung:
               beste_zuege.append(zug)
           if bewertung > beste_bewertung:
               beste_zuege = [zug]
-#        assert beste_zuege
+        assert beste_zuege
         n = self.rng.integers(len(beste_zuege))
         return beste_zuege[n]
 
