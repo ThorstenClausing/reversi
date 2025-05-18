@@ -114,7 +114,7 @@ class Ergebnisspeicher:
     self.schwarz = schwarz
     self.weiss = weiss
 
-  def bewertung_laden(self, datei='reversi_8x8.of'):
+  def bewertung_laden(self, datei='reversi_schwarz.of'):
     try:
         with zipfile.ZipFile("reversi.zip", "r") as archiv:
             with archiv.open(datei, "r") as d:
@@ -122,7 +122,7 @@ class Ergebnisspeicher:
     except:
         print('Fehler beim Laden der Bewertung!')
 
-  def bewertung_speichern(self, datei='reversi_8x8.of'):
+  def bewertung_speichern(self, datei='reversi_schwarz.of'):
     with zipfile.ZipFile(
             "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
             ) as archiv:

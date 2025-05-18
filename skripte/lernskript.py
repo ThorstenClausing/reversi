@@ -20,8 +20,8 @@ anzahl_partien = 100000
 anzahl_tests = 1000
 speicher = Ergebnisspeicher(True, True)
 
-#speicher.bewertung_laden()
-#print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
+speicher.bewertung_laden()
+print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
@@ -31,7 +31,16 @@ partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 
-for y in [2, 3, 4, 5, 6]:
+test_schwarz.testprotokoll_zuruecksetzen()
+for _ in range(anzahl_tests):
+    test_schwarz.test_starten()
+test_schwarz.testprotokoll_drucken()
+test_weiss.testprotokoll_zuruecksetzen()
+for _ in range(anzahl_tests):
+    test_weiss.test_starten()
+test_weiss.testprotokoll_drucken()
+
+for y in [7, 8, 9, 10, 10]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
