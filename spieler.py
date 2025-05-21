@@ -137,3 +137,30 @@ class Minimax_Spieler(Spieler): #Prüfen!!
         bester_zug = zug_eins
         ergebnis = minimax_zwei
     return bester_zug
+
+class Lernender_Spieler_v2(Spieler):
+
+  def __init__(self, speicher):
+    super().__init__()
+    self.erfahrungsspeicher = speicher
+    self.rng = np.random.default_rng()
+
+  def zug_waehlen(self, stellung):
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
+        return None
+    if (l := len(liste_moegliche_zuege)) == 1:
+        return liste_moegliche_zuege[0]
+    gewichte = []
+    for zug in liste_moegliche_zuege:
+      folgestellung = stellung.copy()
+      folgestellung.zug_spielen(zug)
+      bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
+      if bewertung is None:
+          bewertung = 40
+      gewichte.append(bewertung)
+    assert len(gewichte) == l
+    p = np.array(gewichte)
+    p = p / np.sum(p, dtype=float)
+    n = self.rng.choice(l, p=p)
+    return liste_moegliche_zuege[n]
