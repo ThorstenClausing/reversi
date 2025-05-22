@@ -84,6 +84,7 @@ class Optimierender_Spieler(Spieler):
           beste_zuege.append(zug)
       if bewertung > beste_bewertung:
           beste_zuege = [zug]
+          beste_bewertung = bewertung
     if beste_zuege:
         n = self.rng.integers(len(beste_zuege))
         return beste_zuege[n]

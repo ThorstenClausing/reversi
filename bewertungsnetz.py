@@ -20,9 +20,12 @@ class Bewertungsnetz(nn.Module):
         self.aktivierung_eins = nn.Tanh()
         self.aktivierung_zwei = nn.Tanh()
         self.flatten = nn.Flatten()
-        nn.init.xavier_uniform_(self.innere_schicht_eins.weight)
-        nn.init.xavier_uniform_(self.innere_schicht_zwei.weight)
-        nn.init.xavier_uniform_(self.ausgabeschicht.weight)
+        nn.init.xavier_uniform_(
+            self.innere_schicht_eins.weight)
+        nn.init.xavier_uniform_(
+            self.innere_schicht_zwei.weight)
+        nn.init.xavier_uniform_(
+            self.ausgabeschicht.weight)
         nn.init.zeros_(self.innere_schicht_eins.bias)
         nn.init.zeros_(self.innere_schicht_zwei.bias)
         nn.init.zeros_(self.ausgabeschicht.bias)

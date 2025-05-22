@@ -87,7 +87,10 @@ class Ergebnisspeicher_v2(Ergebnisspeicher):
             stellung_to_bytes = als_kanonische_stellung(stellung)
             inkrement = ergebnis[0] if zug_nummer % 2 else ergebnis[1]
             if stellung_to_bytes not in self.bewertung.keys():
-                self.bewertung[stellung_to_bytes] = (inkrement, 1)
+                # Die anfängliche Bewertung sollte nicht null sein, da der Zug 
+                # sonst nie wieder ausprobiert und aktualisiert wird. Daher
+                # wird ein Mindestwert von 2 für die Bewertung vorgegeben.
+                self.bewertung[stellung_to_bytes] = (max(2, inkrement), 1)
             else:
                 summe = self.bewertung[stellung_to_bytes][0] + inkrement
                 anzahl = self.bewertung[stellung_to_bytes][1] + 1
