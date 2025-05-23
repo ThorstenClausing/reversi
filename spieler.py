@@ -92,7 +92,11 @@ class Optimierender_Spieler(Spieler):
         n = self.rng.integers(l)
         return liste_moegliche_zuege[n]
 
-class Minimax_Spieler(Spieler): #Prüfen!!
+class Minimax_Spieler(Spieler):
+    
+  def __init__(self):
+    super().__init__()
+    self.rng = np.random.default_rng()
 
   def zug_waehlen(self, stellung):
     moegliche_zuege_eins = stellung.moegliche_zuege()
@@ -135,9 +139,15 @@ class Minimax_Spieler(Spieler): #Prüfen!!
       ergebnisse_zwei = np.array(ergebnis_liste_zwei)
       minimax_zwei = ergebnisse_zwei.min()
       if minimax_zwei > ergebnis:
-        bester_zug = zug_eins
+        bester_zug = [zug_eins]
         ergebnis = minimax_zwei
-    return bester_zug
+      elif minimax_zwei == ergebnis:
+        bester_zug.append(zug_eins)
+    if (l := len(bester_zug)) == 1: 
+        return bester_zug[0]
+    else:
+        n = self.rng.integers(l)
+        return bester_zug[n]
 
 class Lernender_Spieler_v2(Spieler):
 
