@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 import zipfile
-#from google.colab import files
+from itertools import batched
 from spiellogik import Stellung, als_kanonische_stellung
              
 class Ergebnisspeicher:
@@ -15,20 +15,31 @@ class Ergebnisspeicher:
     self.schwarz = schwarz
     self.weiss = weiss
 
-  def bewertung_laden(self, datei='reversi_schwarz.of'):
+  def bewertung_laden(self, dateiliste=['reversi']):
+    self.bewertung = {} 
     try:
         with zipfile.ZipFile("reversi.zip", "r") as archiv:
-            with archiv.open(datei, "r") as d:
-                self.bewertung = pickle.load(d)           
+            for datei in dateiliste:
+                with archiv.open(datei + '.of', "r") as d:
+                    self.bewertung.update(pickle.load(d))
     except:
         print('Fehler beim Laden der Bewertung!')
 
-  def bewertung_speichern(self, datei='reversi_schwarz.of'):
-    with zipfile.ZipFile(
-            "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
-            ) as archiv:
-        with archiv.open(datei, "w") as d:
-            pickle.dump(self.bewertung, d)
+  def bewertung_speichern(self, datei='reversi'):
+      if len(self.bewertung) <= 20000000:
+          with zipfile.ZipFile(
+                "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
+                ) as archiv:
+            with archiv.open(datei + '.of', "w") as d:
+                pickle.dump(self.bewertung, d)
+      else:
+          with zipfile.ZipFile(
+                "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
+                ) as archiv:
+            for i, teilbewertung in enumerate(
+                    batched(self.bewertung.items(), 20000000)):
+                with archiv.open(datei + str(i) + '.of', "w") as d:
+                    pickle.dump(teilbewertung, d)
 
             
   def anzahl_bewertungen(self):
