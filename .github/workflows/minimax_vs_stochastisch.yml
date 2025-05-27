@@ -10,5 +10,5 @@ jobs:
           python-version: '3.12'
       - uses: actions/checkout@v4
       - run: |
-              pip install numpy
+              pip install numpy numba
               python skripte/minimax_vs_stochastisch.py
