@@ -7,8 +7,8 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - uses: actions/checkout@v4
       - run: |
               pip install numpy
-              python skripte/minimax_vs_stochastisch.py 100
+              python skripte/minimax_vs_stochastisch.py
