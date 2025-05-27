@@ -14,6 +14,6 @@ spieler_schwarz = Minimax_Spieler()
 spieler_weiss = Stochastischer_Spieler()
 partie = Partieumgebung(spieler_schwarz, spieler_weiss, None)
 partie.testprotokoll_zuruecksetzen()
-for _ in range(100):
+for _ in range(1000):
     partie.test_starten()
 partie.testprotokoll_drucken()
