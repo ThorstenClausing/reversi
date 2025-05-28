@@ -10,8 +10,8 @@ from spieler import Minimax_Spieler
 from spieler import Stochastischer_Spieler
 from partieumgebung import Partieumgebung_v2 as Partieumgebung
 
-spieler_schwarz = Minimax_Spieler()
-spieler_weiss = Stochastischer_Spieler()
+spieler_schwarz = Stochastischer_Spieler()
+spieler_weiss = Minimax_Spieler()
 partie = Partieumgebung(spieler_schwarz, spieler_weiss, None)
 partie.testprotokoll_zuruecksetzen()
 for _ in range(1000):
