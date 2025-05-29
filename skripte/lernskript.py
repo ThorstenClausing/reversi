@@ -40,7 +40,7 @@ for _ in range(anzahl_tests):
     test_weiss.test_starten()
 test_weiss.testprotokoll_drucken()
 
-for y in [i + 2 for i in range(5)]:
+for y in [i + 2 for i in range(4)]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
