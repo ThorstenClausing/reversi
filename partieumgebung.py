@@ -48,8 +48,8 @@ class Partieumgebung:
     ergebnis = self.__ergebnis_fuer_schwarz(stellung, zug_nummer)
     protokoll.append(ergebnis)
     if self.erfahrungsspeicher is not None:
-        self.erfahrungsspeicher.bewertung_aktualisieren(protokoll.copy())
-      
+        self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+    """
     protokoll.pop()
     e = '\t'
     for zug in protokoll:
@@ -60,7 +60,7 @@ class Partieumgebung:
       e = '\n' if e == '\t' else '\t'
     print(ergebnis)
     stellung.stellung_anzeigen()
-    
+    """
     
   def test_starten(self):
     stellung = Stellung()
@@ -171,8 +171,8 @@ class Partieumgebung_v2(Partieumgebung):
       ergebnis = self.__ergebnis(stellung, zug_nummer)
       protokoll.append(ergebnis)
       if self.erfahrungsspeicher is not None:
-          self.erfahrungsspeicher.bewertung_aktualisieren(protokoll.copy())
-        
+          self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+      """  
       protokoll.pop()
       e = '\t'
       for zug in protokoll:
@@ -183,6 +183,7 @@ class Partieumgebung_v2(Partieumgebung):
         e = '\n' if e == '\t' else '\t'
       print(ergebnis)
       stellung.stellung_anzeigen()
+      """
     
     def test_starten(self):
       stellung = Stellung()

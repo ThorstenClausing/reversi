@@ -20,7 +20,7 @@ class Ergebnisspeicher:
     try:
         with zipfile.ZipFile("reversi.zip", "r") as archiv:
             for datei in dateiliste:
-                with archiv.open(datei + '.of', "r") as d:
+                with archiv.open(datei + ',of', "r") as d:
                     self.bewertung.update(pickle.load(d))
     except:
         print('Fehler beim Laden der Bewertung!')
@@ -36,10 +36,11 @@ class Ergebnisspeicher:
           with zipfile.ZipFile(
                 "reversi.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9
                 ) as archiv:
-            for i, teilbewertung in enumerate(
-                    batched(self.bewertung.items(), 20000000)):
+            i = 0
+            for teilbewertung in batched(self.bewertung.items(), 20000000):
                 with archiv.open(datei + str(i) + '.of', "w") as d:
                     pickle.dump(teilbewertung, d)
+                i += 1
 
             
   def anzahl_bewertungen(self):

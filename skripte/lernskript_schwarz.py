@@ -20,8 +20,8 @@ anzahl_partien = 100000
 anzahl_tests = 1000
 speicher = Ergebnisspeicher(True, False)
 
-#speicher.bewertung_laden()
-#print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
+speicher.bewertung_laden()
+print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Stochastischer_Spieler()
@@ -36,7 +36,7 @@ for _ in range(anzahl_tests):
     test_schwarz.test_starten()
 test_schwarz.testprotokoll_drucken()
 
-for y in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10]:
+for y in [10 for _ in range(10)]:
     spieler_schwarz.epsilonkehrwert_eingeben(y)
     #spieler_weiss.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):

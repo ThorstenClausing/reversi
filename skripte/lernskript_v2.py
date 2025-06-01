@@ -17,12 +17,12 @@ from spieler import Lernender_Spieler_v2 as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from partieumgebung import Partieumgebung_v2 as Partieumgebung
 
-anzahl_partien = 100
-anzahl_tests = 100
-anzahl_lernzyklen = 10
+anzahl_partien = 100000
+anzahl_tests = 1000
+anzahl_lernzyklen = 5
 speicher = Ergebnisspeicher(True, True)
 
-speicher.bewertung_laden()
+speicher.bewertung_laden(['reversi_v2'])
 print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 
 spieler_schwarz = Lernender_Spieler(speicher)
@@ -55,4 +55,4 @@ for _ in range(anzahl_lernzyklen):
         test_weiss.test_starten()
     test_weiss.testprotokoll_drucken()
     
-speicher.bewertung_speichern()  
+speicher.bewertung_speichern('reversi_v2_')  
