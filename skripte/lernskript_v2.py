@@ -19,11 +19,11 @@ from partieumgebung import Partieumgebung_v2 as Partieumgebung
 
 anzahl_partien = 100000
 anzahl_tests = 1000
-anzahl_lernzyklen = 5
+anzahl_lernzyklen = 10
 speicher = Ergebnisspeicher(True, True)
 
-speicher.bewertung_laden(['reversi_v2'])
-print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
+#speicher.bewertung_laden(['reversi_v2_'])
+#print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
@@ -42,7 +42,8 @@ for _ in range(anzahl_tests):
     test_weiss.test_starten()
 test_weiss.testprotokoll_drucken()
 
-for _ in range(anzahl_lernzyklen):
+for i in range(anzahl_lernzyklen):
+    print(i+1)
     for _ in range(anzahl_partien):
         partie.partie_starten()
     print('Bewertungen: ', speicher.anzahl_bewertungen())

@@ -20,7 +20,7 @@ class Stochastischer_Spieler(Spieler):
     n = self.rng.integers(len(liste_moegliche_zuege))
     return liste_moegliche_zuege[n]
 
-class Lernender_Spieler(Spieler):
+class Lernender_Spieler_v1(Spieler):
 
   def __init__(self, speicher, epsilon_kehrwert=10):
     super().__init__()
@@ -43,13 +43,13 @@ class Lernender_Spieler(Spieler):
         return liste_moegliche_zuege[n]
     else:
         beste_zuege = []
-        beste_bewertung = -65
+        beste_bewertung = 0
         for zug in liste_moegliche_zuege:
           folgestellung = stellung.copy()
           folgestellung.zug_spielen(zug)
           bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
           if bewertung is None:
-              bewertung = 10
+              bewertung = 40
           if bewertung == beste_bewertung:
               beste_zuege.append(zug)
           if bewertung > beste_bewertung:
