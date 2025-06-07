@@ -1,0 +1,14 @@
+name: stoch_vs_stoch
+on:
+  workflow_dispatch:
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/checkout@v4
+      - run: |
+              pip install numpy numba
+              python skripte/stoch_vs_stoch.py
