@@ -20,7 +20,7 @@ class Ergebnisspeicher:
     try:
         with zipfile.ZipFile("reversi.zip", "r") as archiv:
             for datei in dateiliste:
-                with archiv.open(datei + ',of', "r") as d:
+                with archiv.open(datei + '.of', "r") as d:
                     self.bewertung.update(pickle.load(d))
     except:
         print('Fehler beim Laden der Bewertung!')
