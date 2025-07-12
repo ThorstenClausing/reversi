@@ -20,7 +20,7 @@ class Stochastischer_Spieler(Spieler):
     n = self.rng.integers(len(liste_moegliche_zuege))
     return liste_moegliche_zuege[n]
 
-class Lernender_Spieler_v1(Spieler):
+class Lernender_Spieler_epsilon(Spieler):
 
   def __init__(self, speicher, epsilon_kehrwert=10):
     super().__init__()
@@ -149,7 +149,7 @@ class Minimax_Spieler(Spieler):
         n = self.rng.integers(l)
         return bester_zug[n]
 
-class Lernender_Spieler_v2(Spieler):
+class Lernender_Spieler_sigma(Spieler):
 
   def __init__(self, speicher):
     super().__init__()
