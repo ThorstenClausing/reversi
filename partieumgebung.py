@@ -7,7 +7,9 @@ ANZAHL_FELDER = BRETTGROESSE**2
 class Partieumgebung:
         
     def __init__(self,  spieler_schwarz, spieler_weiss, speicher=None):
-      super().__init__(spieler_schwarz, spieler_weiss, speicher)
+      self.spieler_schwarz = spieler_schwarz
+      self.spieler_weiss = spieler_weiss
+      self.speicher = speicher
     
     def partie_starten(self):
       stellung = Stellung()

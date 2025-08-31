@@ -14,20 +14,23 @@ import numpy as np
 import zipfile
 from bewertungsnetz import Bewertungsdaten, Bewertungsnetz
 
+print("Jetzt geht's los... ")
+
 training_liste = []
 test_liste = []
 zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("reversi.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_v1.zip", mode="r") as archiv:
     for datei in archiv.namelist():
-        if datei.endswith("20.of"):
+        if datei.endswith(".of"):
+            print("Naechste Datei")
             with archiv.open(datei, mode="r") as datei_av:
                 bewertungen = pickle.load(datei_av)
-                for stellung_bytes in bewertungen.keys():
-                    stellung = np.frombuffer(stellung_bytes, dtype=np.int8)
-                    bewertung = bewertungen[stellung_bytes][0]/bewertungen[stellung_bytes][1]
+                for tupel in bewertungen:
+                    stellung = np.frombuffer(tupel[0], dtype=np.int8)
+                    bewertung = tupel[1][0]/tupel[1][1]
                     eingabe = (torch.from_numpy(stellung)).to(torch.float32)
                     ausgabe = (torch.tensor([bewertung, ])).to(torch.float32)
                     if zaehler % 3:
@@ -37,6 +40,7 @@ with zipfile.ZipFile("reversi.zip", mode="r") as archiv:
                         durchschnitt += bewertung
                     zaehler += 1
 
+print("Alles geladen")
 durchschnitt /= len(test_liste)
 
 r_nenner = 0
@@ -64,12 +68,12 @@ def train_loop(datengeber, modell, verlustfunktion, optimizer):
         optimizer.step()
         optimizer.zero_grad()
 
-        if batch % 100 == 0:
+        if batch % 100000 == 0:
             verlust, current = verlust.item(), batch * 32 + len(X)
             print(f"Verlust: {verlust:>7f}  [{current:>5d}/{size:>5d}]")
 
 
-def test_loop(datengeber, modell, verlustfunktion):
+def test_loop(datengeber, modell, verlustfunktion, r_opt):
     modell.eval()       # Unnecessary in this situation but added for best practices
     num_batches = len(datengeber)
     test_loss, r_zaehler = 0, 0
@@ -78,21 +82,23 @@ def test_loop(datengeber, modell, verlustfunktion):
             vorhersage = modell(X)
             fehler = verlustfunktion(vorhersage, y).item()
             test_loss += fehler
-            r_zaehler += fehler*len(y)
-            
+            r_zaehler += fehler*len(y)           
                         
     test_loss /= num_batches
     r_quadrat = 1 - r_zaehler/r_nenner
+    if r_quadrat > r_opt:
+        r_opt = r_quadrat
+        torch.save(modell.state_dict(), 'gewichte_v1')
     print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
+    return r_opt
 
 optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)
-epochen = 20
+epochen = 5
+r_opt = 0
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
     train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
-    test_loop(test_datengeber, modell, nn.MSELoss())
-
-torch.save(modell.state_dict(), 'gewichte')
+    r_opt = test_loop(test_datengeber, modell, nn.MSELoss(), r_opt)
 
 print("Ende")
 
