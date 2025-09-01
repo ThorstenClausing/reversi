@@ -17,7 +17,7 @@ from bewertungsnetz import Bewertungsnetz
 from spieler import Optimierender_Spieler, Minimax_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 100
+anzahl_tests = 1000
 speicher = Bewertungsnetz()
 
 speicher.load_state_dict(torch.load("skripte/gewichte_v1"))
