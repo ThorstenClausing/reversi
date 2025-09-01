@@ -20,7 +20,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 100
 speicher = Bewertungsnetz()
 
-speicher.load_state_dict(torch.load("gewichte_v1"))
+speicher.load_state_dict(torch.load("skripte/gewichte_v1"))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
