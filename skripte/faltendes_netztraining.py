@@ -74,6 +74,7 @@ def train_loop(datengeber, modell, verlustfunktion, optimizer):
         if batch % 100000 == 0:
             verlust, current = verlust.item(), batch * 32 + len(X)
             print(f"Verlust: {verlust:>7f}  [{current:>5d}/{size:>5d}]")
+    return verlust
 
 
 def test_loop(datengeber, modell, verlustfunktion, r_opt):
@@ -97,12 +98,15 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     return r_opt
 
 optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)
-epochen = 1
+epochen = 5
 r_opt = 0.0
 verlustfunktion = nn.MSELoss()
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
-    train_loop(training_datengeber, modell, verlustfunktion, optimierer)
+    verlust = train_loop(training_datengeber, modell, verlustfunktion, optimierer)
     r_opt = test_loop(test_datengeber, modell, verlustfunktion, r_opt)
     
 print("Bester Bestimmtheitswert: ", r_opt)
+torch.save({'epoch': epochen, 'model_state_dict': modell.state_dict(), 
+                  'optimizer_state_dict': optimierer.state_dict(),
+                  'loss': verlust}, 'trainingsstand')
