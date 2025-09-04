@@ -13,4 +13,4 @@ jobs:
           lfs: true
       - run: |
               pip install numpy numba torch tensordict
-              python skripte/testskript_minimax_netz_v1.py
+              python skripte/testskript_minimax_netz.py
