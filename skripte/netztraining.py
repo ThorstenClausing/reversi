@@ -22,7 +22,7 @@ zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("../daten/reversi_v1.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_v2.zip", mode="r") as archiv:
     for datei in archiv.namelist():
         if datei.endswith(".of"):
             print("Naechste Datei")
@@ -88,7 +88,7 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     r_quadrat = 1 - r_zaehler/r_nenner
     if r_quadrat > r_opt:
         r_opt = r_quadrat
-        torch.save(modell.state_dict(), 'gewichte_v1')
+        torch.save(modell.state_dict(), 'gewichte_v2')
     print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
     return r_opt
 
