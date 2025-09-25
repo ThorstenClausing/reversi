@@ -12,6 +12,7 @@ import pickle
 import random
 import numpy as np
 import zipfile
+import gc
 from bewertungsnetz import Bewertungsdaten, Faltendes_Bewertungsnetz
 
 print("Jetzt geht's los... ")
@@ -22,8 +23,9 @@ zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("../daten/reversi_v1.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_v2.zip", mode="r") as archiv:
     for datei in archiv.namelist():
+        print(datei)
         with archiv.open(datei, mode="r") as offene_datei:
             bewertungen = dict(pickle.load(offene_datei))
             for stellung_bytes in bewertungen.keys():
@@ -43,6 +45,8 @@ with zipfile.ZipFile("../daten/reversi_v1.zip", mode="r") as archiv:
                     test_liste.append((eingabe, ausgabe))
                     durchschnitt += bewertung
                 zaehler += 1
+del bewertungen
+gc.collect()
 
 durchschnitt /= len(test_liste)
 print('Daten geladen: ', len(test_liste) + len(training_liste))
@@ -94,7 +98,7 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     
     if r_quadrat > r_opt:
         r_opt = r_quadrat
-        torch.save(modell.state_dict(), 'faltende_gewichte_v1')
+        torch.save(modell.state_dict(), 'faltende_gewichte_v2')
     return r_opt
 
 optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)

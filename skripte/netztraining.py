@@ -12,6 +12,7 @@ import pickle
 import random
 import numpy as np
 import zipfile
+import gc
 from bewertungsnetz import Bewertungsdaten, Bewertungsnetz
 
 print("Jetzt geht's los... ")
@@ -22,10 +23,10 @@ zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("../daten/reversi_v2.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_weiss.zip", mode="r") as archiv:
     for datei in archiv.namelist():
         if datei.endswith(".of"):
-            print("Naechste Datei")
+            print(datei)
             with archiv.open(datei, mode="r") as datei_av:
                 bewertungen = pickle.load(datei_av)
                 for tupel in bewertungen:
@@ -41,6 +42,9 @@ with zipfile.ZipFile("../daten/reversi_v2.zip", mode="r") as archiv:
                     zaehler += 1
 
 print("Alles geladen")
+del bewertungen
+gc.collect()
+
 durchschnitt /= len(test_liste)
 
 r_nenner = 0
@@ -88,11 +92,13 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     r_quadrat = 1 - r_zaehler/r_nenner
     if r_quadrat > r_opt:
         r_opt = r_quadrat
-        torch.save(modell.state_dict(), 'gewichte_v2')
+        torch.save(modell.state_dict(), 'gewichte_weiss')
     print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
     return r_opt
 
-optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)
+optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
+# Original (vor 21.09.2025): Adam(modell.parameters(), lr=0.001)
+print("optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)")
 epochen = 5
 r_opt = 0
 for t in range(epochen):
@@ -100,5 +106,6 @@ for t in range(epochen):
     train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)
     r_opt = test_loop(test_datengeber, modell, nn.MSELoss(), r_opt)
 
+print("Bester Bestimmtheitswert: ", r_opt)       
 print("Ende")
 

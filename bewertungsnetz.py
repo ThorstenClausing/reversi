@@ -65,6 +65,39 @@ class Bewertungsnetz(nn.Module):
               bewertungen=(torch.from_numpy(np.array(liste_bewertungen))).to(torch.float32), 
               batch_size=[len(liste_stellungen)])
       self.replay_buffer.extend(data)
+      
+class Grosses_Bewertungsnetz(Bewertungsnetz):
+    
+    def __init__(self, replay_buffer=None):
+        super().__init__(replay_buffer)
+        self.innere_schicht_eins = nn.Linear(64, 128)
+        self.innere_schicht_zwei = nn.Linear(128, 96)
+        self.innere_schicht_drei = nn.Linear(96, 64)
+        self.ausgabeschicht = nn.Linear(64, 1)
+        self.aktivierung_drei = nn.Tanh()
+        nn.init.xavier_uniform_(
+            self.innere_schicht_eins.weight)
+        nn.init.xavier_uniform_(
+            self.innere_schicht_zwei.weight)
+        nn.init.xavier_uniform_(
+            self.innere_schicht_drei.weight)
+        nn.init.xavier_uniform_(
+            self.ausgabeschicht.weight)
+        nn.init.zeros_(self.innere_schicht_eins.bias)
+        nn.init.zeros_(self.innere_schicht_zwei.bias)
+        nn.init.zeros_(self.innere_schicht_drei.bias)
+        nn.init.zeros_(self.ausgabeschicht.bias)
+                
+    def forward(self, x):
+        z = self.flatten(x)
+        z = self.innere_schicht_eins(z)
+        z = self.aktivierung_eins(z)
+        z = self.innere_schicht_zwei(z)
+        z = self.aktivierung_zwei(z)
+        z = self.innere_schicht_drei(z)
+        z = self.aktivierung_drei(z)
+        bewertung = self.ausgabeschicht(z)
+        return bewertung
 
 class Bewertungsdaten(Dataset):
     def __init__(self, liste):
