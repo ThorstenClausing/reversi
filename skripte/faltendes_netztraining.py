@@ -104,7 +104,7 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
 optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
 print("optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)")
 epochen = 5
-r_opt = 0.29187287396281547
+r_opt = 0.0
 verlustfunktion = nn.MSELoss()
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
