@@ -23,7 +23,7 @@ zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("../daten/reversi_weiss.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_schwarz.zip", mode="r") as archiv:
     for datei in archiv.namelist():
         if datei.endswith(".of"):
             print(datei)
@@ -41,7 +41,7 @@ with zipfile.ZipFile("../daten/reversi_weiss.zip", mode="r") as archiv:
                         durchschnitt += bewertung
                     zaehler += 1
 
-print("Alles geladen")
+print('Daten geladen: ', len(test_liste) + len(training_liste))
 del bewertungen
 gc.collect()
 
@@ -92,7 +92,7 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     r_quadrat = 1 - r_zaehler/r_nenner
     if r_quadrat > r_opt:
         r_opt = r_quadrat
-        torch.save(modell.state_dict(), 'gewichte_weiss')
+        torch.save(modell.state_dict(), 'gewichte_schwarz')
     print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
     return r_opt
 
@@ -100,7 +100,7 @@ optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
 # Original (vor 21.09.2025): Adam(modell.parameters(), lr=0.001)
 print("optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)")
 epochen = 5
-r_opt = 0
+r_opt = 0.0
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
     train_loop(training_datengeber, modell, nn.MSELoss(), optimierer)

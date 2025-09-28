@@ -23,7 +23,7 @@ zaehler = 0
 bewertungen = {}
 durchschnitt = 0
 
-with zipfile.ZipFile("../daten/reversi_v2.zip", mode="r") as archiv:
+with zipfile.ZipFile("../daten/reversi_schwarz.zip", mode="r") as archiv:
     for datei in archiv.namelist():
         print(datei)
         with archiv.open(datei, mode="r") as offene_datei:
@@ -98,12 +98,13 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
     
     if r_quadrat > r_opt:
         r_opt = r_quadrat
-        torch.save(modell.state_dict(), 'faltende_gewichte_v2')
+        torch.save(modell.state_dict(), 'faltende_gewichte_schwarz')
     return r_opt
 
-optimierer = torch.optim.Adam(modell.parameters(), lr=0.001)
+optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
+print("optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)")
 epochen = 5
-r_opt = 0.0
+r_opt = 0.29187287396281547
 verlustfunktion = nn.MSELoss()
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
@@ -114,3 +115,4 @@ print("Bester Bestimmtheitswert: ", r_opt)
 torch.save({'epoch': epochen, 'model_state_dict': modell.state_dict(), 
                   'optimizer_state_dict': optimierer.state_dict(),
                   'loss': verlust}, 'trainingsstand')
+print("Ende")
