@@ -20,7 +20,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 1000
 speicher = Faltendes_Bewertungsnetz()
 
-speicher.load_state_dict(torch.load("skripte/faltende_gewichte_v1"))
+speicher.load_state_dict(torch.load("Gewichte/faltende_gewichte_v1_"))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
@@ -35,4 +35,5 @@ test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 test_weiss.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_weiss.test_starten()
+print("Test weiß:")
 test_weiss.testprotokoll_drucken()
