@@ -44,7 +44,7 @@ class Bewertungsnetz(nn.Module):
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
         ausgabe = self.forward(self.flatten(eingabe)).item()
         del eingabe
-        return ausgabe
+        return round(ausgabe, 2)
     
     def bewertung_aktualisieren(self, protokoll):
       stellung = Stellung()
@@ -148,4 +148,4 @@ class Faltendes_Bewertungsnetz(nn.Module):
         eingabe = (torch.tensor([stellung_drei_kanaele,])).to(torch.float32)
         ausgabe = self.forward(eingabe).item()
         del eingabe
-        return ausgabe
+        return round(ausgabe, 2)
