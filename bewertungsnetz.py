@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data import Dataset
 import numpy as np
-from spiellogik import Stellung, BRETTGROESSE
+from spiellogik import Stellung, BRETTGROESSE, als_kanonische_stellung
 from tensordict import tensorclass
 
 
@@ -40,7 +40,10 @@ class Bewertungsnetz(nn.Module):
         bewertung = self.ausgabeschicht(z)
         return bewertung
     
-    def bewertung_geben(self, stellung):
+    def bewertung_geben(self, stellung, kanonisch=True):
+        if kanonisch:
+            stellung = als_kanonische_stelung(stellung)
+            stellung = np.frombuffer(stellung).resize(BRETTGROESSE, BRETTGROESSE)
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
         ausgabe = self.forward(self.flatten(eingabe)).item()
         del eingabe
@@ -140,7 +143,10 @@ class Faltendes_Bewertungsnetz(nn.Module):
         bewertung = self.ausgabeschicht(z)
         return bewertung
     
-    def bewertung_geben(self, stellung):
+    def bewertung_geben(self, stellung, kanonisch=True):
+        if kanonisch:
+            stellung = als_kanonische_stelung(stellung)
+            stellung = np.frombuffer(stellung).resize(BRETTGROESSE, BRETTGROESSE)
         stellung_plus = np.maximum(stellung, 0)
         stellung_minus = np.maximum(-1*stellung, 0)
         stellung_leer = 1 - stellung_plus - stellung_minus
