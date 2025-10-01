@@ -45,10 +45,10 @@ class Bewertungsnetz(nn.Module):
             print(stellung)
             stellung = als_kanonische_stellung(stellung)
             print(stellung)
-            stellung = np.frombuffer(stellung)
+            stellung = np.frombuffer(stellung, dtype=int)
             print(stellung)
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
-        ausgabe = self.forward(self.flatten(eingabe)).item()
+        ausgabe = self.forward(eingabe).item()
         del eingabe
         return ausgabe
     
