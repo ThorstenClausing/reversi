@@ -42,14 +42,10 @@ class Bewertungsnetz(nn.Module):
     
     def bewertung_geben(self, stellung, kanonisch=True):
         if kanonisch:
-            print(stellung)
             stellung = als_kanonische_stellung(stellung)
-            print(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8)
-            print(stellung)
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
         ausgabe = self.forward(eingabe).item()
-        del eingabe
         return ausgabe
     
     def bewertung_aktualisieren(self, protokoll):
@@ -149,7 +145,7 @@ class Faltendes_Bewertungsnetz(nn.Module):
     def bewertung_geben(self, stellung, kanonisch=True):
         if kanonisch:
             stellung = als_kanonische_stellung(stellung)
-            stellung = np.frombuffer(stellung)
+            stellung = np.frombuffer(stellung, dtype=np.int8).reshape(BRETTGROESSE, BRETTGROESSE)
         stellung_plus = np.maximum(stellung, 0)
         stellung_minus = np.maximum(-1*stellung, 0)
         stellung_leer = 1 - stellung_plus - stellung_minus
