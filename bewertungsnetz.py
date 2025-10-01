@@ -42,8 +42,11 @@ class Bewertungsnetz(nn.Module):
     
     def bewertung_geben(self, stellung, kanonisch=True):
         if kanonisch:
+            print(stellung)
             stellung = als_kanonische_stellung(stellung)
+            print(stellung)
             stellung = np.frombuffer(stellung)
+            print(stellung)
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
         ausgabe = self.forward(self.flatten(eingabe)).item()
         del eingabe
