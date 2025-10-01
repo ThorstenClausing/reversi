@@ -20,7 +20,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 1000
 speicher = Bewertungsnetz()
 
-speicher.load_state_dict(torch.load("../Gewichte/gewichte_weiss", weights_only=True))
+speicher.load_state_dict(torch.load("../Gewichte/gewichte_v1_", weights_only=True))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
@@ -31,10 +31,10 @@ test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
-print("Test schwarz:")
+print("Test schwarz (V1[kanonisch]):")
 test_schwarz.testprotokoll_drucken()
 test_weiss.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_weiss.test_starten()
-print("Test weiß:")
+print("Test weiß (V1[kanonisch]):")
 test_weiss.testprotokoll_drucken()
