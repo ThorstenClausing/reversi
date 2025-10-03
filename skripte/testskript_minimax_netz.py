@@ -25,16 +25,16 @@ print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
 spieler_stoch = Minimax_Spieler()
-#test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
-test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
+test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
+#test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 
-#test_schwarz.testprotokoll_zuruecksetzen()
-#for _ in range(anzahl_tests):
-#    test_schwarz.test_starten()
-#print("Test schwarz (V1[kanonisch]):")
-#test_schwarz.testprotokoll_drucken()
-test_weiss.testprotokoll_zuruecksetzen()
+test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
-    test_weiss.test_starten()
-print("Test weiß (Weiss[kanonisch]):")
-test_weiss.testprotokoll_drucken()
+    test_schwarz.test_starten()
+print("Test schwarz (Weiss[kanonisch]):")
+test_schwarz.testprotokoll_drucken()
+#test_weiss.testprotokoll_zuruecksetzen()
+#for _ in range(anzahl_tests):
+#    test_weiss.test_starten()
+#print("Test weiß (Weiss[kanonisch]):")
+#test_weiss.testprotokoll_drucken()
