@@ -12,7 +12,8 @@ class MyData:
     bewertungen: torch.Tensor
 
 class Bewertungsnetz(nn.Module):
-    def __init__(self, replay_buffer=None):
+    
+    def __init__(self, kanonisch = True, replay_buffer=None):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
@@ -29,6 +30,7 @@ class Bewertungsnetz(nn.Module):
         nn.init.zeros_(self.innere_schicht_eins.bias)
         nn.init.zeros_(self.innere_schicht_zwei.bias)
         nn.init.zeros_(self.ausgabeschicht.bias)
+        self.kanonisch = kanonisch
         self.replay_buffer = replay_buffer
 
     def forward(self, x):
@@ -40,8 +42,8 @@ class Bewertungsnetz(nn.Module):
         bewertung = self.ausgabeschicht(z)
         return bewertung
     
-    def bewertung_geben(self, stellung, kanonisch=True):
-        if kanonisch:
+    def bewertung_geben(self, stellung):
+        if self.kanonisch:
             stellung = als_kanonische_stellung(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8)
         eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
@@ -112,7 +114,8 @@ class Bewertungsdaten(Dataset):
         return self.liste[idx][0], self.liste[idx][1]
 
 class Faltendes_Bewertungsnetz(nn.Module):
-    def __init__(self):
+    
+    def __init__(self, kanonisch=True):
         super(Faltendes_Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Conv2d(3, 9, kernel_size=3, padding=1, groups=3)
         self.innere_schicht_zwei = nn.Conv2d(9, 9, kernel_size=3, padding=1, groups=3)
@@ -130,6 +133,7 @@ class Faltendes_Bewertungsnetz(nn.Module):
         nn.init.zeros_(self.innere_schicht_zwei.bias)
         nn.init.zeros_(self.innere_schicht_drei.bias)
         nn.init.zeros_(self.ausgabeschicht.bias)
+        self.kanonisch = kanonisch
 
     def forward(self, x):
         z = self.innere_schicht_eins(x)
@@ -142,8 +146,8 @@ class Faltendes_Bewertungsnetz(nn.Module):
         bewertung = self.ausgabeschicht(z)
         return bewertung
     
-    def bewertung_geben(self, stellung, kanonisch=True):
-        if kanonisch:
+    def bewertung_geben(self, stellung):
+        if self.kanonisch:
             stellung = als_kanonische_stellung(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8).reshape(BRETTGROESSE, BRETTGROESSE)
         stellung_plus = np.maximum(stellung, 0)
