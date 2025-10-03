@@ -13,7 +13,7 @@ class MyData:
 
 class Bewertungsnetz(nn.Module):
     
-    def __init__(self, kanonisch = True, replay_buffer=None):
+    def __init__(self, kanonisch=True, replay_buffer=None):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
