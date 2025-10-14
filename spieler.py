@@ -210,23 +210,22 @@ class Alpha_Beta_Spieler(Spieler):
         return beste_zuege[n]
 
   def _minimax(self, stellung, tiefe, alpha, beta, gepasst):
-    if tiefe == 0 or stellung. np.count_nonzero(stellung) == ANZAHL_FELDER:
-      return stellung.sum() if self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
+    if tiefe == 0 or np.count_nonzero(stellung) == ANZAHL_FELDER:
+      return stellung.sum() if (self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
       if gepasst:
-        return stellung.sum() if self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
+        return stellung.sum() if (self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
       else:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(None)
         return self._minimax(naechste_stellung, tiefe - 1, alpha, beta, True)
     if (self.tiefe - tiefe) % 2 == 0:
-      # This node represents a maximizing player's turn (our turn).
+      # Der Alpha_Beta_Spieler (= MAximierer) ist am Zug.
       max_wert = -65
       for zug in liste_moegliche_zuege:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(zug)
-        # Recursive call: The next turn is for the opponent (minimizing player).
         wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
         max_wert = max(max_wert, wert)
         alpha = max(alpha, max_wert) # Update alpha (best score for maximizing player so far)
@@ -238,12 +237,11 @@ class Alpha_Beta_Spieler(Spieler):
           break
       return max_wert
     else:
-      # This node represents a minimizing player's turn (opponent's turn).
+      # Der Gegenspieler (= Minimierer) ist am Zug.
       min_wert = 65
-      for move in possible_moves:
+      for zug in liste_moegliche_zuege:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(zug)
-        # Recursive call: The next turn is for our player (maximizing player).
         wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
         min_wert = min(min_wert, wert)
         beta = min(beta, min_wert) # Update beta (best score for minimizing player so far)
