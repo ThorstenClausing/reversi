@@ -1,5 +1,8 @@
 import numpy as np
 from abc import ABC, abstractmethod
+from spiellogik import Stellung, BRETTGROESSE
+
+ANZAHL_FELDER = BRETTGROESSE**2
 
 class Spieler(ABC):
 
