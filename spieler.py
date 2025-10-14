@@ -221,7 +221,7 @@ class Alpha_Beta_Spieler(Spieler):
         naechste_stellung.zug_spielen(None)
         return self._minimax(naechste_stellung, tiefe - 1, alpha, beta, True)
     if (self.tiefe - tiefe) % 2 == 0:
-      # Der Alpha_Beta_Spieler (= MAximierer) ist am Zug.
+      # Der Alpha_Beta_Spieler (= Maximierer) ist am Zug.
       max_wert = -65
       for zug in liste_moegliche_zuege:
         naechste_stellung = stellung.copy()
