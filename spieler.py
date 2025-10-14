@@ -175,3 +175,81 @@ class Lernender_Spieler_sigma(Spieler):
     p = p / np.sum(p, dtype=float)
     n = self.rng.choice(l, p=p)
     return liste_moegliche_zuege[n]
+
+class Alpha_Beta_Spieler(Spieler):
+
+  def __init__(self, tiefe):
+    super().__init__()
+    self.rng = np.random.default_rng()
+    self.tiefe = tiefe
+
+  def zug_waehlen(self, stellung):
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
+      return None
+    if len(liste_moegliche_zuege) == 1:
+      return liste_moegliche_zuege[0]
+    bester_wert = -65  
+    beste_zuege = []
+    for zug in liste_moegliche_zuege:
+      naechste_stellung = stellung.copy()
+      naechste_stellung.zug_spielen(zug)
+      wert = self._minimax(naechste_stellung, self.tiefe - 1, -65, 65, False)
+      if wert > bester_wert:
+        bester_wert = wert
+        beste_zuege = [zug]
+      elif wert == bester_wert:
+        beste_zuege.append(zug)
+    if (l := len(beste_zuege)) == 1: 
+        return beste_zuege[0]
+    else:
+        n = self.rng.integers(l)
+        return beste_zuege[n]
+
+  def _minimax(self, stellung, tiefe, alpha, beta, gepasst):
+    if tiefe == 0 or stellung. == 64:
+      return stellung.sum() # -1*?
+    liste_moegliche_zuege = stellung.moegliche_zuege()
+    if not liste_moegliche_zuege:
+      if gepasst:
+        return stellung.sum() # -1*?
+      else:
+        naechste_stellung = stellung.copy()
+        naechste_stellung.zug_spielen(None)
+        return self._minimax(naechste_stellung, tiefe - 1, alpha, beta, True)
+    if (self.tiefe - tiefe) % 2 == 0:
+      # This node represents a maximizing player's turn (our turn).
+      max_wert = -65
+      for zug in liste_moegliche_zuege:
+        naechste_stellung = stellung.copy()
+        naechste_stellung.zug_spielen(zug)
+        # Recursive call: The next turn is for the opponent (minimizing player).
+        wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
+        max_wert = max(max_wert, wert)
+        alpha = max(alpha, max_wert) # Update alpha (best score for maximizing player so far)
+        if beta <= alpha:
+          # Alpha-Beta Pruning: If the current maximizing player's alpha value is already
+          # greater than or equal to the minimizing player's beta value, it means
+          # the minimizing player would never allow the game to reach this state
+          # because they already have a better option. So, we can prune this branch.
+          break
+      return max_wert
+    else:
+      # This node represents a minimizing player's turn (opponent's turn).
+      min_eval = math.inf
+      for move in possible_moves:
+        temp_stellung = stellung.copy()
+        temp_stellung.zug_spielen(move)
+        # Recursive call: The next turn is for our player (maximizing player).
+        eval = self._minimax(temp_stellung, depth - 1, alpha, beta, True)
+        min_eval = min(min_eval, eval)
+        beta = min(beta, min_eval) # Update beta (best score for minimizing player so far)
+        if beta <= alpha:
+          # Alpha-Beta Pruning: If the current minimizing player's beta value is already
+          # less than or equal to the maximizing player's alpha value, it means
+          # the maximizing player would never allow the game to reach this state
+          # because they already have a better option. Prune this branch.
+          break
+      return min_eval
+      
+  
