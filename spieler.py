@@ -1,6 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from spiellogik import Stellung, BRETTGROESSE
+from spiellogik import BRETTGROESSE
 
 ANZAHL_FELDER = BRETTGROESSE**2
 
