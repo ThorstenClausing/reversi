@@ -207,7 +207,7 @@ class Alpha_Beta_Spieler(Spieler):
         return beste_zuege[n]
 
   def _minimax(self, stellung, tiefe, alpha, beta, gepasst):
-    if tiefe == 0 or stellung. == 64:
+    if tiefe == 0 or stellung. np.count_nonzero(stellung) == ANZAHL_FELDER:
       return stellung.sum() if self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
