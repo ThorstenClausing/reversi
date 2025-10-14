@@ -208,11 +208,11 @@ class Alpha_Beta_Spieler(Spieler):
 
   def _minimax(self, stellung, tiefe, alpha, beta, gepasst):
     if tiefe == 0 or stellung. == 64:
-      return stellung.sum() # -1*?
+      return stellung.sum() if self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
       if gepasst:
-        return stellung.sum() # -1*?
+        return stellung.sum() if self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
       else:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(None)
@@ -236,20 +236,20 @@ class Alpha_Beta_Spieler(Spieler):
       return max_wert
     else:
       # This node represents a minimizing player's turn (opponent's turn).
-      min_eval = math.inf
+      min_wert = 65
       for move in possible_moves:
-        temp_stellung = stellung.copy()
-        temp_stellung.zug_spielen(move)
+        naechste_stellung = stellung.copy()
+        naechste_stellung.zug_spielen(zug)
         # Recursive call: The next turn is for our player (maximizing player).
-        eval = self._minimax(temp_stellung, depth - 1, alpha, beta, True)
-        min_eval = min(min_eval, eval)
-        beta = min(beta, min_eval) # Update beta (best score for minimizing player so far)
+        wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
+        min_wert = min(min_wert, wert)
+        beta = min(beta, min_wert) # Update beta (best score for minimizing player so far)
         if beta <= alpha:
           # Alpha-Beta Pruning: If the current minimizing player's beta value is already
           # less than or equal to the maximizing player's alpha value, it means
           # the maximizing player would never allow the game to reach this state
           # because they already have a better option. Prune this branch.
           break
-      return min_eval
+      return min_wert
       
   
