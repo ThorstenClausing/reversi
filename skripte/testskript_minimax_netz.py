@@ -14,7 +14,7 @@ sys.path.append(parent)
 
 import torch
 from bewertungsnetz import Bewertungsnetz
-from spieler import Optimierender_Spieler, Minimax_Spieler
+from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
 anzahl_tests = 1000
@@ -24,7 +24,8 @@ speicher.load_state_dict(torch.load("Gewichte/gewichte_v2", weights_only=True))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
-spieler_stoch = Minimax_Spieler()
+spieler_stoch = Alpha_Beta_Spieler(6)
+print("Alpha-Beta-Tiefe 6")
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 #test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 
