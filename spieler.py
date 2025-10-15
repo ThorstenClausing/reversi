@@ -211,6 +211,17 @@ class Alpha_Beta_Spieler(Spieler):
 
   def _minimax(self, stellung, tiefe, alpha, beta, gepasst):
     if tiefe == 0 or np.count_nonzero(stellung) == ANZAHL_FELDER:
+      # Die Bewertung einer Stellung erfolgt immer aus Sicht des Alpha_Beta_Spielers,
+      # d.h. sie gibt an, wie viele Steine er mehr hat als der Gegenspieler. Der
+      # Alpha_Beta_Spieler versucht also, die Bewertung zu maximieren, der Gegenspieler
+      # versucht, sie zu minimieren.
+      # Nach einer geraden Anzahl von Zügen (= Differenz zwischen self.tiefe und tiefe)
+      # ist der Alpha_Beta_Spieler am Zug, seine Steine sind also in der Stellung
+      # mit 1 markiert, die Summe aller Steine (= Matrixwerte der Stellung) gibt
+      # die Bewertung daher korrekt an.
+      # Nach einer ungeraden Anzahl von Zügen ist der gegenspieler am Zug, für eine 
+      # Bewertung aus Sicht des Alpha_Beta_Spielers muss die Summe aller Steine
+      # daher mit -1 multipliziert werden.
       return stellung.sum() if (self.tiefe - tiefe) % 2 == 0 else -1*stellung.sum()
     liste_moegliche_zuege = stellung.moegliche_zuege()
     if not liste_moegliche_zuege:
