@@ -197,7 +197,8 @@ class Alpha_Beta_Spieler(Spieler):
     for zug in liste_moegliche_zuege:
       naechste_stellung = stellung.copy()
       naechste_stellung.zug_spielen(zug)
-      wert = self._minimax(naechste_stellung, self.tiefe - 1, -65, 65, False)
+      wert = self._minimax(
+        naechste_stellung, self.tiefe - 1, -1*ANZAHL_FELDER, ANZAHL_FELDER, False)
       if wert > bester_wert:
         bester_wert = wert
         beste_zuege = [zug]
@@ -233,34 +234,40 @@ class Alpha_Beta_Spieler(Spieler):
         return self._minimax(naechste_stellung, tiefe - 1, alpha, beta, True)
     if (self.tiefe - tiefe) % 2 == 0:
       # Der Alpha_Beta_Spieler (= Maximierer) ist am Zug.
-      max_wert = -65
+      max_wert = -1*ANZAHL_FELDER
       for zug in liste_moegliche_zuege:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(zug)
         wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
         max_wert = max(max_wert, wert)
-        alpha = max(alpha, max_wert) # Update alpha (best score for maximizing player so far)
+        # Alpha-Wert (= der beste Wert, den der Maximierer in den bisher ausgewerteten
+        # Spielverläufen garantieren kann) aktualisieren:
+        alpha = max(alpha, max_wert) 
         if beta <= alpha:
-          # Alpha-Beta Pruning: If the current maximizing player's alpha value is already
-          # greater than or equal to the minimizing player's beta value, it means
-          # the minimizing player would never allow the game to reach this state
-          # because they already have a better option. So, we can prune this branch.
+          # Alpha-Beta Pruning: Wenn der Alpha-Wert im aktuellen Teilspielbaum größer
+          # ist als der Beta-Wert, den der Minimierer in den schon ausgewerteten
+          # Teilspielbäumen garantieren kann, wird der Minimierer das Erreichen des
+          # aktuellen Teilspielbaums verhindern. Er braucht daher nicht weiter
+          # ausgewertet zu werden.
           break
       return max_wert
     else:
       # Der Gegenspieler (= Minimierer) ist am Zug.
-      min_wert = 65
+      min_wert = ANZAHL_FELDER
       for zug in liste_moegliche_zuege:
         naechste_stellung = stellung.copy()
         naechste_stellung.zug_spielen(zug)
         wert = self._minimax(naechste_stellung, tiefe - 1, alpha, beta, False)
         min_wert = min(min_wert, wert)
-        beta = min(beta, min_wert) # Update beta (best score for minimizing player so far)
+        # Beta-Wert (= der beste Wert, den der Minimierer in den bisher ausgewerteten
+        # Spielverläufen garantieren kann) aktualisieren:
+        beta = min(beta, min_wert)
         if beta <= alpha:
-          # Alpha-Beta Pruning: If the current minimizing player's beta value is already
-          # less than or equal to the maximizing player's alpha value, it means
-          # the maximizing player would never allow the game to reach this state
-          # because they already have a better option. Prune this branch.
+          # Alpha-Beta Pruning: Wenn der Beta-Wert im aktuellen Teilspielbaum kleiner
+          # ist als der Alpha-Wert, den der Maximierer in den schon ausgewerteten
+          # Teilspielbäumen garantieren kann, wird der Maximierer das Erreichen des
+          # aktuellen Teilspielbaums vemhindern. Er braucht daher nicht weiter
+          # ausgewertet zu werden.
           break
       return min_wert
       
