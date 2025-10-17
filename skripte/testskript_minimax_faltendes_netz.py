@@ -14,27 +14,30 @@ sys.path.append(parent)
 
 import torch
 from bewertungsnetz import Faltendes_Bewertungsnetz
-from spieler import Optimierender_Spieler, Minimax_Spieler
+from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 1000
+anzahl_tests = 200
 speicher = Faltendes_Bewertungsnetz()
 
-speicher.load_state_dict(torch.load("Gewichte/faltende_gewichte_v1_"))
+variante = "v2"
+speicher.load_state_dict(torch.load("Gewichte/faltende_gewichte_" + variante))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
-spieler_stoch = Minimax_Spieler()
-test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
-#test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
+tiefe = 6
+spieler_minimax = Alpha_Beta_Spieler(tiefe)
+print("Alpha-Beta-Tiefe ", tiefe)
+test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
+#test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
-print("Test schwarz (Gewichte V1[k]):")
+print("Test schwarz (Gewichte ", variante, "[k]):")
 test_schwarz.testprotokoll_drucken()
 #test_weiss.testprotokoll_zuruecksetzen()
 #for _ in range(anzahl_tests):
 #    test_weiss.test_starten()
-#print("Test weiß (Gewichte Weiss[k]):")
+#print("Test weiß (Gewichte ", variante, "[k]):")
 #test_weiss.testprotokoll_drucken()
