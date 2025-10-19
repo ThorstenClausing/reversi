@@ -17,15 +17,15 @@ from bewertungsnetz import Bewertungsnetz
 from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 50
+anzahl_tests = 200
 speicher = Bewertungsnetz()
 
-variante = "v2"
-speicher.load_state_dict(torch.load("../Gewichte/gewichte_" + variante, weights_only=True))
+variante = "weiss" # Auswahl: v1_, v2, schwarz, weiss
+speicher.load_state_dict(torch.load("Gewichte/gewichte_" + variante, weights_only=True))
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
-tiefe = 8
+tiefe = 6
 spieler_minimax = Alpha_Beta_Spieler(tiefe)
 print("Alpha-Beta-Tiefe ", tiefe, sep='')
 #test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
