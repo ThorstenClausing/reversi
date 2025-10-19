@@ -1,4 +1,4 @@
-name: testskript_minimax_netz_v1
+name: testskript_minimax_netz
 on:
   workflow_dispatch:
 jobs:
