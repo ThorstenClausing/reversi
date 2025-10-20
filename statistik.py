@@ -28,6 +28,7 @@ class Statistikumgebung:
         max_passen = 0
         min_passen = 100
         sum_passen = 0
+        sum_kanonisch = 0
         for _ in range(anzahl_partien):
             stellung = Stellung()
             stellung.grundstellung()
@@ -64,6 +65,8 @@ class Statistikumgebung:
                     keine_zugmoeglichkeit = False 
                 stellung.zug_spielen(zug)
                 schluessel = kodieren(stellung)
+                if schluessel == stellung.tobytes():
+                    sum_kanonisch += 1
                 if schluessel not in stellungen.keys():
                     stellungen[schluessel] = [naechster]
                 elif naechster not in stellungen[schluessel]:
@@ -83,7 +86,8 @@ class Statistikumgebung:
                     break       
                 # Am Ende der Schleife entspricht zug_nummer der Anzahl der tatsächlich
                 # gespielten Züge
-        print("Summe aller Züge:", sum_laenge)
+        print("Anzahl aller Züge:", sum_laenge)
+        print("Anzahl aller original kanonischen Stellungen:", sum_kanonisch)
         print("Kürzeste Partie:", min_laenge)
         print("Längste Partie:", max_laenge)
         print("Frühestes Passen:", fruehestes_passen)
