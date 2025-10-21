@@ -16,7 +16,7 @@ from statistik import Statistikumgebung
 
 spieler_schwarz = Stochastischer_Spieler()
 spieler_weiss = Stochastischer_Spieler()
-statistik = Statistikumgebung(spieler_schwarz, spieler_weiss)
+statistiker = Statistikumgebung(spieler_schwarz, spieler_weiss)
 anzahl_partien = 1000000
 
-statistik.partien_starten(anzahl_partien)
+statistiker.partien_starten(anzahl_partien)
