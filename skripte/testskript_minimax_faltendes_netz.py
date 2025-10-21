@@ -20,7 +20,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 200
 speicher = Faltendes_Bewertungsnetz()
 
-variante = "schwarz" # Auswahl: v1_, v2, schwarz, weiss
+variante = "v1_" # Auswahl: v1_, v2, schwarz, weiss
 speicher.load_state_dict(torch.load("Gewichte/faltende_gewichte_" + variante))
 print('Gewichte geladen.')
 
