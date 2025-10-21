@@ -12,7 +12,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from spieler import Stochastischer_Spieler
-from partieumgebung import Statistikumgebung
+from statistik import Statistikumgebung
 
 spieler_schwarz = Stochastischer_Spieler()
 spieler_weiss = Stochastischer_Spieler()
