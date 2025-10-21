@@ -17,6 +17,7 @@ class Statistikumgebung:
       
     def partien_starten(self, anzahl_partien): 
         stellungen = {}
+        stellungen_kanonisch = {}
         stellungen_schwach = {}
         fruehestes_passen = 100
         min_laenge = 100
@@ -62,16 +63,21 @@ class Statistikumgebung:
                 else:
                     keine_zugmoeglichkeit = False 
                 stellung.zug_spielen(zug)
-                schluessel = als_kanonische_stellung(stellung)
+                schluessel = stellung.tobytes()
+                schluessel_kanonisch = als_kanonische_stellung(stellung)
                 schluessel_schwach = als_schwache_kanonische_stellung(stellung)
-                if schluessel == stellung.tobytes():
+                if schluessel == schluessel_kanonisch:
                     sum_kanonisch += 1
-                if schluessel_schwach == stellung.tobytes():
+                if schluessel == schluessel_schwach:
                     sum_kanonisch_schwach += 1
                 if schluessel not in stellungen.keys():
                     stellungen[schluessel] = [naechster]
                 elif naechster not in stellungen[schluessel]:
                     stellungen[schluessel].append(naechster)
+                if schluessel_kanonisch not in stellungen_kanonisch.keys():
+                    stellungen_kanonisch[schluessel_kanonisch] = [naechster]
+                elif naechster not in stellungen_kanonisch[schluessel]:
+                    stellungen_kanonisch[schluessel_kanonisch].append(naechster)
                 if schluessel_schwach not in stellungen_schwach.keys():
                     stellungen_schwach[schluessel_schwach] = [naechster]
                 elif naechster not in stellungen_schwach[schluessel_schwach]:
@@ -93,7 +99,10 @@ class Statistikumgebung:
                 # gespielten Züge
         print("Anzahl aller Züge:", sum_laenge)
         print("Anzahl aller original kanonischen Stellungen:", sum_kanonisch)
-        print("Anzahl unterschiedlicher kanonischer Stellungen:", len(stellungen))
+        print("Anzahl aller original schwach kanonischen Stellungen:", sum_kanonisch_schwach)
+        print("Anzahl unterschiedlicher Stellungen:", len(stellungen))
+        print("Anzahl unterschiedlicher kanonischer Stellungen:", len(stellungen_kanonisch))
+        print("Anzahl unterschiedlicher schwacher kanonischer Stellungen:", len(stellungen_schwach))
         print("Kürzeste Partie:", min_laenge)
         print("Längste Partie:", max_laenge)
         print("Frühestes Passen:", fruehestes_passen)
@@ -101,19 +110,30 @@ class Statistikumgebung:
         print("Höchste Anzahl Passen:", max_passen)
         print("Insgesamt gepasst:", sum_passen)
         print("Doppelte kanonische Stellungen:")
-        anzahl_doppelte = 0
-        for key in stellungen.keys():
-            if "w" in stellungen[key] and "s" in stellungen[key]:
-                print(key)
-                anzahl_doppelte += 1
-        print("Anzahl doppelter kanonischer Stellungen:", anzahl_doppelte)
+        anzahl_doppelte_kanonisch = 0
+        for key in stellungen_kanonisch.keys():
+            if "w" in stellungen_kanonisch[key] and "s" in stellungen_kanonisch[key]:
+                # print(key)
+                anzahl_doppelte_kanonisch += 1
+        print("Anzahl doppelter kanonischer Stellungen:", anzahl_doppelte_kanonisch)
         print("Doppelte schwache kanonische Stellungen:")
         anzahl_doppelte_schwach = 0
         for key in stellungen_schwach.keys():
             if "w" in stellungen_schwach[key] and "s" in stellungen_schwach[key]:
-                print(key)
+                # print(key)
                 anzahl_doppelte_schwach += 1
         print("Anzahl doppelter schwacher kanonischer Stellungen:", anzahl_doppelte_schwach)
+        if anzahl_doppelte_schwach > 0:
+                print("Doppelte originale Stellungen:")
+                anzahl_doppelte = 0
+                zaehler = 0
+                for key in stellungen.keys():
+                    if "w" in stellungen[key] and "s" in stellungen[key]:
+                        if zaehler < 5:
+                                print(key)
+                                zaehler += 1
+                        anzahl_doppelte += 1
+        print("Anzahl doppelter originaler Stellungen:", anzahl_doppelte)
         print("Ende")
         
     def __schwarz_am_zug(self, zug_nummer):
