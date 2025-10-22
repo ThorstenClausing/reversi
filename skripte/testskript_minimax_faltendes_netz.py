@@ -17,7 +17,7 @@ from bewertungsnetz import Faltendes_Bewertungsnetz
 from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 100
+anzahl_tests = 150
 speicher = Faltendes_Bewertungsnetz()
 
 variante = "v1_" # Auswahl: v1_, v2, schwarz, weiss
