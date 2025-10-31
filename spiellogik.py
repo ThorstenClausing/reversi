@@ -179,11 +179,13 @@ def als_schwache_kanonische_stellung(stellung):
     stellung_to_bytes = stellung_eins.tobytes()
     
     # 180 Grad nach links rotieren    
+    stellung_zwei = np.rot90(stellung_eins)
     stellung_zwei = np.rot90(stellung_zwei)
     if stellung_zwei.tobytes() < stellung_to_bytes:
         stellung_to_bytes = stellung_zwei.tobytes()
        
     # an Nebendiagonale spiegeln
+    stellung_zwei = np.rot90(stellung_zwei)
     stellung_zwei = np.rot90(np.transpose(stellung_zwei))
     if stellung_zwei.tobytes() < stellung_to_bytes:
         stellung_to_bytes = stellung_zwei.tobytes()
