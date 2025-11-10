@@ -38,8 +38,8 @@ class Partieumgebung:
           # gespielten Züge
       ergebnis = self.__ergebnis(stellung, zug_nummer)
       protokoll.append(ergebnis)
-      if self.erfahrungsspeicher is not None:
-          self.erfahrungsspeicher.bewertung_aktualisieren(protokoll)
+      if self.speicher is not None:
+          self.speicher.bewertung_aktualisieren(protokoll)
       """
       protokoll.pop()
       e = '\t'

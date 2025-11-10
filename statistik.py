@@ -119,7 +119,7 @@ class Statistikumgebung:
                 if "w" in stellungen_kanonisch[key] and "s" in stellungen_kanonisch[key]:
                     # datei.write(key)
                     anzahl_farbenblinde_kanonisch += 1
-                    datei.write(str(stellungen_kanonisch[key] + '\n\n'))
+                    datei.write(str(stellungen_kanonisch[key]) + '\n\n')
             for i in range(anzahl_partien + 1):
                 if haeufigkeit[i] > 0:
                     datei.write(str(i) + " -> " + str(haeufigkeit[i]) + '\n')
@@ -146,7 +146,7 @@ class Statistikumgebung:
                     #        datei.write(key)
                     #        zaehler += 1
                     anzahl_farbenblinde += 1 
-                    datei.write(str(stellungen[key] + '\n\n'))
+                    datei.write(str(stellungen[key]) + '\n\n')
             for i in range(anzahl_partien + 1):
                 if haeufigkeit[i] > 0:
                     datei.write(str(i) + " -> " + str(haeufigkeit[i]) + '\n')

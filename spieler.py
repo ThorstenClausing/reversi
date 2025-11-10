@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from abc import ABC, abstractmethod
 from spiellogik import BRETTGROESSE
 
@@ -172,6 +173,8 @@ class Lernender_Spieler_sigma(Spieler):
       bewertung = self.erfahrungsspeicher.bewertung_geben(folgestellung)
       if bewertung is None:
           bewertung = 40
+      if bewertung == 0:
+          bewertung = 0.01
       gewichte.append(bewertung)
     assert len(gewichte) == l
     p = np.array(gewichte)

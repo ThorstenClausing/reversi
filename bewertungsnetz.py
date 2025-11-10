@@ -5,7 +5,6 @@ import numpy as np
 from spiellogik import Stellung, BRETTGROESSE, als_kanonische_stellung
 from tensordict import tensorclass
 
-
 @tensorclass
 class MyData:
     stellungen: torch.Tensor
@@ -13,7 +12,8 @@ class MyData:
 
 class Bewertungsnetz(nn.Module):
     
-    def __init__(self, kanonisch=True, replay_buffer=None):
+    def __init__(self, schwarz=True, weiss=False, kanonisch=True, 
+                 replay_buffer=None, prozessor='cpu'):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
@@ -30,8 +30,12 @@ class Bewertungsnetz(nn.Module):
         nn.init.zeros_(self.innere_schicht_eins.bias)
         nn.init.zeros_(self.innere_schicht_zwei.bias)
         nn.init.zeros_(self.ausgabeschicht.bias)
-        self.kanonisch = kanonisch
+        self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
+        self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
+        self.kanonisch = kanonisch # Sollen Stellungen vor Bewertung kanonisiert werden?
         self.replay_buffer = replay_buffer
+        self.to(prozessor)
+        self.prozessor=prozessor
 
     def forward(self, x):
         z = self.flatten(x)
@@ -42,31 +46,51 @@ class Bewertungsnetz(nn.Module):
         bewertung = self.ausgabeschicht(z)
         return bewertung
     
+    def speichermerkmale_setzen(self, schwarz, weiss):
+        self.schwarz = schwarz
+        self.weiss = weiss
+    
     def bewertung_geben(self, stellung):
         if self.kanonisch:
             stellung = als_kanonische_stellung(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8)
-        eingabe = (torch.from_numpy(np.array([stellung]))).to(torch.float32)
+        # eingabe = (torch.from_numpy(np.array([stellung]))).to(device, torch.float32)
+        eingabe = torch.tensor([stellung], dtype=torch.float32, device=self.prozessor)
         ausgabe = self.forward(eingabe).item()
-        return ausgabe
+        # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
+        # Spieler nicht umgehen können und die daher abgefangen werden
+        # müssen:
+        return max(0, ausgabe)  
     
     def bewertung_aktualisieren(self, protokoll):
       stellung = Stellung()
       stellung.grundstellung()
       zug_nummer = 0
-      ergebnis = protokoll.pop()//2
+      ergebnis = protokoll.pop()
       liste_stellungen = []
       liste_bewertungen = []
       while protokoll:
           zug_nummer += 1
           zug = protokoll.pop(0)
           stellung.zug_spielen(zug)
-          liste_stellungen.append(stellung.copy())
-          bewertung = ergebnis if zug_nummer % 2 else -1*ergebnis
-          liste_bewertungen.append([bewertung])
+          if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
+              if self.kanonisch:
+                  stellung_neu = als_kanonische_stellung(stellung)
+                  stellung_neu = np.frombuffer(stellung_neu, dtype=np.int8)
+              else:
+                  stellung_neu = stellung.copy()
+              liste_stellungen.append(stellung_neu)
+              bewertung = ergebnis[0] if zug_nummer % 2 else ergebnis[1]
+              liste_bewertungen.append([bewertung])
       data = MyData(
-              stellungen=(torch.from_numpy(np.array(liste_stellungen))).to(torch.float32),
-              bewertungen=(torch.from_numpy(np.array(liste_bewertungen))).to(torch.float32), 
+              stellungen=torch.tensor(
+                  np.array(liste_stellungen), 
+                  dtype=torch.float32, 
+                  device=self.prozessor),
+              bewertungen=torch.tensor(
+                  np.array(liste_bewertungen), 
+                  dtype=torch.float32, 
+                  device=self.prozessor), 
               batch_size=[len(liste_stellungen)])
       self.replay_buffer.extend(data)
       
@@ -156,5 +180,7 @@ class Faltendes_Bewertungsnetz(nn.Module):
         stellung_drei_kanaele = np.array([stellung_plus, stellung_minus, stellung_leer])      
         eingabe = (torch.tensor([stellung_drei_kanaele,])).to(torch.float32)
         ausgabe = self.forward(eingabe).item()
-        del eingabe
-        return ausgabe
+        # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
+        # Spieler nicht umgehen können und die daher abgefangen werden
+        # müssen:
+        return max(0, ausgabe)
