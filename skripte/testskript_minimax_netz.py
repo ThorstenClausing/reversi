@@ -31,7 +31,7 @@ print("Alpha-Beta-Tiefe ", tiefe, sep='')
 #test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
 test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 
-test_schwarz.testprotokoll_zuruecksetzen()
+#test_schwarz.testprotokoll_zuruecksetzen()
 #for _ in range(anzahl_tests):
 #    test_schwarz.test_starten()
 #print("Test schwarz (", variante, "[kanonisch]):", sep='')
