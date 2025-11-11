@@ -17,7 +17,7 @@ from bewertungsnetz import Bewertungsnetz
 from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 1
+anzahl_tests = 100
 speicher = Bewertungsnetz()
 
 variante = "v2" # Auswahl: v1_, v2, schwarz, weiss
@@ -25,17 +25,17 @@ speicher.load_state_dict(torch.load("Gewichte/gewichte_" + variante, weights_onl
 print('Gewichte geladen.')
 
 spieler_opt = Optimierender_Spieler(speicher)
-tiefe = 9
+tiefe = 5
 spieler_minimax = Alpha_Beta_Spieler(tiefe)
 print("Alpha-Beta-Tiefe ", tiefe, sep='')
-#test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
+test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
 test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 
-#test_schwarz.testprotokoll_zuruecksetzen()
-#for _ in range(anzahl_tests):
-#    test_schwarz.test_starten()
-#print("Test schwarz (", variante, "[kanonisch]):", sep='')
-#test_schwarz.testprotokoll_drucken()
+test_schwarz.testprotokoll_zuruecksetzen()
+for _ in range(anzahl_tests):
+    test_schwarz.test_starten()
+print("Test schwarz (", variante, "[kanonisch]):", sep='')
+test_schwarz.testprotokoll_drucken()
 test_weiss.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_weiss.test_starten()
