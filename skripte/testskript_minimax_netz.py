@@ -40,4 +40,4 @@ test_schwarz.testprotokoll_drucken()
 #for _ in range(anzahl_tests):
 #    test_weiss.test_starten()
 #print("Test weiß (", variante, "[kanonisch]):", sep='')
-test_weiss.testprotokoll_drucken()
+#test_weiss.testprotokoll_drucken()
