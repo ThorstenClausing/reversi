@@ -168,7 +168,7 @@ Füllung Replay-Buffer: 500000
 [(np.int64(48048), np.int64(15952)), 977, 7, 16]
 [(np.int64(15350), np.int64(48650)), 15, 5, 980]
 
-*** Beginn mit zufällgen Gewichten, Lernender Spieler epsilon gegen Stochastischer Spieler, 12:21 Stunden, Replay-Buffer 1_000_000, Test alle 10 Zyklen, SGD lr=0.001 ***
+*** Beginn mit zufällgen Gewichten, Lernender Spieler sigma gegen Stochastischer Spieler, 12:23:13 Stunden, Replay-Buffer 1_000_000, Test alle 10 Zyklen, SGD lr=0.001 ***
 Partien: 1000
 Zyklen: 1000
 Test: 1000 
