@@ -13,7 +13,7 @@ class MyData:
 class Bewertungsnetz(nn.Module):
     
     def __init__(self, schwarz=True, weiss=False, kanonisch=True, 
-                 replay_buffer=None, prozessor='cpu'):
+                 replay_buffer=None, prozessor='cpu', runden=0):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
@@ -36,6 +36,9 @@ class Bewertungsnetz(nn.Module):
         self.replay_buffer = replay_buffer
         self.to(prozessor)
         self.prozessor=prozessor
+        # Auf wie viele Nachkommastellen sollen Bewertungen gerundet werden?
+        # 0 bedeutet nicht runden.
+        self.runden = runden 
 
     def forward(self, x):
         z = self.flatten(x)
@@ -49,6 +52,9 @@ class Bewertungsnetz(nn.Module):
     def speichermerkmale_setzen(self, schwarz, weiss):
         self.schwarz = schwarz
         self.weiss = weiss
+        
+    def rundungsparameter_setzen(self, runden):
+        self.runden = runden
     
     def bewertung_geben(self, stellung):
         if self.kanonisch:
@@ -61,7 +67,10 @@ class Bewertungsnetz(nn.Module):
         # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
         # Spieler nicht umgehen können und die daher abgefangen werden
         # müssen:
-        return max(0, ausgabe)  
+        ausgabe = max(0, ausgabe)  
+        if self.runden:
+            return round(ausgabe, self.runden)
+        return ausgabe
     
     def bewertung_aktualisieren(self, protokoll):
       stellung = Stellung()
@@ -140,7 +149,7 @@ class Bewertungsdaten(Dataset):
 
 class Faltendes_Bewertungsnetz(nn.Module):
     
-    def __init__(self, kanonisch=True):
+    def __init__(self, kanonisch=True, runden=0):
         super(Faltendes_Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Conv2d(3, 9, kernel_size=3, padding=1, groups=3)
         self.innere_schicht_zwei = nn.Conv2d(9, 9, kernel_size=3, padding=1, groups=3)
@@ -159,6 +168,9 @@ class Faltendes_Bewertungsnetz(nn.Module):
         nn.init.zeros_(self.innere_schicht_drei.bias)
         nn.init.zeros_(self.ausgabeschicht.bias)
         self.kanonisch = kanonisch
+        # Auf wie viele Nachkommastellen sollen Bewertungen gerundet werden?
+        # 0 bedeutet nicht runden.
+        self.runden = runden 
 
     def forward(self, x):
         z = self.innere_schicht_eins(x)
@@ -184,4 +196,7 @@ class Faltendes_Bewertungsnetz(nn.Module):
         # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
         # Spieler nicht umgehen können und die daher abgefangen werden
         # müssen:
-        return max(0, ausgabe)
+        ausgabe = max(0, ausgabe)  
+        if self.runden:
+            return round(ausgabe, self.runden)
+        return ausgabe
