@@ -21,23 +21,24 @@ anzahl_tests = 100
 speicher = Bewertungsnetz()
 
 #variante = "v2" # Auswahl: v1_, v2, schwarz, weiss
-speicher.load_state_dict(torch.load("Gewichte/tiefe_gewichte_sigma", weights_only=True))
-print('Gewichte geladen.')
+gewichte = "Gewichte/tiefe_gewichte_schwarz"
+speicher.load_state_dict(torch.load(gewichte, weights_only=True))
+print('Gewichte geladen.', gewichte)
 
 spieler_opt = Optimierender_Spieler(speicher)
 tiefe = 6
 spieler_minimax = Alpha_Beta_Spieler(tiefe)
 print("Alpha-Beta-Tiefe ", tiefe, sep='')
-#test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
-test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
+test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
+#test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 
-#test_schwarz.testprotokoll_zuruecksetzen()
-#for _ in range(anzahl_tests):
-#    test_schwarz.test_starten()
-#print("Test schwarz (tief sigma):")
-#test_schwarz.testprotokoll_drucken()
-test_weiss.testprotokoll_zuruecksetzen()
+test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
-    test_weiss.test_starten()
-print("Test weiß (tief sigma):")
-test_weiss.testprotokoll_drucken()
+    test_schwarz.test_starten()
+print("Test schwarz (tief sigma):")
+test_schwarz.testprotokoll_drucken()
+#test_weiss.testprotokoll_zuruecksetzen()
+#for _ in range(anzahl_tests):
+#    test_weiss.test_starten()
+#print("Test weiß (tief sigma):")
+#test_weiss.testprotokoll_drucken()
