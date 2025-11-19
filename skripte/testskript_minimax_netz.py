@@ -21,7 +21,7 @@ anzahl_tests = 100
 speicher = Bewertungsnetz()
 
 #variante = "v2" # Auswahl: v1_, v2, schwarz, weiss
-gewichte = "Gewichte/tiefe_gewichte_schwarz"
+gewichte = "Gewichte/tiefe_gewichte_sigma_schwarz"
 speicher.load_state_dict(torch.load(gewichte, weights_only=True))
 print('Gewichte geladen.', gewichte)
 
