@@ -21,8 +21,9 @@ anzahl_tests = 100
 speicher = Bewertungsnetz()
 
 #variante = "v2" # Auswahl: v1_, v2, schwarz, weiss
-speicher.load_state_dict(torch.load("Gewichte/tiefe_gewichte_sigma", weights_only=True))
-print('Gewichte geladen.')
+gewichte = "Gewichte/tiefe_gewichte_sigma_weiss"
+speicher.load_state_dict(torch.load(gewichte, weights_only=True))
+print('Gewichte geladen.', gewichte)
 
 spieler_opt = Optimierender_Spieler(speicher)
 tiefe = 6
