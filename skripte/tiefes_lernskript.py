@@ -31,10 +31,10 @@ replay_buffer = td.ReplayBuffer(
     batch_size=512)
 netz = Bewertungsnetz(
     schwarz=True, 
-    weiss=True, 
+    weiss=False, 
     replay_buffer=replay_buffer,
     prozessor=prozessor)
-spieler_schwarz =  Lernender_Spieler(netz)
+spieler_schwarz =  Stochastischer_Spieler() # Lernender_Spieler(netz)
 spieler_weiss = Lernender_Spieler(netz)
 umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, netz)
 
@@ -58,29 +58,29 @@ def train_loop(datengeber, modell, verlustfunktion, optimierer, anzahl_schritte)
 
 spieler_opt = Optimierender_Spieler(netz)
 spieler_stoch = Stochastischer_Spieler()
-test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
+test_schwarz = None #Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
         
-def test_loop(test_schwarz, test_weiss, anzahl_tests, liste, bestes_ergebnis):
-    # modell.eval()
-    test_schwarz.testprotokoll_zuruecksetzen()
-    for _ in range(anzahl_tests):
-        test_schwarz.test_starten()
-    ergebnis = test_schwarz.testprotokoll_geben()
-    liste.append(ergebnis)
-    ergebnis_schwarz = (ergebnis[1] + ergebnis[2]/2)/anzahl_tests
-    
-    test_weiss.testprotokoll_zuruecksetzen()
-    for _ in range(anzahl_tests):
-        test_weiss.test_starten()
-    ergebnis = test_weiss.testprotokoll_geben()
-    liste.append(ergebnis)
-    ergebnis_weiss = (ergebnis[3] + ergebnis[2]/2)/anzahl_tests
-    
-    ergebnis_durchschnitt = (ergebnis_weiss + ergebnis_schwarz)/2
-    if ergebnis_durchschnitt > bestes_ergebnis:
-        bestes_ergebnis = ergebnis_durchschnitt
-        torch.save(netz.state_dict(), 'tiefe_gewichte_sigma')
+def test_loop(test_schwarz, test_weiss, anzahl_tests, liste, 
+              bestes_ergebnis):
+    with torch.no_grad():
+        #test_schwarz.testprotokoll_zuruecksetzen()
+        #for _ in range(anzahl_tests):
+        #    test_schwarz.test_starten()
+        #ergebnis = test_schwarz.testprotokoll_geben()
+        #liste.append(ergebnis)
+        #ergebnis_schwarz = (ergebnis[1] + ergebnis[2]/2)/anzahl_tests
+        
+        test_weiss.testprotokoll_zuruecksetzen()
+        for _ in range(anzahl_tests):
+            test_weiss.test_starten()
+        ergebnis = test_weiss.testprotokoll_geben()
+        liste.append(ergebnis)
+        ergebnis_weiss = (ergebnis[3] + ergebnis[2]/2)/anzahl_tests
+        
+        if ergebnis_weiss >= bestes_ergebnis:
+            bestes_ergebnis = ergebnis_weiss
+            torch.save(netz.state_dict(), 'tiefe_gewichte_weiss')
     return liste, bestes_ergebnis
 
 verlustfunktion = nn.MSELoss()
@@ -89,9 +89,9 @@ lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
 
 anzahl_partien = 5_000
 anzahl_zyklen = 100
-anzahl_tests = 200
+anzahl_tests = 1000
 anzahl_schritte = 625
-minimum_replay_buffer = 500_000
+minimum_replay_buffer = 350_000
 ergebnisse = []
 bestes_ergebnis = 0.8
 
@@ -123,16 +123,21 @@ for z in range(anzahl_zyklen):
         #print("Start Testen", datetime.now().strftime("%H:%M:%S"))
         netz.rundungsparameter_setzen(0)
         ergebnisse, bestes_ergebnis = test_loop(
-            test_schwarz, test_weiss, anzahl_tests, ergebnisse, bestes_ergebnis)
+            test_schwarz, test_weiss, anzahl_tests, ergebnisse, 
+            bestes_ergebnis)
 
 replay_buffer.dumps('replay_buffer')
 
 #print("Start Speichern", datetime.now().strftime("%H:%M:%S")) 
-with open('tiefes_protokoll.txt', "a") as datei:
-    datei.write(text)
-    datei.write('\n' + str(datetime.now()) + '\n')
+try:
+    with open('tiefes_protokoll.txt', "a") as datei:
+        datei.write(text)
+        datei.write('\n' + str(datetime.now()) + '\n')
+        for ergebnis in ergebnisse:
+            datei.write(str(ergebnis) + '\n')
+        datei.write('\n')
+except:
     for ergebnis in ergebnisse:
-        datei.write(str(ergebnis) + '\n')
-    datei.write('\n')
+        print(*ergebnis)
 
 print("Ende", datetime.now().strftime("%H:%M:%S"))

@@ -17,7 +17,7 @@ from bewertungsnetz import Bewertungsnetz
 from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
 from partieumgebung import Partieumgebung
 
-anzahl_tests = 1_000
+anzahl_tests = 1000
 speicher = Bewertungsnetz()
 
 #variante = "v2" # Auswahl: v1_, v2, schwarz, weiss

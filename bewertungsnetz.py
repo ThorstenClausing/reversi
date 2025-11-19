@@ -61,9 +61,10 @@ class Bewertungsnetz(nn.Module):
             stellung = als_kanonische_stellung(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8)
         # eingabe = (torch.from_numpy(np.array([stellung]))).to(device, torch.float32)
-        eingabe = torch.tensor(
-            stellung, dtype=torch.float32, device=self.prozessor).unsqueeze(0)
-        ausgabe = self.forward(eingabe).item()
+        with torch.no_grad():
+            eingabe = torch.tensor(
+                stellung, dtype=torch.float32, device=self.prozessor).unsqueeze(0)
+            ausgabe = self.forward(eingabe).item()
         # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
         # Spieler nicht umgehen können und die daher abgefangen werden
         # müssen:
