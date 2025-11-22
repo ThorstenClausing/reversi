@@ -446,7 +446,7 @@ Füllung Replay-Buffer: 500000
 [(np.int64(42709), np.int64(21291)), 894, 31, 75]
 [(np.int64(20405), np.int64(43595)), 62, 21, 917]
 
-*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 10 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 ***
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 10 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_sigma
 Partien: 5000
 Zyklen: 100
 Test: 200 
@@ -496,7 +496,7 @@ Füllung Replay-Buffer: 500000
 [(np.int64(9847), np.int64(2953)), 196, 0, 4]
 [(np.int64(2598), np.int64(10202)), 2, 0, 198]
 
-*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Stochastischer Spieler, 7 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 ***
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Stochastischer Spieler, 7 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_schwarz
 Partien: 5000
 Zyklen: 100
 Test: 200 
@@ -525,7 +525,7 @@ Füllung Replay-Buffer: 350000
 [(np.int64(9781), np.int64(3019)), 197, 1, 2]
 [(np.int64(9882), np.int64(2918)), 198, 0, 2]
 
-*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 10:40 Stunden, Replay-Buffer 1_000_000, Test alle 10 Zyklen, SGD lr=0.01, ExponentialLR(gamma=0.95), Batch 64 ***
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 10:40 Stunden, Replay-Buffer 1_000_000, Test alle 10 Zyklen, SGD lr=0.01, ExponentialLR(gamma=0.95), Batch 64 *** tiefe_gewichte_sigma_schwarz/weiss
 Partien: 2000
 Zyklen: 250
 Test: 1000 
@@ -584,4 +584,285 @@ Füllung Replay-Buffer: 350000
 [(np.int64(14880), np.int64(49120)), 10, 1, 989]
 [(np.int64(48288), np.int64(15712)), 988, 3, 9]
 [(np.int64(14720), np.int64(49280)), 13, 3, 984]
+
+*** Beginn mit zufälligen Gewichten, Stochastischer Spieler sigma gegen Lernender Spieler, 7 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_weiss
+Partien: 5000
+Zyklen: 100
+Test: 1000 
+Schritte: 625
+Füllung Replay-Buffer: 350000
+2025-11-19 16:39:10.534076
+[(np.int64(32757), np.int64(31243)), 499, 37, 464]
+[(np.int64(17487), np.int64(46513)), 39, 12, 949]
+[(np.int64(15623), np.int64(48377)), 18, 12, 970]
+[(np.int64(14955), np.int64(49045)), 15, 6, 979]
+[(np.int64(14770), np.int64(49230)), 13, 5, 982]
+[(np.int64(15309), np.int64(48691)), 25, 5, 970]
+[(np.int64(15036), np.int64(48964)), 17, 8, 975]
+[(np.int64(15103), np.int64(48897)), 8, 9, 983]
+[(np.int64(13743), np.int64(50257)), 9, 2, 989]
+[(np.int64(13895), np.int64(50105)), 13, 2, 985]
+[(np.int64(13097), np.int64(50903)), 5, 4, 991]
+[(np.int64(14688), np.int64(49312)), 19, 3, 978]
+[(np.int64(13772), np.int64(50228)), 12, 2, 986]
+[(np.int64(14559), np.int64(49441)), 17, 6, 977]
+[(np.int64(13720), np.int64(50280)), 12, 2, 986]
+[(np.int64(14120), np.int64(49880)), 13, 4, 983]
+[(np.int64(14415), np.int64(49585)), 11, 6, 983]
+[(np.int64(14427), np.int64(49573)), 12, 6, 982]
+[(np.int64(13972), np.int64(50028)), 13, 6, 981]
+[(np.int64(13973), np.int64(50027)), 11, 0, 989]
+[(np.int64(14397), np.int64(49603)), 13, 3, 984]
+
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 8 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_sigsig_trans_final_1
+Partien: 5000
+Zyklen: 100
+Test: 1000 
+Schritte: 625
+Füllung Replay-Buffer: 350000
+transformiert
+2025-11-19 20:45:40.738482
+[(np.int64(29804), np.int64(34196)), 368, 37, 595]
+[(np.int64(33584), np.int64(30416)), 565, 51, 384]
+[(np.int64(45662), np.int64(18338)), 933, 14, 53]
+[(np.int64(18369), np.int64(45631)), 56, 14, 930]
+[(np.int64(46788), np.int64(17212)), 960, 8, 32]
+[(np.int64(16498), np.int64(47502)), 33, 10, 957]
+[(np.int64(47430), np.int64(16570)), 966, 3, 31]
+[(np.int64(15816), np.int64(48184)), 29, 6, 965]
+[(np.int64(48176), np.int64(15824)), 970, 5, 25]
+[(np.int64(14978), np.int64(49022)), 13, 4, 983]
+[(np.int64(48569), np.int64(15431)), 979, 5, 16]
+[(np.int64(15085), np.int64(48915)), 18, 2, 980]
+[(np.int64(48477), np.int64(15523)), 987, 4, 9]
+[(np.int64(14722), np.int64(49278)), 13, 3, 984]
+[(np.int64(48585), np.int64(15415)), 980, 8, 12]
+[(np.int64(15133), np.int64(48867)), 8, 5, 987]
+[(np.int64(49801), np.int64(14199)), 989, 3, 8]
+[(np.int64(13854), np.int64(50146)), 10, 6, 984]
+[(np.int64(48363), np.int64(15637)), 984, 3, 13]
+[(np.int64(14462), np.int64(49538)), 11, 5, 984]
+[(np.int64(48959), np.int64(15041)), 984, 6, 10]
+[(np.int64(14839), np.int64(49161)), 13, 5, 982]
+[(np.int64(48085), np.int64(15915)), 980, 4, 16]
+[(np.int64(15604), np.int64(48396)), 17, 4, 979]
+[(np.int64(48224), np.int64(15776)), 985, 2, 13]
+[(np.int64(14897), np.int64(49103)), 17, 6, 977]
+[(np.int64(49490), np.int64(14510)), 990, 3, 7]
+[(np.int64(14310), np.int64(49690)), 8, 5, 987]
+[(np.int64(48727), np.int64(15273)), 984, 2, 14]
+[(np.int64(13990), np.int64(50010)), 13, 3, 984]
+[(np.int64(48432), np.int64(15568)), 985, 3, 12]
+[(np.int64(14525), np.int64(49475)), 11, 4, 985]
+[(np.int64(48868), np.int64(15132)), 985, 5, 10]
+[(np.int64(14430), np.int64(49570)), 11, 4, 985]
+[(np.int64(49179), np.int64(14821)), 987, 4, 9]
+[(np.int64(14467), np.int64(49533)), 17, 5, 978]
+[(np.int64(48462), np.int64(15538)), 980, 5, 15]
+[(np.int64(13937), np.int64(50063)), 8, 3, 989]
+[(np.int64(49362), np.int64(14638)), 983, 3, 14]
+[(np.int64(14439), np.int64(49561)), 12, 7, 981]
+[(np.int64(49035), np.int64(14965)), 990, 2, 8]
+[(np.int64(14735), np.int64(49265)), 16, 5, 979]
+
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 9:10 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_sigsig_500_final
+Partien: 5000
+Zyklen: 100
+Test: 1000 
+Schritte: 625
+Füllung Replay-Buffer: 350000
+2025-11-20 02:16:08.833797
+[(np.int64(32907), np.int64(31093)), 502, 37, 461]
+[(np.int64(30025), np.int64(33975)), 372, 45, 583]
+[(np.int64(44644), np.int64(19356)), 937, 17, 46]
+[(np.int64(18747), np.int64(45253)), 51, 13, 936]
+[(np.int64(46627), np.int64(17373)), 965, 12, 23]
+[(np.int64(16573), np.int64(47427)), 22, 8, 970]
+[(np.int64(48373), np.int64(15627)), 968, 6, 26]
+[(np.int64(15271), np.int64(48729)), 15, 8, 977]
+[(np.int64(47769), np.int64(16231)), 979, 3, 18]
+[(np.int64(15105), np.int64(48895)), 19, 7, 974]
+[(np.int64(46814), np.int64(17186)), 972, 0, 28]
+[(np.int64(16405), np.int64(47595)), 16, 6, 978]
+[(np.int64(48227), np.int64(15773)), 976, 6, 18]
+[(np.int64(14382), np.int64(49618)), 7, 3, 990]
+[(np.int64(47690), np.int64(16310)), 985, 4, 11]
+[(np.int64(14909), np.int64(49091)), 13, 8, 979]
+[(np.int64(48296), np.int64(15704)), 971, 6, 23]
+[(np.int64(14848), np.int64(49152)), 15, 5, 980]
+[(np.int64(48895), np.int64(15105)), 981, 5, 14]
+[(np.int64(14281), np.int64(49719)), 16, 3, 981]
+[(np.int64(49096), np.int64(14904)), 986, 6, 8]
+[(np.int64(14618), np.int64(49382)), 8, 4, 988]
+[(np.int64(49428), np.int64(14572)), 984, 3, 13]
+[(np.int64(13551), np.int64(50449)), 10, 2, 988]
+[(np.int64(49423), np.int64(14577)), 989, 4, 7]
+[(np.int64(14348), np.int64(49652)), 19, 3, 978]
+[(np.int64(49193), np.int64(14807)), 984, 5, 11]
+[(np.int64(13685), np.int64(50315)), 8, 2, 990]
+[(np.int64(50035), np.int64(13965)), 985, 4, 11]
+[(np.int64(13258), np.int64(50742)), 5, 3, 992]
+[(np.int64(49401), np.int64(14599)), 977, 9, 14]
+[(np.int64(14197), np.int64(49803)), 9, 4, 987]
+[(np.int64(49890), np.int64(14110)), 985, 4, 11]
+[(np.int64(13758), np.int64(50242)), 11, 3, 986]
+[(np.int64(49220), np.int64(14780)), 988, 3, 9]
+[(np.int64(14090), np.int64(49910)), 10, 5, 985]
+[(np.int64(49069), np.int64(14931)), 986, 2, 12]
+[(np.int64(13972), np.int64(50028)), 8, 4, 988]
+[(np.int64(50028), np.int64(13972)), 990, 1, 9]
+[(np.int64(13331), np.int64(50669)), 9, 2, 989]
+[(np.int64(49966), np.int64(14034)), 986, 5, 9]
+[(np.int64(13568), np.int64(50432)), 5, 2, 993]
+
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 9:15 Stunden, Replay-Buffer 1_000_000, Test alle 10 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 128 *** tiefe_gewichte_sigsig_trans_final_2
+Partien: 2000
+Zyklen: 250
+Test: 1000 
+Schritte: 2500
+Füllung Replay-Buffer: 350000
+transformiert
+2025-11-20 20:51:14.634455
+[(np.int64(32034), np.int64(31966)), 485, 40, 475]
+[(np.int64(31783), np.int64(32217)), 490, 32, 478]
+[(np.int64(47753), np.int64(16247)), 971, 7, 22]
+[(np.int64(15685), np.int64(48315)), 18, 8, 974]
+[(np.int64(48056), np.int64(15944)), 981, 3, 16]
+[(np.int64(14864), np.int64(49136)), 11, 3, 986]
+[(np.int64(49142), np.int64(14858)), 986, 2, 12]
+[(np.int64(14159), np.int64(49841)), 12, 8, 980]
+[(np.int64(49683), np.int64(14317)), 984, 5, 11]
+[(np.int64(13631), np.int64(50369)), 11, 2, 987]
+[(np.int64(49109), np.int64(14891)), 987, 7, 6]
+[(np.int64(13942), np.int64(50058)), 10, 1, 989]
+[(np.int64(49671), np.int64(14329)), 991, 1, 8]
+[(np.int64(12803), np.int64(51197)), 7, 1, 992]
+[(np.int64(49997), np.int64(14003)), 986, 4, 10]
+[(np.int64(13021), np.int64(50979)), 9, 3, 988]
+[(np.int64(49596), np.int64(14404)), 989, 2, 9]
+[(np.int64(13521), np.int64(50479)), 5, 3, 992]
+[(np.int64(50423), np.int64(13577)), 988, 3, 9]
+[(np.int64(13115), np.int64(50885)), 8, 4, 988]
+[(np.int64(50081), np.int64(13919)), 994, 2, 4]
+[(np.int64(13096), np.int64(50904)), 13, 1, 986]
+[(np.int64(50514), np.int64(13486)), 995, 1, 4]
+[(np.int64(13557), np.int64(50443)), 11, 4, 985]
+[(np.int64(50253), np.int64(13747)), 990, 5, 5]
+[(np.int64(12716), np.int64(51284)), 7, 0, 993]
+[(np.int64(50224), np.int64(13776)), 990, 3, 7]
+[(np.int64(13345), np.int64(50655)), 7, 3, 990]
+[(np.int64(50210), np.int64(13790)), 994, 2, 4]
+[(np.int64(13278), np.int64(50722)), 5, 3, 992]
+[(np.int64(49970), np.int64(14030)), 987, 4, 9]
+[(np.int64(13253), np.int64(50747)), 6, 2, 992]
+[(np.int64(49736), np.int64(14264)), 991, 2, 7]
+[(np.int64(13185), np.int64(50815)), 8, 2, 990]
+[(np.int64(50100), np.int64(13900)), 988, 3, 9]
+[(np.int64(13151), np.int64(50849)), 5, 1, 994]
+[(np.int64(49856), np.int64(14144)), 991, 3, 6]
+[(np.int64(13440), np.int64(50560)), 8, 0, 992]
+[(np.int64(50346), np.int64(13654)), 989, 2, 9]
+[(np.int64(13142), np.int64(50858)), 6, 1, 993]
+[(np.int64(50363), np.int64(13637)), 992, 2, 6]
+[(np.int64(13420), np.int64(50580)), 14, 1, 985]
+[(np.int64(50491), np.int64(13509)), 995, 0, 5]
+[(np.int64(13175), np.int64(50825)), 4, 1, 995]
+[(np.int64(50378), np.int64(13622)), 993, 2, 5]
+[(np.int64(13057), np.int64(50943)), 8, 1, 991]
+[(np.int64(50252), np.int64(13748)), 989, 2, 9]
+[(np.int64(13151), np.int64(50849)), 6, 3, 991]
+[(np.int64(50441), np.int64(13559)), 991, 3, 6]
+[(np.int64(13318), np.int64(50682)), 8, 5, 987]
+[(np.int64(50309), np.int64(13691)), 991, 5, 4]
+[(np.int64(13284), np.int64(50716)), 8, 1, 991]
+
+*** Beginn mit zufälligen Gewichten, Lernender Spieler sigma gegen Lernender Spieler sigma, 21 1/2 Stunden, Replay-Buffer 1_000_000, Test alle 5 Zyklen, SGD lr=0.005, ExponentialLR(gamma=0.95), Batch 512 *** tiefe_gewichte_sigsig_1000_final
+Partien: 5000
+Zyklen: 200
+Test: 1000 
+Schritte: 625
+Füllung Replay-Buffer: 350000
+2025-11-21 08:22:52.493319
+[(np.int64(31689), np.int64(32311)), 473, 33, 494]
+[(np.int64(31919), np.int64(32081)), 466, 47, 487]
+[(np.int64(45821), np.int64(18179)), 957, 12, 31]
+[(np.int64(17697), np.int64(46303)), 31, 11, 958]
+[(np.int64(46784), np.int64(17216)), 963, 8, 29]
+[(np.int64(16376), np.int64(47624)), 25, 2, 973]
+[(np.int64(49268), np.int64(14732)), 980, 7, 13]
+[(np.int64(14232), np.int64(49768)), 8, 5, 987]
+[(np.int64(48388), np.int64(15612)), 975, 7, 18]
+[(np.int64(14685), np.int64(49315)), 17, 10, 973]
+[(np.int64(48676), np.int64(15324)), 984, 5, 11]
+[(np.int64(14385), np.int64(49615)), 6, 5, 989]
+[(np.int64(49638), np.int64(14362)), 991, 1, 8]
+[(np.int64(14733), np.int64(49267)), 11, 4, 985]
+[(np.int64(49045), np.int64(14955)), 984, 4, 12]
+[(np.int64(14083), np.int64(49917)), 15, 4, 981]
+[(np.int64(49529), np.int64(14471)), 980, 6, 14]
+[(np.int64(12997), np.int64(51003)), 9, 3, 988]
+[(np.int64(50818), np.int64(13182)), 987, 4, 9]
+[(np.int64(13595), np.int64(50405)), 9, 3, 988]
+[(np.int64(49915), np.int64(14085)), 986, 2, 12]
+[(np.int64(14084), np.int64(49916)), 15, 2, 983]
+[(np.int64(49203), np.int64(14797)), 989, 3, 8]
+[(np.int64(14297), np.int64(49703)), 9, 4, 987]
+[(np.int64(49118), np.int64(14882)), 980, 3, 17]
+[(np.int64(13928), np.int64(50072)), 9, 7, 984]
+[(np.int64(49790), np.int64(14210)), 989, 4, 7]
+[(np.int64(13653), np.int64(50347)), 12, 5, 983]
+[(np.int64(49586), np.int64(14414)), 993, 1, 6]
+[(np.int64(13609), np.int64(50391)), 12, 6, 982]
+[(np.int64(49297), np.int64(14703)), 989, 3, 8]
+[(np.int64(13782), np.int64(50218)), 14, 1, 985]
+[(np.int64(50084), np.int64(13916)), 997, 0, 3]
+[(np.int64(13665), np.int64(50335)), 17, 0, 983]
+[(np.int64(49061), np.int64(14939)), 988, 2, 10]
+[(np.int64(13309), np.int64(50691)), 9, 2, 989]
+[(np.int64(50134), np.int64(13866)), 992, 1, 7]
+[(np.int64(13013), np.int64(50987)), 12, 0, 988]
+[(np.int64(49048), np.int64(14952)), 988, 2, 10]
+[(np.int64(13717), np.int64(50283)), 10, 0, 990]
+[(np.int64(49096), np.int64(14904)), 986, 3, 11]
+[(np.int64(13769), np.int64(50231)), 15, 1, 984]
+[(np.int64(49559), np.int64(14441)), 986, 3, 11]
+[(np.int64(13233), np.int64(50767)), 7, 4, 989]
+[(np.int64(49658), np.int64(14342)), 989, 3, 8]
+[(np.int64(13767), np.int64(50233)), 11, 4, 985]
+[(np.int64(49438), np.int64(14562)), 982, 3, 15]
+[(np.int64(14141), np.int64(49859)), 14, 4, 982]
+[(np.int64(49964), np.int64(14036)), 990, 2, 8]
+[(np.int64(13538), np.int64(50462)), 8, 6, 986]
+[(np.int64(49748), np.int64(14252)), 988, 3, 9]
+[(np.int64(13251), np.int64(50749)), 10, 1, 989]
+[(np.int64(49860), np.int64(14140)), 988, 0, 12]
+[(np.int64(13403), np.int64(50597)), 8, 4, 988]
+[(np.int64(49956), np.int64(14044)), 992, 2, 6]
+[(np.int64(13350), np.int64(50650)), 10, 3, 987]
+[(np.int64(50326), np.int64(13674)), 996, 0, 4]
+[(np.int64(13423), np.int64(50577)), 11, 3, 986]
+[(np.int64(50321), np.int64(13679)), 995, 0, 5]
+[(np.int64(13424), np.int64(50576)), 13, 3, 984]
+[(np.int64(49808), np.int64(14192)), 987, 1, 12]
+[(np.int64(13422), np.int64(50578)), 11, 3, 986]
+[(np.int64(49507), np.int64(14493)), 982, 7, 11]
+[(np.int64(13300), np.int64(50700)), 7, 2, 991]
+[(np.int64(49710), np.int64(14290)), 983, 6, 11]
+[(np.int64(13448), np.int64(50552)), 12, 3, 985]
+[(np.int64(49694), np.int64(14306)), 991, 3, 6]
+[(np.int64(13038), np.int64(50962)), 6, 2, 992]
+[(np.int64(49522), np.int64(14478)), 989, 3, 8]
+[(np.int64(13816), np.int64(50184)), 17, 1, 982]
+[(np.int64(49790), np.int64(14210)), 989, 1, 10]
+[(np.int64(13375), np.int64(50625)), 13, 3, 984]
+[(np.int64(50125), np.int64(13875)), 988, 0, 12]
+[(np.int64(13223), np.int64(50777)), 9, 3, 988]
+[(np.int64(49371), np.int64(14629)), 989, 3, 8]
+[(np.int64(13080), np.int64(50920)), 4, 5, 991]
+[(np.int64(50105), np.int64(13895)), 993, 3, 4]
+[(np.int64(13425), np.int64(50575)), 7, 6, 987]
+[(np.int64(50127), np.int64(13873)), 990, 4, 6]
+[(np.int64(13501), np.int64(50499)), 7, 7, 986]
+[(np.int64(49491), np.int64(14509)), 986, 3, 11]
+[(np.int64(13354), np.int64(50646)), 7, 2, 991]
 

@@ -12,7 +12,9 @@ class MyData:
 
 class Bewertungsnetz(nn.Module):
     
-    def __init__(self, schwarz=True, weiss=False, kanonisch=True, 
+    def __init__(self, schwarz=True, weiss=False, 
+                 transformation=als_kanonische_stellung,
+                 kanonisch=True,
                  replay_buffer=None, prozessor='cpu', runden=0):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
@@ -32,6 +34,7 @@ class Bewertungsnetz(nn.Module):
         nn.init.zeros_(self.ausgabeschicht.bias)
         self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
         self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
+        self.transformation = transformation # Wie sollen Stellungen vor Speicherung transformiert werden?
         self.kanonisch = kanonisch # Sollen Stellungen vor Bewertung kanonisiert werden?
         self.replay_buffer = replay_buffer
         self.to(prozessor)
@@ -61,7 +64,7 @@ class Bewertungsnetz(nn.Module):
             stellung = als_kanonische_stellung(stellung)
             stellung = np.frombuffer(stellung, dtype=np.int8)
         # eingabe = (torch.from_numpy(np.array([stellung]))).to(device, torch.float32)
-        with torch.no_grad():
+        with torch.inference_mode():
             eingabe = torch.tensor(
                 stellung, dtype=torch.float32, device=self.prozessor).unsqueeze(0)
             ausgabe = self.forward(eingabe).item()
@@ -85,8 +88,8 @@ class Bewertungsnetz(nn.Module):
           zug = protokoll.pop(0)
           stellung.zug_spielen(zug)
           if (zug_nummer % 2 and self.schwarz) or (not zug_nummer % 2 and self.weiss):
-              if self.kanonisch:
-                  stellung_neu = als_kanonische_stellung(stellung)
+              if self.transformation:
+                  stellung_neu = self.transformation(stellung)
                   stellung_neu = np.frombuffer(stellung_neu, dtype=np.int8)
               else:
                   stellung_neu = stellung.copy()
