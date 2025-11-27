@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Sat Mar 29 15:09:11 2025
@@ -20,7 +21,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 100
 speicher = Bewertungsnetz()
 
-gewichte = "Gewichte/tiefe_gewichte_sigsig_hybrid_m_250"
+gewichte = "Gewichte/tiefe_gewichte_sigsig_mehrfach_160"
 speicher.load_state_dict(torch.load(gewichte, weights_only=True))
 print('Gewichte geladen.', gewichte)
 
