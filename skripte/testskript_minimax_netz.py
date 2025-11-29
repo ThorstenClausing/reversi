@@ -21,7 +21,7 @@ from partieumgebung import Partieumgebung
 anzahl_tests = 100
 speicher = Bewertungsnetz()
 
-gewichte = "Gewichte/tiefe_gewichte_sigsig_trans_5_130"
+gewichte = "Gewichte/tiefe_gewichte_sigsig_trans_5_120"
 speicher.load_state_dict(torch.load(gewichte, weights_only=True))
 print('Gewichte geladen.', gewichte)
 
