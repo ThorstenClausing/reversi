@@ -13,7 +13,7 @@ import random
 import numpy as np
 import zipfile
 import gc
-from bewertungsnetz import Bewertungsdaten, Bewertungsnetz
+from bewertungsnetz import Bewertungsdatensatz, Bewertungsnetz
 
 print("Jetzt geht's los... ")
 
@@ -52,8 +52,8 @@ for _, bewertung in test_liste:
     r_nenner += (bewertung.item() - durchschnitt)**2
 
 random.shuffle(training_liste)
-training_daten = Bewertungsdaten(training_liste)
-test_daten = Bewertungsdaten(test_liste)
+training_daten = Bewertungsdatensatz(training_liste)
+test_daten = Bewertungsdatensatz(test_liste)
 training_datengeber = DataLoader(training_daten, batch_size=32, shuffle=True)
 test_datengeber = DataLoader(test_daten, batch_size=32)
 

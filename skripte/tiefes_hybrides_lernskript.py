@@ -20,15 +20,9 @@ import random
 
 from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
-from bewertungsnetz import Bewertungsnetz
+from bewertungsnetz import Bewertungsnetz, BewertungsDaten
 from partieumgebung import Partieumgebung
 from auswertungsumgebung import Ergebnisspeicher
-from tensordict import tensorclass
-
-@tensorclass
-class BewertungsDaten:
-    stellungen: torch.Tensor
-    bewertungen: torch.Tensor
 
 netz = Bewertungsnetz(
     schwarz=True, 

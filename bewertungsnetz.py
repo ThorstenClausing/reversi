@@ -6,7 +6,7 @@ from spiellogik import Stellung, BRETTGROESSE, als_kanonische_stellung
 from tensordict import tensorclass
 
 @tensorclass
-class MyData:
+class BewertungsDaten:
     stellungen: torch.Tensor
     bewertungen: torch.Tensor
 
@@ -96,7 +96,7 @@ class Bewertungsnetz(nn.Module):
               liste_stellungen.append(stellung_neu)
               bewertung = ergebnis[0] if zug_nummer % 2 else ergebnis[1]
               liste_bewertungen.append([bewertung])
-      data = MyData(
+      data = BewertungsDaten(
               stellungen=torch.tensor(
                   np.array(liste_stellungen), 
                   dtype=torch.float32, 
@@ -141,7 +141,7 @@ class Grosses_Bewertungsnetz(Bewertungsnetz):
         bewertung = self.ausgabeschicht(z)
         return bewertung
 
-class Bewertungsdaten(Dataset):
+class Bewertungsdatensatz(Dataset):
     def __init__(self, liste):
         self.liste = liste
 
