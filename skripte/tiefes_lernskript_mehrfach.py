@@ -35,10 +35,10 @@ umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, netz)
 def train_loop(datengeber, modell, verlustfunktion, optimierer, anzahl_durchgaenge):
     modell.train()      # Unnecessary in this situation but added for best practices
     stichprobe = td.ReplayBuffer(
-            storage=td.LazyTensorStorage(160000, device='auto'), 
+            storage=td.LazyTensorStorage(160256, device='auto'), 
             sampler=td.SamplerWithoutReplacement(shuffle=True),
-            batch_size=64)
-    stichprobe.extend(datengeber.sample(160000))
+            batch_size=512)
+    stichprobe.extend(datengeber.sample(160256))
     for _ in range(anzahl_durchgaenge):
         for batch in stichprobe:
             optimierer.zero_grad()
@@ -54,47 +54,38 @@ spieler_stoch = Stochastischer_Spieler()
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
         
-def test_loop(test_schwarz, test_weiss, anzahl_tests, liste, bestes_ergebnis):
+def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
     with torch.no_grad():
         test_schwarz.testprotokoll_zuruecksetzen()
         for _ in range(anzahl_tests):
             test_schwarz.test_starten()
         ergebnis = test_schwarz.testprotokoll_geben()
         liste.append(ergebnis)
-        ergebnis_schwarz = (ergebnis[1] + ergebnis[2]/2)/anzahl_tests
-        if ergebnis_schwarz >= bestes_ergebnis[0]:
-            bestes_ergebnis = (ergebnis_schwarz, bestes_ergebnis[1])
-            torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_mehrfach_schwarz')
         test_weiss.testprotokoll_zuruecksetzen()
         for _ in range(anzahl_tests):
             test_weiss.test_starten()
         ergebnis = test_weiss.testprotokoll_geben()
         liste.append(ergebnis)
-        ergebnis_weiss = (ergebnis[3] + ergebnis[2]/2)/anzahl_tests
-        if ergebnis_weiss >= bestes_ergebnis[1]:
-            bestes_ergebnis = (bestes_ergebnis[0], ergebnis_weiss)
-            torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_mehrfach_weiss')
-    return liste, bestes_ergebnis
+    return liste
 
 verlustfunktion = nn.MSELoss()
-optimierer = torch.optim.SGD(netz.parameters(), lr=0.01)
+optimierer = torch.optim.SGD(netz.parameters(), lr=0.005)
 lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
 
-anzahl_partien = 2_000
-anzahl_zyklen = 500
+anzahl_partien = 5_000
+anzahl_zyklen = 100
 anzahl_tests = 1_000
 anzahl_durchgaenge = 3
 minimum_replay_buffer = 350_000
 ergebnisse = []
-bestes_ergebnis = (0.99, 0.99)
 
 text = f"""Partien: {anzahl_partien}\nZyklen: {anzahl_zyklen}\nTest: {anzahl_tests} 
 Durchgänge: {anzahl_durchgaenge}\nFüllung Replay-Buffer: {minimum_replay_buffer}"""
 print(text)
 print("Start", datetime.now().strftime("%H:%M:%S"))
 
-ergebnisse, bestes_ergebnis = test_loop(
-    test_schwarz, test_weiss, anzahl_tests, ergebnisse, bestes_ergebnis)
+ergebnisse = test_loop(
+    test_schwarz, test_weiss, anzahl_tests, ergebnisse)
 
 #print("Start Auffüllen", datetime.now().strftime("%H:%M:%S"))
 while len(replay_buffer) < minimum_replay_buffer:
@@ -110,15 +101,12 @@ for z in range(anzahl_zyklen):
     #print("Start Gewichte Trainieren", datetime.now().strftime("%H:%M:%S"))
     train_loop(replay_buffer, netz, verlustfunktion, optimierer, anzahl_durchgaenge)
     lernschema.step()
-    if not (z + 1) % 10:
+    if not (z + 1) % 5:
         #print("Start Testen", datetime.now().strftime("%H:%M:%S"))
-        ergebnisse, bestes_ergebnis = test_loop(
-            test_schwarz, test_weiss, anzahl_tests, ergebnisse, bestes_ergebnis)
-        if z + 1 == 250:
-            torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_mehrfach_500')
-
-torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_mehrfach_final')
-replay_buffer.dumps('replay_buffer')
+        ergebnisse = test_loop(
+            test_schwarz, test_weiss, anzahl_tests, ergebnisse)
+        if z > 55:
+            torch.save(netz.state_dict(), f'tiefe_gewichte_sigsig_5000_mehrfach_{z + 1}')
 
 #print("Start Speichern", datetime.now().strftime("%H:%M:%S")) 
 try:

@@ -21,10 +21,6 @@ from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from bewertungsnetz import Bewertungsnetz
 from partieumgebung import Partieumgebung
 
-#prozessor = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
-prozessor = 'cpu'
-print(f"Prozessor für tiefes Lernskript: {prozessor}")
-
 replay_buffer = td.ReplayBuffer(
     storage=td.LazyTensorStorage(1000000, device='auto'), 
     sampler=td.SamplerWithoutReplacement(shuffle=True),
@@ -32,25 +28,18 @@ replay_buffer = td.ReplayBuffer(
 netz = Bewertungsnetz(
     schwarz=True, 
     weiss=True, 
-    replay_buffer=replay_buffer,
-    prozessor=prozessor)
+    replay_buffer=replay_buffer)
 spieler_schwarz =  Lernender_Spieler(netz)
 spieler_weiss = Lernender_Spieler(netz)
 umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, netz)
-
-#variante = "v2" # Auswahl: v1_, v2, schwarz, weiss
-#netz.load_state_dict(torch.load("../Gewichte/gewichte_" + variante, weights_only=True))
 
 def train_loop(datengeber, modell, verlustfunktion, optimierer, anzahl_schritte):
     modell.train()      
     for _ in range(anzahl_schritte):
         stichprobe = datengeber.sample()
         # Compute prediction and loss
-        #stichprobe.stellungen.to(prozessor)
         vorhersage = modell(stichprobe.stellungen)
-        #stichprobe.bewertungen.to(prozessor)
         verlust = verlustfunktion(vorhersage, stichprobe.bewertungen)
-        #print(verlust.item())
         # Backpropagation
         verlust.backward()
         optimierer.step()
@@ -61,51 +50,40 @@ spieler_stoch = Stochastischer_Spieler()
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
         
-def test_loop(test_schwarz, test_weiss, anzahl_tests, liste, 
-              bestes_ergebnis):
+def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
     with torch.no_grad():
         test_schwarz.testprotokoll_zuruecksetzen()
         for _ in range(anzahl_tests):
             test_schwarz.test_starten()
         ergebnis = test_schwarz.testprotokoll_geben()
         liste.append(ergebnis)
-        ergebnis_schwarz = (ergebnis[1] + ergebnis[2]/2)/anzahl_tests
-        if ergebnis_schwarz >= bestes_ergebnis[0]:
-            bestes_ergebnis = (ergebnis_schwarz, bestes_ergebnis[1])
-            torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_schwarz')
         test_weiss.testprotokoll_zuruecksetzen()
         for _ in range(anzahl_tests):
             test_weiss.test_starten()
         ergebnis = test_weiss.testprotokoll_geben()
         liste.append(ergebnis)
-        ergebnis_weiss = (ergebnis[3] + ergebnis[2]/2)/anzahl_tests        
-        if ergebnis_weiss >= bestes_ergebnis[1]:
-            bestes_ergebnis = (bestes_ergebnis[0], ergebnis_weiss)
-            torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_weiss')
-    return liste, bestes_ergebnis
+    return liste
 
 verlustfunktion = nn.MSELoss()
 optimierer = torch.optim.SGD(netz.parameters(), lr=0.005)
 lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
 
 anzahl_partien = 5_000
-anzahl_zyklen = 200
+anzahl_zyklen = 100
 anzahl_tests = 1000
 anzahl_schritte = 625
 minimum_replay_buffer = 350_000
 ergebnisse = []
-bestes_ergebnis = (0.95, 0.95)
 
 text = f"""Partien: {anzahl_partien}\nZyklen: {anzahl_zyklen}\nTest: {anzahl_tests} 
 Schritte: {anzahl_schritte}\nFüllung Replay-Buffer: {minimum_replay_buffer}"""
 print(text)
 print("Start", datetime.now().strftime("%H:%M:%S"))
 
-ergebnisse, bestes_ergebnis = test_loop(
-    test_schwarz, test_weiss, anzahl_tests, ergebnisse, bestes_ergebnis)
+ergebnisse = test_loop(
+    test_schwarz, test_weiss, anzahl_tests, ergebnisse)
 
 #print("Start Auffüllen", datetime.now().strftime("%H:%M:%S"))
-netz.rundungsparameter_setzen(1)
 while len(replay_buffer) < minimum_replay_buffer:
     umgebung.partie_starten()
  
@@ -114,7 +92,6 @@ while len(replay_buffer) < minimum_replay_buffer:
 for z in range(anzahl_zyklen):
     #print("Start Spielen", datetime.now().strftime("%H:%M:%S")) 
     # Innere Schleife: neue Beobachtungen generieren und abspeichern
-    netz.rundungsparameter_setzen(1)
     for _ in range(anzahl_partien):
         umgebung.partie_starten()
     #print("Start Gewichte Trainieren", datetime.now().strftime("%H:%M:%S"))
@@ -122,13 +99,10 @@ for z in range(anzahl_zyklen):
     lernschema.step()
     if not (z + 1) % 5:
         #print("Start Testen", datetime.now().strftime("%H:%M:%S"))
-        netz.rundungsparameter_setzen(0)
-        ergebnisse, bestes_ergebnis = test_loop(
-            test_schwarz, test_weiss, anzahl_tests, ergebnisse, 
-            bestes_ergebnis)
+        ergebnisse = test_loop(
+            test_schwarz, test_weiss, anzahl_tests, ergebnisse)
+        torch.save(netz.state_dict(), f'tiefe_gewichte_sigsig_{z + 1}')
 
-torch.save(netz.state_dict(), 'tiefe_gewichte_sigsig_final')
-replay_buffer.dumps('replay_buffer')
 
 #print("Start Speichern", datetime.now().strftime("%H:%M:%S")) 
 try:
