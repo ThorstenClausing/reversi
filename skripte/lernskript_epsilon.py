@@ -55,4 +55,4 @@ for i in range(anzahl_lernzyklen):
         test_weiss.test_starten()
     test_weiss.testprotokoll_drucken()
     
-speicher.bewertung_speichern('reversi')  
+speicher.bewertung_speichern('reversi_epsilon_')  
