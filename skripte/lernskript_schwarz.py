@@ -21,9 +21,6 @@ anzahl_partien = 100000
 anzahl_tests = 1000
 speicher = Ergebnisspeicher(True, False)
 
-#speicher.bewertung_laden()
-#print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
-
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Stochastischer_Spieler()
 spieler_opt = Optimierender_Spieler(speicher)
