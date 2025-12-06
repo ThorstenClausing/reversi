@@ -12,18 +12,15 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from auswertungsumgebung import Ergebnisspeicher_v2 as Ergebnisspeicher
-from spieler import Lernender_Spieler_v2 as Lernender_Spieler
+from auswertungsumgebung import Ergebnisspeicher
+from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
-from partieumgebung import Partieumgebung_v2 as Partieumgebung
+from partieumgebung import Partieumgebung
 
 anzahl_partien = 100000
 anzahl_tests = 1000
 anzahl_lernzyklen = 10
 speicher = Ergebnisspeicher(True, True)
-
-#speicher.bewertung_laden(['reversi_v2_'])
-#print('Geladene Bewertungen: ', speicher.anzahl_bewertungen())
 
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
@@ -56,4 +53,4 @@ for i in range(anzahl_lernzyklen):
         test_weiss.test_starten()
     test_weiss.testprotokoll_drucken()
     
-speicher.bewertung_speichern('reversi_v2_')  
+speicher.bewertung_speichern('reversi')  
