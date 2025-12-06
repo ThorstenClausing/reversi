@@ -12,10 +12,10 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from auswertungsumgebung import Ergebnisspeicher_v2 as Ergebnisspeicher
-from spieler import Lernender_Spieler_v2 as Lernender_Spieler
+from auswertungsumgebung import Ergebnisspeicher
+from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
-from partieumgebung import Partieumgebung_v2 as Partieumgebung
+from partieumgebung import Partieumgebung
 
 anzahl_partien = 100000
 anzahl_tests = 1000
@@ -37,7 +37,6 @@ for _ in range(anzahl_tests):
 test_schwarz.testprotokoll_drucken()
 
 for _ in range(10):
-    #spieler_schwarz.epsilonkehrwert_eingeben(y)
     for _ in range(anzahl_partien):
         partie.partie_starten()
     print('Bewertungen: ', speicher.anzahl_bewertungen())
