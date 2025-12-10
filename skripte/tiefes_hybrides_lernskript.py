@@ -20,14 +20,13 @@ import random
 
 from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
-from bewertungsnetz import Bewertungsnetz, BewertungsDaten
+from bewertungsgeber import Bewertungstabelle, Bewertungsnetz, BewertungsDaten
 from partieumgebung import Partieumgebung
-from auswertungsumgebung import Ergebnisspeicher
 
 netz = Bewertungsnetz(
     schwarz=True, 
     weiss=True)
-tabelle = Ergebnisspeicher(
+tabelle = Bewertungstabelle(
     schwarz=True,
     weiss=True)
 
