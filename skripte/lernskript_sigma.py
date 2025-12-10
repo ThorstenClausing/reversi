@@ -12,7 +12,7 @@ current = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(current)
 sys.path.append(parent)
 
-from auswertungsumgebung import Ergebnisspeicher
+from bewertungsgeber import Bewertungstabelle
 from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from partieumgebung import Partieumgebung
@@ -20,7 +20,7 @@ from partieumgebung import Partieumgebung
 anzahl_partien = 100000
 anzahl_tests = 1000
 anzahl_lernzyklen = 10
-speicher = Ergebnisspeicher(True, True)
+speicher = Bewertungstabelle(True, True)
 
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
