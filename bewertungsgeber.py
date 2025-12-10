@@ -187,3 +187,66 @@ class Bewertungsnetz(nn.Module):
               batch_size=[len(liste_stellungen)])
       self.replay_buffer.extend(data)
       
+class Bewertungsdatensatz(Dataset):
+    def __init__(self, liste):
+        self.liste = liste
+
+    def __len__(self):
+        return len(self.liste)
+
+    def __getitem__(self, idx):
+        return self.liste[idx][0], self.liste[idx][1]
+
+class Faltendes_Bewertungsnetz(nn.Module):
+    
+    def __init__(self, kanonisch=True, runden=0):
+        super(Faltendes_Bewertungsnetz, self).__init__()
+        self.innere_schicht_eins = nn.Conv2d(3, 9, kernel_size=3, padding=1, groups=3)
+        self.innere_schicht_zwei = nn.Conv2d(9, 9, kernel_size=3, padding=1, groups=3)
+        self.innere_schicht_drei = nn.Linear(9*BRETTGROESSE*BRETTGROESSE, 300)
+        self.ausgabeschicht = nn.Linear(300, 1)
+        #self.aktivierung_eins = nn.ReLU()
+        #self.aktivierung_zwei = nn.ReLU()
+        self.aktivierung_drei = nn.Tanh()
+        self.flatten = nn.Flatten()
+        nn.init.xavier_uniform_(self.innere_schicht_eins.weight)
+        nn.init.xavier_uniform_(self.innere_schicht_zwei.weight)
+        nn.init.xavier_uniform_(self.innere_schicht_drei.weight)
+        nn.init.xavier_uniform_(self.ausgabeschicht.weight)
+        nn.init.zeros_(self.innere_schicht_eins.bias)
+        nn.init.zeros_(self.innere_schicht_zwei.bias)
+        nn.init.zeros_(self.innere_schicht_drei.bias)
+        nn.init.zeros_(self.ausgabeschicht.bias)
+        self.kanonisch = kanonisch
+        # Auf wie viele Nachkommastellen sollen Bewertungen gerundet werden?
+        # 0 bedeutet nicht runden.
+        self.runden = runden 
+
+    def forward(self, x):
+        z = self.innere_schicht_eins(x)
+        #z = self.aktivierung_eins(z)
+        z = self.innere_schicht_zwei(z)
+        #z = self.aktivierung_zwei(z)
+        z = self.flatten(z)
+        z = self.innere_schicht_drei(z)
+        z = self.aktivierung_drei(z)
+        bewertung = self.ausgabeschicht(z)
+        return bewertung
+    
+    def bewertung_geben(self, stellung):
+        if self.kanonisch:
+            stellung = als_kanonische_stellung(stellung)
+            stellung = np.frombuffer(stellung, dtype=np.int8).reshape(BRETTGROESSE, BRETTGROESSE)
+        stellung_plus = np.maximum(stellung, 0)
+        stellung_minus = np.maximum(-1*stellung, 0)
+        stellung_leer = 1 - stellung_plus - stellung_minus
+        stellung_drei_kanaele = np.array([stellung_plus, stellung_minus, stellung_leer])      
+        eingabe = (torch.tensor([stellung_drei_kanaele,])).to(torch.float32)
+        ausgabe = self.forward(eingabe).item()
+        # Bei untrainiertem Netz sind negative Ausgaben möglich, mit denen die 
+        # Spieler nicht umgehen können und die daher abgefangen werden
+        # müssen:
+        ausgabe = max(0, ausgabe)  
+        if self.runden:
+            return round(ausgabe, self.runden)
+        return ausgabe
