@@ -94,7 +94,7 @@ class Bewertungsnetz(nn.Module):
     def __init__(self, schwarz=True, weiss=False, 
                  transformation=als_kanonische_stellung,
                  kanonisch=True,
-                 replay_buffer=None, prozessor='cpu', runden=0):
+                 zwischenspeicher=None, prozessor='cpu', runden=0):
         super(Bewertungsnetz, self).__init__()
         self.innere_schicht_eins = nn.Linear(64, 96)
         self.innere_schicht_zwei = nn.Linear(96, 34)
@@ -115,7 +115,7 @@ class Bewertungsnetz(nn.Module):
         self.weiss = weiss     # Sollen Erfahrungen für Weiß gespeichert werden?
         self.transformation = transformation # Wie sollen Stellungen vor Speicherung transformiert werden?
         self.kanonisch = kanonisch # Sollen Stellungen vor Bewertung kanonisiert werden?
-        self.replay_buffer = replay_buffer
+        self.zwischenspeicher = zwischenspeicher
         self.to(prozessor)
         self.prozessor=prozessor
         # Auf wie viele Nachkommastellen sollen Bewertungen gerundet werden?
@@ -185,7 +185,7 @@ class Bewertungsnetz(nn.Module):
                   dtype=torch.float32, 
                   device=self.prozessor), 
               batch_size=[len(liste_stellungen)])
-      self.replay_buffer.extend(data)
+      self.zwischenspeicher.extend(data)
       
 class Bewertungsdatensatz(Dataset):
     def __init__(self, liste):
