@@ -14,8 +14,8 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 import torch
-from bewertungsnetz import Bewertungsnetz
-from spieler import Optimierender_Spieler, Alpha_Beta_Spieler
+from bewertungsgeber import Bewertungsnetz
+from spieler import Optimierender_Spieler, Minimax_Spieler
 from partieumgebung import Partieumgebung
 
 anzahl_tests = 100
@@ -27,18 +27,18 @@ print('Gewichte geladen.', gewichte)
 
 spieler_opt = Optimierender_Spieler(speicher)
 tiefe = 6
-spieler_minimax = Alpha_Beta_Spieler(tiefe)
+spieler_minimax = Minimax_Spieler(tiefe)
 print("Alpha-Beta-Tiefe ", tiefe, sep='')
 test_schwarz = Partieumgebung(spieler_opt, spieler_minimax)
-#test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
+test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
 print("Test schwarz:")
 test_schwarz.testprotokoll_drucken()
-#test_weiss.testprotokoll_zuruecksetzen()
-#for _ in range(anzahl_tests):
-#    test_weiss.test_starten()
-#print("Test weiß:")
-#test_weiss.testprotokoll_drucken()
+test_weiss.testprotokoll_zuruecksetzen()
+for _ in range(anzahl_tests):
+    test_weiss.test_starten()
+print("Test weiß:")
+test_weiss.testprotokoll_drucken()
