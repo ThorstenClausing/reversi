@@ -13,7 +13,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from spieler import Stochastischer_Spieler
-from partieumgebung import Partieumgebung_v2 as Partieumgebung
+from partieumgebung import Partieumgebung
 
 anzahl_tests = 1000
 anzahl_runden = 10
