@@ -13,7 +13,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 import torch
-from bewertungsnetz import Bewertungsnetz
+from bewertungsgeber import Bewertungsnetz
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from partieumgebung import Partieumgebung
 
@@ -31,10 +31,10 @@ test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
-print("Test schwarz (Weiss[k]):")
+print("Test schwarz (Weiss):")
 test_schwarz.testprotokoll_drucken()
 test_weiss.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_weiss.test_starten()
-print("Test weiß (Weiss[k]):")
+print("Test weiß (Weiss):")
 test_weiss.testprotokoll_drucken()
