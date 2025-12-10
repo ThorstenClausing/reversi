@@ -13,7 +13,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 import torch
-from bewertungsnetz import Faltendes_Bewertungsnetz
+from bewertungsgeber import Faltendes_Bewertungsnetz
 from spieler import Optimierender_Spieler
 from partieumgebung import Partieumgebung
 
