@@ -3,7 +3,7 @@ import zipfile
 from itertools import batched
 from spiellogik import Stellung, als_kanonische_stellung
              
-class Ergebnisspeicher:
+class Bewertungstabelle:
 
   def __init__(self, schwarz=True, weiss=False):
     self.schwarz = schwarz # Sollen Erfahrungen für Schwarz gespeichert werden?
