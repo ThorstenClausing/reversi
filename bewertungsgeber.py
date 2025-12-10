@@ -1,7 +1,12 @@
 import pickle
 import zipfile
 from itertools import batched
-from spiellogik import Stellung, als_kanonische_stellung
+import torch
+from torch import nn
+from torch.utils.data import Dataset
+import numpy as np
+from spiellogik import Stellung, BRETTGROESSE, als_kanonische_stellung
+from tensordict import tensorclass
              
 class Bewertungstabelle:
 
