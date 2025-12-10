@@ -18,7 +18,7 @@ from datetime import datetime
 
 from spieler import Lernender_Spieler_sigma as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
-from bewertungsnetz import Bewertungsnetz
+from bewertungsgeber import Bewertungsnetz
 from partieumgebung import Partieumgebung
 
 replay_buffer = td.ReplayBuffer(
@@ -27,7 +27,7 @@ replay_buffer = td.ReplayBuffer(
 netz = Bewertungsnetz(
     schwarz=True, 
     weiss=True, 
-    replay_buffer=replay_buffer)
+    zwischenspeicher=replay_buffer)
 spieler_schwarz =  Lernender_Spieler(netz)
 spieler_weiss = Lernender_Spieler(netz)
 umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, netz)
