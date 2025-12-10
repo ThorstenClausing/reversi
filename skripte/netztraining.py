@@ -13,7 +13,7 @@ import random
 import numpy as np
 import zipfile
 import gc
-from bewertungsnetz import Bewertungsdatensatz, Bewertungsnetz
+from bewertungsgeber import Bewertungsdatensatz, Bewertungsnetz
 
 print("Jetzt geht's los... ")
 
