@@ -49,7 +49,25 @@ class Stellung(np.ndarray):
         return stellung
       
     def __array_wrap__(self, array, context=None, return_scalar=False):
-        
+        """
+        Ermöglicht die Anwendung von NumPy-Operationen auf `Stellung`-Objekte. 
+
+        Parameter
+        ----------
+        array : numpy.ndarray
+            Das Array, das von der NumPy-Operation zurückgegeben wurde.
+        context : tuple, optional
+            Ein Tupel, das Informationen über die aufrufende Funktion enthält
+            (hier immer None).
+        return_scalar : bool, optional
+            Gibt an, ob ein Skalarwert zurückgegeben werden soll (im Fall eines 0D-Arrays;
+            hier immer False).
+
+        Rückgabe
+        -------
+        numpy.ndarray
+            Das unveränderte Array, wie es von der NumPy-Operation zurückgegeben wurde.
+        """
         return array[()]
       
     def __nicht_am_zug(self, liste):
