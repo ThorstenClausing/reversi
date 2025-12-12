@@ -93,7 +93,7 @@ class Stellung(np.ndarray):
         Diese private Hilfsmethode ändert den Status der Felder, die in der
         `liste` von Koordinaten angegeben sind, auf `AM_ZUG`.
 
-        Parameters
+        Parameter
         ----------
         liste : list of tuple
             Eine Liste von (Zeile, Spalte)-Tupeln, die die Positionen
@@ -204,7 +204,7 @@ class Stellung(np.ndarray):
 
         Parameter
         ----------
-        zug : tuple or None
+        zug : tuple oder None
             Ein Tupel, das den Zug repräsentiert:
             - `zug[0]` : Ein (Zeile, Spalte)-Tupel des Feldes, auf das gesetzt wird.
             - `zug[1]` : Eine Liste von Richtungsvektoren, in denen Steine
@@ -248,12 +248,12 @@ class Stellung(np.ndarray):
         richtung : numpy.ndarray
             Der Richtungsvektor, in dem über das Spielbrett gegangen werden sollen.
 
-        Returns
+        Rückgabe
         -------
         list of tuple
             Eine Liste von (Zeile, Spalte)-Tupeln der Steine, die umgedreht werden müssen.
 
-        Raises
+        Wirft
         ------
         AssertionError
             Wenn die erste Position nach dem Zugfeld außerhalb des Bretts liegt,
