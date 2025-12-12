@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 29 15:09:11 2025
+Skript für den tabularen RL-Reversi-Spieler
+Version 1: Lernender_Spieler_epsilon gegen Lernender_Spieler_epsilon
 
-@author: Thorsten
-
+@author: Thorsten Clausing
 """
 import sys
 import os
@@ -17,11 +17,12 @@ from spieler import Lernender_Spieler_epsilon as Lernender_Spieler
 from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from partieumgebung import Partieumgebung
 
+# Trainingsparameter
 anzahl_partien = 100000
 anzahl_tests = 1000
 anzahl_lernzyklen = 10
-speicher = Bewertungstabelle(True, True)
 
+speicher = Bewertungstabelle(True, True)
 spieler_schwarz = Lernender_Spieler(speicher)
 spieler_weiss = Lernender_Spieler(speicher)
 spieler_opt = Optimierender_Spieler(speicher)
@@ -30,6 +31,7 @@ partie = Partieumgebung(spieler_schwarz, spieler_weiss, speicher)
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
 
+# Spielstärketest mit leerer Tabelle
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
@@ -39,13 +41,17 @@ for _ in range(anzahl_tests):
     test_weiss.test_starten()
 test_weiss.testprotokoll_drucken()
 
+# Hauptlernzyklus
 for i in range(anzahl_lernzyklen):
     print(i+1)
+    # Anpassung der Epsilonwerte
     spieler_schwarz.epsilonkehrwert_eingeben(min(i + 2, 10))
     spieler_weiss.epsilonkehrwert_eingeben(min(i + 2, 10))
+    # Lernpartien
     for _ in range(anzahl_partien):
         partie.partie_starten()
     print('Bewertungen: ', speicher.anzahl_bewertungen())
+    # Spielstärketest mit aktualisierter Tabelle
     test_schwarz.testprotokoll_zuruecksetzen()
     for _ in range(anzahl_tests):
         test_schwarz.test_starten()
@@ -54,5 +60,6 @@ for i in range(anzahl_lernzyklen):
     for _ in range(anzahl_tests):
         test_weiss.test_starten()
     test_weiss.testprotokoll_drucken()
-    
+
+# Persistente Speicherung der Bewertungstabelle
 speicher.bewertung_speichern('reversi_epsilon_')  

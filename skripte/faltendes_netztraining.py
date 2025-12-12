@@ -1,3 +1,8 @@
+"""
+Skript für das Training eines CNN mit Tabellendaten
+
+@author: Thorsten Clausing
+"""
 import sys
 import os
 
@@ -15,8 +20,7 @@ import zipfile
 import gc
 from bewertungsgeber import Bewertungsdaten, Faltendes_Bewertungsnetz
 
-print("Jetzt geht's los... ")
-
+# Einlesen der Trainings- und Testdaten
 training_liste = []
 test_liste = []
 zaehler = 0
@@ -45,11 +49,14 @@ with zipfile.ZipFile("../daten/reversi_schwarz.zip", mode="r") as archiv:
                     test_liste.append((eingabe, ausgabe))
                     durchschnitt += bewertung
                 zaehler += 1
+
+print('Daten geladen: ', len(test_liste) + len(training_liste))
 del bewertungen
 gc.collect()
 
+# Berechnung des Nenners des Bestimmtheitsmaßes
+# für spätere Anpassungstests
 durchschnitt /= len(test_liste)
-print('Daten geladen: ', len(test_liste) + len(training_liste))
 r_nenner = 0
 for _, bewertung in test_liste:
     r_nenner += (bewertung.item() - durchschnitt)**2
@@ -62,11 +69,12 @@ test_datengeber = DataLoader(test_daten, batch_size=32)
  
 modell = Faltendes_Bewertungsnetz()
 
+# Trainingsschleife
 def train_loop(datengeber, modell, verlustfunktion, optimizer):
     size = len(datengeber.dataset)
-    modell.train()      # Unnecessary in this situation but added for best practices
+    modell.train()      # Unnötig aber 'best practice'
     for batch, (X, y) in enumerate(datengeber):
-        # Compute prediction and loss
+        # Vorhersage und Verlust berechnen
         vorhersage = modell(X)
         verlust = verlustfunktion(vorhersage, y)
 
@@ -74,15 +82,17 @@ def train_loop(datengeber, modell, verlustfunktion, optimizer):
         verlust.backward()
         optimizer.step()
         optimizer.zero_grad()
-
+        
+        # Kontrollausdruck des Trainingsverlusts
         if batch % 100000 == 0:
             verlust, current = verlust.item(), batch * 32 + len(X)
             print(f"Verlust: {verlust:>7f}  [{current:>5d}/{size:>5d}]")
+    # Rückgabewert: Trainingsverlust
     return verlust
 
-
+# Testschleife
 def test_loop(datengeber, modell, verlustfunktion, r_opt):
-    modell.eval()       # Unnecessary in this situation but added for best practices
+    modell.eval()       
     num_batches = len(datengeber)
     test_loss, r_zaehler = 0, 0
     with torch.no_grad():
@@ -94,25 +104,28 @@ def test_loop(datengeber, modell, verlustfunktion, r_opt):
                         
     test_loss /= num_batches
     r_quadrat = 1 - r_zaehler/r_nenner
+    # Ausdruck des Testergebnisses (Verlust und Bestimmtheitsmaß)
     print(f"Testergebnis\n Durchschnittsverlust: {(test_loss):>8f}, R_quadrat: {r_quadrat} \n")
-    
+    # Persistente Speicherung der (bisher) besten Gewichte
     if r_quadrat > r_opt:
         r_opt = r_quadrat
         torch.save(modell.state_dict(), 'faltende_gewichte_schwarz')
+    # Rückgabewert: Bisher bester Wert des Bestimmtheitsmaßes
     return r_opt
 
+# Trainingsparameter
 optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)
-print("optimierer = torch.optim.SGD(modell.parameters(), lr=0.001)")
 epochen = 5
-r_opt = 0.0
 verlustfunktion = nn.MSELoss()
+
+r_opt = 0.0
+
+# Hauptschleife
 for t in range(epochen):
     print(f"Epoche {t+1}\n-------------------------------")
     verlust = train_loop(training_datengeber, modell, verlustfunktion, optimierer)
     r_opt = test_loop(test_datengeber, modell, verlustfunktion, r_opt)
     
+# Ausdruck des besten erreichten Bestimmtheitswerts
 print("Bester Bestimmtheitswert: ", r_opt)
-torch.save({'epoch': epochen, 'model_state_dict': modell.state_dict(), 
-                  'optimizer_state_dict': optimierer.state_dict(),
-                  'loss': verlust}, 'trainingsstand')
-print("Ende")
+
