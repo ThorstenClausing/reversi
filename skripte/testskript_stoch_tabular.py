@@ -1,3 +1,9 @@
+"""
+Skript für Spielstärketest für einen tabularen RL-Reversi-Spieler
+gegen den Stochastischen Spieler
+
+@author: Thorsten Clausing
+"""
 import sys
 import os
 
