@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 """
 Skript für Spielstärketests für einen tiefen RL-Reversi-Spieler mit MLP
