@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sept 30 2025
+Skript für einen direkten Spielstärkvergleich zwischen zwei tiefen RL-Reversi-Spielern mit MLP
 
-@author: Thorsten
-
+@author: Thorsten Clausing
 """
 import sys
 import os
@@ -21,7 +20,7 @@ anzahl_tests = 1000
 speicher_eins = Bewertungsnetz()
 speicher_zwei = Bewertungsnetz()
 
-speicher_eins.load_state_dict(torch.load("Gewichte/gewichte_v1_", weights_only=True))
+speicher_eins.load_state_dict(torch.load("Gewichte/gewichte_v1", weights_only=True))
 speicher_zwei.load_state_dict(torch.load("Gewichte/gewichte_v2", weights_only=True))
 print('Gewichte geladen.')
 
