@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat May  3 13:18:29 2025
+Skript für das Training eines tiefen RL-Reversi-Spielers mit angereicherten Daten
 
-@author: Thorsten
+@author: Thorsten Clausing
 """
 import sys
 import os
@@ -28,6 +28,7 @@ replay_buffer = td.ReplayBuffer(
     sampler=td.SamplerWithoutReplacement(shuffle=True),
     batch_size=64)
 
+# Funktion zur Anreicherung der Trainingsdaten
 def transformieren(stellung):
     stellung_eins = stellung.copy()
     selektor = random.randrange(4)
@@ -53,16 +54,14 @@ spieler_schwarz =  Lernender_Spieler(netz)
 spieler_weiss = Lernender_Spieler(netz)
 umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, netz)
 
+# Trainingsschleife
 def train_loop(datengeber, modell, verlustfunktion, optimierer, anzahl_schritte):
-    modell.train()      # Unnecessary in this situation but added for best practices
+    modell.train()      # Unnötig aber 'best practice'
     for _ in range(anzahl_schritte):
         stichprobe = datengeber.sample()
-        # Compute prediction and loss
-        #stichprobe.stellungen.to(prozessor)
+        # Vorhersage und Verlust berechnen
         vorhersage = modell(stichprobe.stellungen)
-        #stichprobe.bewertungen.to(prozessor)
         verlust = verlustfunktion(vorhersage, stichprobe.bewertungen)
-        #print(verlust.item())
         # Backpropagation
         verlust.backward()
         optimierer.step()
@@ -72,7 +71,8 @@ spieler_opt = Optimierender_Spieler(netz)
 spieler_stoch = Stochastischer_Spieler()
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
-        
+
+# Testschleife
 def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
     with torch.inference_mode():
         test_schwarz.testprotokoll_zuruecksetzen()
@@ -87,46 +87,46 @@ def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
         liste.append(ergebnis)
     return liste
 
-verlustfunktion = nn.MSELoss()
-optimierer = torch.optim.SGD(netz.parameters(), lr=0.01)
-lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
-
+# Trainingsparameter
 anzahl_partien = 2_500
 anzahl_zyklen = 200
 anzahl_tests = 1000
 anzahl_schritte = 2500
 minimum_replay_buffer = 350_000
 ergebnisse = []
+verlustfunktion = nn.MSELoss()
+optimierer = torch.optim.SGD(netz.parameters(), lr=0.01)
+lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
 
 text = f"""Partien: {anzahl_partien}\nZyklen: {anzahl_zyklen}\nTest: {anzahl_tests} 
 Schritte: {anzahl_schritte}\nFüllung Replay-Buffer: {minimum_replay_buffer}"""
 print(text)
 print("Start", datetime.now().strftime("%H:%M:%S"))
 
+# Test der Spielstärke vor Trainingsbeginn mit zufälligen Netzgewichten
 ergebnisse = test_loop(
     test_schwarz, test_weiss, anzahl_tests, ergebnisse)
 
-#print("Start Auffüllen", datetime.now().strftime("%H:%M:%S"))
+# Auffüllen des Zwischenspeichers
 while len(replay_buffer) < minimum_replay_buffer:
     umgebung.partie_starten()
  
-# Äußere Schleife: Abfolge von Trainingszyklen, Beobachtungen generieren,
-# einmal Netzparameter anpassen, ggf. einmal Spielstärke testen  
+# Haupttrainingsschleife 
 for z in range(anzahl_zyklen):
-    #print("Start Spielen", datetime.now().strftime("%H:%M:%S")) 
-    # Innere Schleife: neue Beobachtungen generieren und abspeichern
+    # Erfahrungssammelphase
     for _ in range(anzahl_partien):
         umgebung.partie_starten()
-    #print("Start Gewichte Trainieren", datetime.now().strftime("%H:%M:%S"))
+    # Trainingsphase
     train_loop(replay_buffer, netz, verlustfunktion, optimierer, anzahl_schritte)
     lernschema.step()
     if not (z + 1) % 10:
-        #print("Start Testen", datetime.now().strftime("%H:%M:%S"))
+        # Testphase
         ergebnisse = test_loop(
             test_schwarz, test_weiss, anzahl_tests, ergebnisse)
+        # Persistentes Speichern der aktuellen Netzgewichte
         torch.save(netz.state_dict(), f'tiefe_gewichte_sigsig_trans_6_{z + 1}')
 
-#print("Start Speichern", datetime.now().strftime("%H:%M:%S")) 
+# Speichern der Trainingsdaten 
 try:
     with open('tiefes_protokoll.txt', "a") as datei:
         datei.write(text)
@@ -138,5 +138,3 @@ try:
 except:
     for ergebnis in ergebnisse:
         print(*ergebnis)
-
-print("Ende", datetime.now().strftime("%H:%M:%S"))
