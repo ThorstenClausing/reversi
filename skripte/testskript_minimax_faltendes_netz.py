@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 29 15:09:11 2025
+Skript für Spielstärketests für einen tiefen RL-Reversi-Spieler mit MLP
+gegen den Minimax-Spieler
 
-@author: Thorsten
-
+@author: Thorsten Clausing
 """
 import sys
 import os
@@ -34,10 +34,10 @@ test_weiss = Partieumgebung(spieler_minimax, spieler_opt)
 test_schwarz.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_schwarz.test_starten()
-print("Test schwarz (Gewichte ", variante, "[k]):", sep='')
+print("Test schwarz (Gewichte ", variante, "):", sep='')
 test_schwarz.testprotokoll_drucken()
 test_weiss.testprotokoll_zuruecksetzen()
 for _ in range(anzahl_tests):
     test_weiss.test_starten()
-print("Test weiß (Gewichte ", variante, "[k]):", sep='')
+print("Test weiß (Gewichte ", variante, "):", sep='')
 test_weiss.testprotokoll_drucken()
