@@ -1,5 +1,5 @@
 """
-Skript für Spielstärketest für einen tabularen RL-Reversi-Spieler
+Skript für Spielstärketests für einen tabularen RL-Reversi-Spieler
 gegen den Stochastischen Spieler
 
 @author: Thorsten Clausing
