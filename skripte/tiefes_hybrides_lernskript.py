@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat May  3 13:18:29 2025
+Skript für das Training eines tiefen RL-Reversi-Spielers mit Netzwerk und Tabelle
 
-@author: Thorsten
+@author: Thorsten Clausing
 """
 import sys
 import os
@@ -23,9 +23,11 @@ from spieler import Optimierender_Spieler, Stochastischer_Spieler
 from bewertungsgeber import Bewertungstabelle, Bewertungsnetz, BewertungsDaten
 from partieumgebung import Partieumgebung
 
+# Netzwerk für die Zugauswahl der Spieler
 netz = Bewertungsnetz(
     schwarz=True, 
     weiss=True)
+# Tabelle als Zwischenspeicher
 tabelle = Bewertungstabelle(
     schwarz=True,
     weiss=True)
@@ -34,11 +36,12 @@ spieler_schwarz =  Lernender_Spieler(netz)
 spieler_weiss = Lernender_Spieler(netz)
 umgebung = Partieumgebung(spieler_schwarz, spieler_weiss, tabelle)
 
+# Trainingsschleife
 def train_loop(datengeber, modell, verlustfunktion, optimierer):
     modell.train()      
     for stichprobe in datengeber:
         optimierer.zero_grad()
-        # Compute prediction and loss
+        # Vorhersage und Verlust berechnen
         vorhersage = modell(stichprobe.stellungen)
         verlust = verlustfunktion(vorhersage, stichprobe.bewertungen)
         # Backpropagation
@@ -49,7 +52,8 @@ spieler_opt = Optimierender_Spieler(netz)
 spieler_stoch = Stochastischer_Spieler()
 test_schwarz = Partieumgebung(spieler_opt, spieler_stoch)
 test_weiss = Partieumgebung(spieler_stoch, spieler_opt)
-        
+
+# Testschleife
 def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
     with torch.inference_mode():
         test_schwarz.testprotokoll_zuruecksetzen()
@@ -64,15 +68,16 @@ def test_loop(test_schwarz, test_weiss, anzahl_tests, liste):
         liste.append(ergebnis)
     return liste
 
-verlustfunktion = nn.MSELoss()
-optimierer = torch.optim.SGD(netz.parameters(), lr=0.01)
-lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
-
+# Trainingsparameter
 anzahl_partien = 2_000
 anzahl_zyklen = 250
 anzahl_tests = 1000
 minimum_daten = 160_000
 stichproben_groesse = 160_000
+verlustfunktion = nn.MSELoss()
+optimierer = torch.optim.SGD(netz.parameters(), lr=0.01)
+lernschema = torch.optim.lr_scheduler.ExponentialLR(optimierer, gamma=0.95)
+
 ergebnisse = []
 replay_buffer = td.ReplayBuffer(
     storage=td.LazyTensorStorage(stichproben_groesse), 
@@ -86,21 +91,20 @@ Füllung Tabelle: {minimum_daten}"""
 print(text)
 print("Start", datetime.now().strftime("%H:%M:%S"))
 
+# Test der Spielstärke vor Trainingsbeginn mit zufälligen Netzgewichten
 ergebnisse = test_loop(
     test_schwarz, test_weiss, anzahl_tests, ergebnisse)
 
-#print("Start Auffüllen", datetime.now().strftime("%H:%M:%S"))
+# Auffüllen der Tabelle (= Zwischenspeicher)
 while len(tabelle.bewertung) < minimum_daten:
     umgebung.partie_starten()
  
-# Äußere Schleife: Abfolge von Trainingszyklen, Beobachtungen generieren,
-# einmal Netzparameter anpassen, ggf. einmal Spielstärke testen  
+# Haupttrainingsschleife
 for z in range(anzahl_zyklen):
-    #print("Start Spielen", datetime.now().strftime("%H:%M:%S")) 
-    # Innere Schleife: neue Beobachtungen generieren und abspeichern
+    # Erfahrungssammelphase
     for _ in range(anzahl_partien):
         umgebung.partie_starten()
-    #print("Start Gewichte Trainieren", datetime.now().strftime("%H:%M:%S"))
+    # Stichprobe aus der Tabelle ziehen und in Replay Buffer geben
     auswahl = random.sample(list(tabelle.bewertung.keys()), stichproben_groesse)
     liste_stellungen = []
     liste_bewertungen = []
@@ -119,15 +123,17 @@ for z in range(anzahl_zyklen):
                 dtype=torch.float32), 
             batch_size=[len(liste_stellungen)])
     replay_buffer.extend(daten)
+    # Trainingsphase
     train_loop(replay_buffer, netz, verlustfunktion, optimierer)
     lernschema.step()
     if not (z + 1) % 10:
-        #print("Start Testen", datetime.now().strftime("%H:%M:%S"))
+        # Testphase
         ergebnisse = test_loop(
             test_schwarz, test_weiss, anzahl_tests, ergebnisse)
+        # Persistentes Speichern der aktuellen Netzgewichte
         torch.save(netz.state_dict(), f'tiefe_gewichte_sigsig_2000_hybrid_{z + 1}')
 
-#print("Start Speichern", datetime.now().strftime("%H:%M:%S")) 
+# Speichern der Trainingsdaten 
 try:
     with open('tiefes_protokoll.txt', "a") as datei:
         datei.write('Hybrid\n')
@@ -139,5 +145,3 @@ try:
 except:
     for ergebnis in ergebnisse:
         print(*ergebnis)
-
-print("Ende", datetime.now().strftime("%H:%M:%S"))
