@@ -1,10 +1,10 @@
 
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 29 15:09:11 2025
+Skript für Spielstärketests für einen tiefen RL-Reversi-Spieler mit MLP
+gegen den Minimax-Spieler
 
-@author: Thorsten
-
+@author: Thorsten Clausing
 """
 import sys
 import os
