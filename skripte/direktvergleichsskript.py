@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Skript für einen direkten Spielstärkvergleich zwischen zwei tiefen RL-Reversi-Spielern mit MLP
+Skript für einen direkten Spielstärkvergleich zwischen zwei RL-Reversi-Spielern mit Netzwerk (MLP)
 
 @author: Thorsten Clausing
 """
